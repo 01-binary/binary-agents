@@ -32,29 +32,37 @@ npx binary-agents sync
 
 ## 사용법
 
-### 모든 서브에이전트 동기화
+### 로컬 프로젝트에 설치 (기본)
+
+현재 프로젝트의 `.claude/agents/` 디렉토리에 설치:
 
 ```bash
+# 모든 서브에이전트 동기화
 npx @01-binary/binary-agents sync
-```
 
-이 명령어는 `.claude/agents/` 디렉토리에 모든 서브에이전트 파일을 다운로드합니다.
-
-### 기본 버전만 동기화
-
-```bash
+# 기본 버전만 (Haiku 모델)
 npx @01-binary/binary-agents sync --basic
-```
 
-Haiku 모델을 사용하는 기본 서브에이전트만 동기화합니다.
-
-### 고급 버전만 동기화
-
-```bash
+# 고급 버전만 (Sonnet 모델)
 npx @01-binary/binary-agents sync --advanced
 ```
 
-Sonnet 모델을 사용하는 고급 서브에이전트만 동기화합니다.
+### 전역 설치
+
+홈 디렉토리의 `~/.claude/agents/`에 설치 (모든 프로젝트에서 사용 가능):
+
+```bash
+# 전역으로 모든 서브에이전트 설치
+npx @01-binary/binary-agents sync --global
+# 또는
+npx @01-binary/binary-agents sync -g
+
+# 전역 + 기본 버전만
+npx @01-binary/binary-agents sync --global --basic
+
+# 전역 + 고급 버전만
+npx @01-binary/binary-agents sync --global --advanced
+```
 
 ### 사용 가능한 서브에이전트 목록 보기
 

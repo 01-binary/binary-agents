@@ -13,9 +13,10 @@ program
 
 program
   .command('sync')
-  .description('Sync subagent files from GitHub to .claude/agents/')
+  .description('Sync subagent files to .claude/agents/ (local) or ~/.claude/agents (global)')
   .option('--basic', 'Sync only basic (Haiku) subagents')
   .option('--advanced', 'Sync only advanced (Sonnet) subagents')
+  .option('-g, --global', 'Install to ~/.claude/agents instead of current directory')
   .action(async (options) => {
     let filter = null;
 
@@ -25,7 +26,10 @@ program
       filter = 'advanced';
     }
 
-    const result = await syncSubagents({ filter });
+    const result = await syncSubagents({
+      filter,
+      global: options.global || false
+    });
 
     if (!result.success) {
       process.exit(1);

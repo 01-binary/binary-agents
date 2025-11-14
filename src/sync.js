@@ -54,9 +54,19 @@ async function readAgentFile(filename) {
 
 /**
  * .claude/agents 디렉토리 생성
+ * @param {boolean} isGlobal - true면 ~/.claude/agents, false면 현재 디렉토리의 .claude/agents
  */
-async function ensureAgentsDirectory() {
-  const agentsDir = path.join(process.cwd(), '.claude', 'agents');
+async function ensureAgentsDirectory(isGlobal = false) {
+  let agentsDir;
+
+  if (isGlobal) {
+    // 전역 설치: ~/.claude/agents
+    const homeDir = process.env.HOME || process.env.USERPROFILE;
+    agentsDir = path.join(homeDir, '.claude', 'agents');
+  } else {
+    // 로컬 설치: 현재 디렉토리의 .claude/agents
+    agentsDir = path.join(process.cwd(), '.claude', 'agents');
+  }
 
   try {
     await fs.access(agentsDir);
@@ -80,9 +90,13 @@ async function saveFile(agentsDir, filename, content) {
  * 서브에이전트 동기화 메인 함수
  */
 export async function syncSubagents(options = {}) {
-  const { filter = null } = options;
+  const { filter = null, global = false } = options;
 
   console.log(chalk.blue.bold('\n🤖 Binary Agents Sync\n'));
+
+  if (global) {
+    console.log(chalk.cyan('📍 Global mode: Installing to ~/.claude/agents\n'));
+  }
 
   // 로컬 agents 디렉토리에서 파일 목록 가져오기
   const fetchSpinner = ora('Reading subagent files from local repository...').start();
@@ -108,12 +122,14 @@ export async function syncSubagents(options = {}) {
   }
 
   // .claude/agents 디렉토리 생성
-  const dirSpinner = ora('Creating .claude/agents directory...').start();
+  const dirMessage = global ? 'Creating ~/.claude/agents directory...' : 'Creating .claude/agents directory...';
+  const dirSpinner = ora(dirMessage).start();
   let agentsDir;
 
   try {
-    agentsDir = await ensureAgentsDirectory();
-    dirSpinner.succeed(chalk.green('Created .claude/agents directory'));
+    agentsDir = await ensureAgentsDirectory(global);
+    const successMessage = global ? 'Created ~/.claude/agents directory' : 'Created .claude/agents directory';
+    dirSpinner.succeed(chalk.green(successMessage));
   } catch (error) {
     dirSpinner.fail(chalk.red(`Failed to create directory: ${error.message}`));
     return { success: false, error: error.message };
