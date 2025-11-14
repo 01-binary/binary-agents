@@ -13,20 +13,20 @@ Claude Code 서브에이전트 컬렉션 및 동기화 도구
 별도 설치 없이 바로 사용:
 
 ```bash
-npx @01-binary/binary-agents sync
+npx binary-agents sync
 ```
 
 ### 글로벌 설치
 
 ```bash
-npm install -g @01-binary/binary-agents
+npm install -g binary-agents
 binary-agents sync
 ```
 
 ### 로컬 설치
 
 ```bash
-npm install @01-binary/binary-agents
+npm install binary-agents
 npx binary-agents sync
 ```
 
@@ -38,13 +38,13 @@ npx binary-agents sync
 
 ```bash
 # 모든 서브에이전트 동기화
-npx @01-binary/binary-agents sync
+npx binary-agents sync
 
 # 기본 버전만 (Haiku 모델)
-npx @01-binary/binary-agents sync --basic
+npx binary-agents sync --basic
 
 # 고급 버전만 (Sonnet 모델)
-npx @01-binary/binary-agents sync --advanced
+npx binary-agents sync --advanced
 ```
 
 ### 전역 설치
@@ -53,21 +53,21 @@ npx @01-binary/binary-agents sync --advanced
 
 ```bash
 # 전역으로 모든 서브에이전트 설치
-npx @01-binary/binary-agents sync --global
+npx binary-agents sync --global
 # 또는
-npx @01-binary/binary-agents sync -g
+npx binary-agents sync -g
 
 # 전역 + 기본 버전만
-npx @01-binary/binary-agents sync --global --basic
+npx binary-agents sync --global --basic
 
 # 전역 + 고급 버전만
-npx @01-binary/binary-agents sync --global --advanced
+npx binary-agents sync --global --advanced
 ```
 
 ### 사용 가능한 서브에이전트 목록 보기
 
 ```bash
-npx @01-binary/binary-agents list
+npx binary-agents list
 ```
 
 ## 서브에이전트 종류

@@ -1,5 +1,5 @@
 {
-  "name": "@01-binary/binary-agents",
+  "name": "binary-agents",
   "version": "1.0.0",
   "description": "Claude Code subagents collection with sync CLI tool",
   "type": "module",
