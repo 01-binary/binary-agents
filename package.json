@@ -1,0 +1,44 @@
+{
+  "name": "@01-binary/binary-agents",
+  "version": "1.0.0",
+  "description": "Claude Code subagents collection with sync CLI tool",
+  "type": "module",
+  "main": "src/sync.js",
+  "bin": {
+    "binary-agents": "./bin/cli.js"
+  },
+  "scripts": {
+    "sync": "node bin/cli.js sync",
+    "list": "node bin/cli.js list"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "subagents",
+    "sync",
+    "cli",
+    "code-review",
+    "refactoring"
+  ],
+  "author": "01-binary",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/01-binary/binary-agents.git"
+  },
+  "files": [
+    "agents",
+    "bin",
+    "src",
+    "docs",
+    "README.md"
+  ],
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "ora": "^8.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
