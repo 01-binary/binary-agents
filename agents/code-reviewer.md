@@ -38,11 +38,46 @@ As a subagent, you operate independently with your own context. When invoked, yo
 - Global state modifications
 - Functions with multiple responsibilities
 
-### 2. Separation of Concerns
+### 2. Separation of Concerns & Cohesion (Enhanced with Toss Principles)
 
 **✅ Look for:**
 - Clear layer boundaries: Data (API) → State (Context/hooks) → View (components) → Utils (pure functions)
+- **Domain-based directory structure** (Toss principle: 함께 수정되는 코드는 같이 위치)
+  ```
+  src/
+  ├── components/ (shared globally)
+  └── domains/
+      ├── payment/
+      │   ├── components/
+      │   ├── hooks/
+      │   └── utils/
+      └── user/
+          ├── components/
+          ├── hooks/
+          └── utils/
+  ```
+- **Single responsibility hooks** (Toss principle: 한 번에 하나의 책임만)
+  ```typescript
+  // GOOD: Separate hooks per concern
+  const cardId = useCardIdQueryParam();
+  const dateFrom = useDateFromQueryParam();
+
+  // BAD: God hook managing everything
+  const { cardId, dateFrom, dateTo, statusList } = usePageState();
+  ```
 - Custom hooks for logic isolation
+- **No hidden side effects** (Toss principle: 숨은 로직을 드러내기)
+  ```typescript
+  // GOOD: Side effects visible at call site
+  const balance = await fetchBalance();
+  logging.log("balance_fetched"); // Explicit!
+
+  // BAD: Hidden logging inside function
+  function fetchBalance() {
+    logging.log("balance_fetched"); // Hidden!
+    return api.get('/balance');
+  }
+  ```
 - Pure computation in separate util files
 - UI components focused only on rendering
 - Domain logic separated from presentation
@@ -51,24 +86,64 @@ As a subagent, you operate independently with your own context. When invoked, yo
 - API calls directly in components
 - Business logic mixed with JSX
 - State management in view components
+- **Type-based structure** (components/, hooks/, utils/ with mixed domains) - prefer domain-based
+- **Cross-domain imports** (../../../domains/payment/hooks) - indicates poor cohesion
+- **God hooks/components** managing >5 concerns - violates single responsibility
+- **Hidden side effects** in business logic functions (logging, analytics, mutations)
 - Utils importing React hooks
 - Circular dependencies between layers
+- **Props drilling >2 levels** - use composition or context instead
 
-### 3. Code Readability
+### 3. Code Readability (Enhanced with Toss Principles)
 
 **✅ Look for:**
 - Self-documenting function/variable names
-- Complex conditions extracted to named variables
+- **Complex conditions extracted to named variables** (Toss principle: 복잡한 조건에 이름을 붙이기)
+  ```typescript
+  // GOOD: Named conditions
+  const isSameCategory = products.some(p => p.category === filter.category);
+  const isPriceInRange = products.some(p => p.price >= minPrice && p.price <= maxPrice);
+  if (isSameCategory && isPriceInRange) { ... }
+
+  // BAD: Inline complex conditions
+  if (products.some(p => p.category === filter.category) &&
+      products.some(p => p.price >= minPrice && p.price <= maxPrice)) { ... }
+  ```
+- **Named constants for magic numbers** (Toss principle: 매직 넘버 제거)
+  ```typescript
+  // GOOD: Named constant shows intent
+  const ANIMATION_DELAY_MS = 300;
+  await delay(ANIMATION_DELAY_MS);
+
+  // BAD: Magic number
+  await delay(300); // Why 300?
+  ```
+- **Simplified ternary operators** (Toss principle: 중첩된 삼항 연산자 단순화)
+  ```typescript
+  // GOOD: IIFE with clear if statements
+  const status = (() => {
+    if (conditionA && conditionB) return "BOTH";
+    if (conditionA) return "A";
+    if (conditionB) return "B";
+    return "NONE";
+  })();
+
+  // BAD: Nested ternary hell
+  const status = conditionA && conditionB ? "BOTH" : conditionA || conditionB ? (conditionA ? "A" : "B") : "NONE";
+  ```
 - JSDoc for non-obvious logic
 - Consistent naming conventions (list*, get*, create*, update*, remove*)
 - TypeScript types that clarify intent
 
 **❌ Anti-patterns:**
 - Single-letter variables (except loop indices)
-- Magic numbers without constants
+- **Magic numbers without constants** (timing, sizes, limits, thresholds)
 - Long functions (>50 lines)
+- **Nested ternaries (>2 levels)** - use IIFE or if/else instead
 - Nested conditionals (>3 levels)
+- **Unnamed complex conditions** - extract to variables with meaningful names
 - Abbreviated names that obscure meaning
+- **Context switching code** (Toss: 시점 이동) - requiring jumps between multiple files/functions to understand simple logic
 
 ### 4. React-Specific Patterns
 

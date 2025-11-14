@@ -22,7 +22,7 @@ As a subagent, you operate independently with your own context. When invoked, yo
 
 ## Analysis Areas
 
-### 1. Code Duplication
+### 1. Code Duplication (Enhanced with Toss Pragmatic Approach)
 
 **Search for:**
 - Identical logic blocks in multiple files
@@ -37,10 +37,48 @@ As a subagent, you operate independently with your own context. When invoked, yo
 - Look for repeated string patterns in JSX
 - Check for duplicate validation logic
 
+**Toss Principle: When to ALLOW Duplication** (때로는 중복 코드를 허용하라)
+```typescript
+// Scenario: Two pages with similar bottom sheet logic
+// Page A: Shows maintenance info + logs "page_a_viewed" + closes page
+// Page B: Shows maintenance info + logs "page_b_viewed" + stays on page
+
+// ❌ BAD: Forcing shared hook (increases coupling)
+function useMaintenanceSheet() {
+  // Shared logic becomes complex to handle different behaviors
+  // Changes to Page A affect Page B unexpectedly
+}
+
+// ✅ GOOD: Allow duplication (reduces coupling)
+// Page A has its own implementation
+// Page B has its own implementation
+// Reason: Requirements likely to diverge, shared hook would couple them
+```
+
+**When to ALLOW Duplication:**
+- ✅ Different domains with similar but diverging requirements
+- ✅ Premature abstraction would increase coupling
+- ✅ Testing burden would increase with shared code
+- ✅ Future requirements are uncertain or likely to diverge
+- ✅ Only 2 instances (not worth abstracting yet)
+
+**When to ELIMINATE Duplication:**
+- ❌ Logic is truly identical and will stay that way (>3 instances)
+- ❌ Core business rules that must stay synchronized
+- ❌ Clear SRP violation (same responsibility duplicated)
+- ❌ High maintenance burden (bugs fixed in one place miss others)
+
+**Decision Framework:**
+1. **Assess divergence likelihood**: Will requirements differ in the future?
+2. **Calculate coupling cost**: Would shared code tightly couple independent features?
+3. **Evaluate testing impact**: Would abstraction make testing harder?
+4. **Consider team communication**: Is there clear shared understanding?
+
 **Impact Metrics:**
 - Lines of code that can be removed
 - Number of files affected
 - Maintenance burden reduction
+- **Coupling increase risk** (NEW: warn if abstraction increases coupling)
 
 ### 2. Cyclomatic Complexity
 

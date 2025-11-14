@@ -77,7 +77,72 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 ---
 
-### 1. Code Quality Reviewers (코드 품질 리뷰어)
+### 1. Toss Cohesion Analyzer (토스 응집도 분석기) 🆕 **SPECIAL**
+
+#### [toss-cohesion-analyzer.md](../agents/toss-cohesion-analyzer.md) - Toss 원칙 특화 ⭐⭐⭐
+```yaml
+모델: haiku
+도구: Read, Glob, Grep
+설명: 토스 팀의 16가지 코드 품질 원칙을 기반으로 응집도, 결합도, 가독성 분석
+```
+
+**주요 기능:**
+- 📁 도메인 기반 디렉토리 구조 분석
+- 🔗 응집도(Cohesion)와 결합도(Coupling) 평가
+- 📖 가독성 패턴 검증 (조건문 네이밍, 매직 넘버, 삼항 연산자)
+- 🔄 실용적 중복 코드 판단 (때로는 중복이 더 나을 수 있다)
+- 🎯 일관성 체크 (같은 이름 = 같은 동작, 같은 반환 타입)
+
+**Toss 팀의 16가지 원칙:**
+1. ✅ Code Directory Organization (도메인별 구성)
+2. ✅ Condition Naming (조건문 네이밍)
+3. ✅ Form Field Cohesion (필드 응집도)
+4. ✅ Hidden Logic Exposure (숨은 로직 노출)
+5. ✅ HTTP Naming Consistency (네이밍 일관성)
+6. ✅ Props Drilling Solutions (컴포넌트 결합도)
+7. ✅ Implementation Detail Abstraction (추상화)
+8. ✅ Magic Numbers - Cohesion (매직 넘버와 응집도)
+9. ✅ Magic Numbers - Readability (매직 넘버와 가독성)
+10. ✅ Separating Non-Concurrent Code (비동시 코드 분리)
+11. ✅ Ternary Operator Simplification (삼항 연산자)
+12. ✅ Allowing Duplicate Code (중복 코드 허용 시점)
+13. ✅ Page State Coupling (단일 책임)
+14. ✅ Page State Readability (로직 분리)
+15. ✅ Consistent Return Types (일관된 반환 타입)
+16. ✅ Context Switching Minimization (컨텍스트 스위칭 최소화)
+
+**평가 항목 (5개):**
+- 📦 Code Organization & Cohesion (25%)
+- 🔗 Coupling & Dependencies (25%)
+- 📖 Readability Patterns (25%)
+- ✅ Consistency Patterns (15%)
+- 🔧 Practical Refactoring (10%)
+
+**언제 사용하나요?**
+- ✅ 토스 팀의 코드 품질 기준을 적용하고 싶을 때
+- ✅ 응집도와 결합도를 명확히 구분해서 분석하고 싶을 때
+- ✅ 실용적인 리팩토링 기준이 필요할 때
+- ✅ 한국 핀테크 업계 표준을 따르고 싶을 때
+
+**사용 예시:**
+```bash
+"toss-cohesion-analyzer로 이 프로젝트 분석해줘"
+"토스 팀의 원칙에 맞게 코드를 개선하고 싶어"
+```
+
+**출력물:**
+- 📊 Overall Score (100점 만점)
+- ❌ Critical Issues (즉시 수정 필요)
+- ⚠️ Recommended Improvements (권장 개선사항)
+- ✅ Best Practices Found (잘하고 있는 부분)
+- 📈 Toss Principles Summary (원칙별 준수 현황)
+
+**Reference:**
+- Source: [Toss Frontend Fundamentals](https://github.com/toss/frontend-fundamentals)
+
+---
+
+### 2. Code Quality Reviewers (코드 품질 리뷰어)
 
 #### [code-reviewer.md](code-reviewer.md) - 기본 버전
 ```yaml
@@ -130,7 +195,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 ---
 
-### 2. Refactoring Analyzers (리팩토링 분석기)
+### 3. Refactoring Analyzers (리팩토링 분석기)
 
 #### [refactor-analyzer.md](refactor-analyzer.md) - 기본 버전
 ```yaml
@@ -189,7 +254,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 ---
 
-### 3. Junior Developer Readability Checkers (주니어 친화성 검사기)
+### 4. Junior Developer Readability Checkers (주니어 친화성 검사기)
 
 #### [junior-friendly-checker.md](junior-friendly-checker.md) - 기본 버전
 ```yaml
