@@ -9,7 +9,8 @@
   },
   "scripts": {
     "sync": "node bin/cli.js sync",
-    "list": "node bin/cli.js list"
+    "list": "node bin/cli.js list",
+    "release": "npm version patch && npm publish"
   },
   "keywords": [
     "claude",
