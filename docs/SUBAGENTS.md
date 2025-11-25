@@ -142,7 +142,52 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 ---
 
-### 2. Code Quality Reviewers (코드 품질 리뷰어)
+### 2. React Performance Optimizer (React 성능 최적화) 🆕 **SPECIAL**
+
+#### [react-performance-optimizer.md](../agents/react-performance-optimizer.md) - 성능 분석 특화 ⭐⭐⭐
+```yaml
+모델: sonnet
+도구: Read, Glob, Grep, WebFetch, WebSearch
+설명: React 앱의 성능 병목점 분석 - 리렌더 최적화, 컨텍스트 분할, 훅 의존성, 메모이제이션, React 19+ 패턴
+```
+
+**주요 기능:**
+- 🔄 리렌더 최적화 (React.memo, useMemo, useCallback)
+- 📦 컨텍스트 최적화 (State/Dispatch/Config 분리 패턴)
+- 🎣 훅 의존성 검증 (stale closure, ESLint disable 탐지)
+- ⚡ 모던 React 패턴 (useSyncExternalStore, useTransition)
+- 📊 번들 사이즈 & 코드 스플리팅 분석
+
+**평가 항목 (5개):**
+- 🔄 Re-render Optimization (30%)
+- 📦 Context Optimization (25%)
+- 🎣 Hook Dependencies (20%)
+- ⚡ Modern React Patterns (15%)
+- 📊 Bundle Size (10%)
+
+**언제 사용하나요?**
+- ✅ React 앱이 느리게 느껴질 때
+- ✅ 불필요한 리렌더를 줄이고 싶을 때
+- ✅ Context 구조를 최적화하고 싶을 때
+- ✅ React 19+ 최신 패턴을 적용하고 싶을 때
+
+**사용 예시:**
+```bash
+"react-performance-optimizer로 이 프로젝트 분석해줘"
+"리렌더가 너무 많이 발생하는 것 같아"
+"Context 구조를 최적화하고 싶어"
+```
+
+**출력물:**
+- 📊 Performance Score (100점 만점)
+- 🔥 High Priority (Quick Wins)
+- ⚠️ Medium Priority
+- 📈 Impact Metrics (렌더 횟수 감소율)
+- 🛣️ Implementation Roadmap
+
+---
+
+### 4. Code Quality Reviewers (코드 품질 리뷰어)
 
 #### [code-reviewer.md](code-reviewer.md) - 기본 버전
 ```yaml
@@ -195,7 +240,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 ---
 
-### 3. Refactoring Analyzers (리팩토링 분석기)
+### 5. Refactoring Analyzers (리팩토링 분석기)
 
 #### [refactor-analyzer.md](refactor-analyzer.md) - 기본 버전
 ```yaml
@@ -254,7 +299,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 ---
 
-### 4. Junior Developer Readability Checkers (주니어 친화성 검사기)
+### 6. Junior Developer Readability Checkers (주니어 친화성 검사기)
 
 #### [junior-friendly-checker.md](junior-friendly-checker.md) - 기본 버전
 ```yaml

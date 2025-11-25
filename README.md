@@ -76,11 +76,14 @@ npx binary-agents list
 - `code-reviewer.md` - 코드 리뷰어
 - `refactor-analyzer.md` - 리팩토링 분석기
 - `junior-friendly-checker.md` - 주니어 친화성 체커
+- `toss-cohesion-analyzer.md` - Toss 응집도 분석기
 
 ### 고급 버전 (Sonnet 모델)
 - `advanced-code-reviewer.md` - 고급 코드 리뷰어
 - `advanced-refactor-analyzer.md` - 고급 리팩토링 분석기
 - `advanced-junior-checker.md` - 고급 주니어 친화성 체커
+- `react-performance-optimizer.md` - React 성능 최적화
+- `subagent-builder.md` - 서브에이전트 빌더
 
 ## 저장소 구조
 
@@ -93,6 +96,8 @@ binary-agents/
 │   ├── advanced-refactor-analyzer.md
 │   ├── junior-friendly-checker.md
 │   ├── advanced-junior-checker.md
+│   ├── toss-cohesion-analyzer.md
+│   ├── react-performance-optimizer.md
 │   └── subagent-builder.md
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
