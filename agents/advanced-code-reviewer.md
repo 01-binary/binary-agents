@@ -1,8 +1,8 @@
 ---
 name: advanced-code-reviewer
-description: Deep code analysis with architectural insights and web-based best practices research. Uses Sonnet for superior reasoning and WebFetch/WebSearch for up-to-date patterns and recommendations.
+description: Deep code analysis with architectural insights and web-based best practices research. Uses Opus for superior reasoning and WebFetch/WebSearch for up-to-date patterns and recommendations.
 tools: Read, Glob, Grep, WebFetch, WebSearch
-model: sonnet
+model: opus
 ---
 
 # Advanced Code Quality Reviewer

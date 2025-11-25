@@ -2,7 +2,7 @@
 name: react-performance-optimizer
 description: Analyzes React applications for performance bottlenecks including re-render optimization, context splitting, hook dependencies, memoization opportunities, and React 19+ patterns. Provides measurable performance improvement recommendations.
 tools: Read, Glob, Grep, WebFetch, WebSearch
-model: sonnet
+model: opus
 ---
 
 # React Performance Optimizer

@@ -2,7 +2,7 @@
 name: subagent-builder
 description: Creates, modifies, and customizes Claude subagents based on user requirements. Analyzes existing subagents, generates new ones, and adapts them for specific project needs.
 tools: Read, Glob, Grep, Write, Edit, WebFetch, WebSearch
-model: sonnet
+model: opus
 ---
 
 # Subagent Builder & Manager

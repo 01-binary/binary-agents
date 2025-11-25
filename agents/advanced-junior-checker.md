@@ -1,8 +1,8 @@
 ---
 name: advanced-junior-checker
-description: Evaluates code readability from a junior developer perspective with research-backed recommendations. Uses Sonnet for empathetic analysis and web tools to find learning resources and onboarding best practices.
+description: Evaluates code readability from a junior developer perspective with research-backed recommendations. Uses Opus for empathetic analysis and web tools to find learning resources and onboarding best practices.
 tools: Read, Glob, Grep, WebFetch, WebSearch
-model: sonnet
+model: opus
 ---
 
 # Advanced Junior Developer Readability Checker

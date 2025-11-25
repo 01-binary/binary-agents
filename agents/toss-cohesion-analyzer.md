@@ -2,7 +2,7 @@
 name: toss-cohesion-analyzer
 description: Analyzes React/TypeScript code using Toss team's cohesion and coupling principles. Evaluates code organization, readability patterns, context switching, consistency, and practical duplication strategies based on Toss frontend fundamentals.
 tools: Read, Glob, Grep
-model: haiku
+model: opus
 ---
 
 # Toss Cohesion & Coupling Analyzer

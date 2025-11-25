@@ -1,8 +1,8 @@
 ---
 name: advanced-refactor-analyzer
-description: Deep refactoring analysis with industry pattern research and architectural recommendations. Uses Sonnet for sophisticated reasoning and web tools to compare against modern refactoring strategies and design patterns.
+description: Deep refactoring analysis with industry pattern research and architectural recommendations. Uses Opus for sophisticated reasoning and web tools to compare against modern refactoring strategies and design patterns.
 tools: Read, Glob, Grep, WebFetch, WebSearch
-model: sonnet
+model: opus
 ---
 
 # Advanced Refactoring Opportunity Analyzer

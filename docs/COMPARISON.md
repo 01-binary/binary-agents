@@ -4,8 +4,8 @@
 
 | 항목 | 기본 버전 (Basic) | 고급 버전 (Advanced) |
 |------|------------------|---------------------|
-| **모델** | Haiku | Sonnet |
-| **토큰 비용** | ~$0.25 per 1M input | ~$3.00 per 1M input |
+| **모델** | Haiku | Opus |
+| **토큰 비용** | ~$0.25 per 1M input | ~$15.00 per 1M input |
 | **추론 능력** | 패턴 매칭, 규칙 기반 | 심층 추론, 컨텍스트 이해 |
 | **도구** | Read, Glob, Grep | Read, Glob, Grep, WebFetch, WebSearch |
 | **실행 시간** | 5-10분 | 15-20분 |
@@ -60,7 +60,7 @@ tools: Read, Glob, Grep
 
 ```yaml
 name: advanced-code-reviewer
-model: sonnet
+model: opus
 tools: Read, Glob, Grep, WebFetch, WebSearch
 ```
 
@@ -185,7 +185,7 @@ export function validateEmail(email: string): boolean {
 
 ```yaml
 name: advanced-refactor-analyzer
-model: sonnet
+model: opus
 tools: Read, Glob, Grep, WebFetch, WebSearch
 ```
 
@@ -353,7 +353,7 @@ tools: Read, Glob, Grep
 
 ```yaml
 name: advanced-junior-checker
-model: sonnet
+model: opus
 tools: Read, Glob, Grep, WebFetch, WebSearch
 ```
 
@@ -567,7 +567,7 @@ Claude는 **파일 이름**으로 서브에이전트를 선택합니다.
 ```
 "advanced-code-reviewer를 사용해서 최신 베스트 프랙티스와 비교해줘"
 ```
-→ `advanced-code-reviewer.md`가 실행됨 (Sonnet, 웹 리서치)
+→ `advanced-code-reviewer.md`가 실행됨 (Opus, 웹 리서치)
 
 #### 3. 암묵적 사용 (추천!)
 상황에 맞게 요청하면 Claude가 적절한 에이전트 선택:
@@ -584,7 +584,7 @@ Claude는 **파일 이름**으로 서브에이전트를 선택합니다.
 최신 문서와 비교해서 분석하고, 부족한 부분에 대한
 학습 자료도 찾아줘"
 ```
-→ Claude가 `advanced-code-reviewer` 선택 (Sonnet + 웹)
+→ Claude가 `advanced-code-reviewer` 선택 (Opus + 웹)
 
 ---
 
@@ -659,7 +659,7 @@ Claude: [advanced-junior-checker 사용]
 - 업계 표준 궁금
 - 왜 문제인지 깊은 이해 필요
 
-### 고급 버전 (Sonnet) 사용
+### 고급 버전 (Opus) 사용
 ✅ **이럴 때 사용:**
 - 아키텍처 리뷰
 - 최신 2025 패턴 확인

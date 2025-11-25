@@ -8,7 +8,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 | 특징 | 기본 버전 | 고급 버전 |
 |------|----------|----------|
-| **모델** | Haiku (빠름, 저렴) | Sonnet (강력, 심층 분석) |
+| **모델** | Haiku (빠름, 저렴) | Opus (최강, 심층 분석) |
 | **도구** | Read, Glob, Grep | Read, Glob, Grep, WebFetch, WebSearch |
 | **속도** | ⚡⚡⚡ 매우 빠름 | ⚡⚡ 빠름 |
 | **비용** | 💰 저렴 | 💰💰 보통 |
@@ -24,7 +24,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 #### [subagent-builder.md](subagent-builder.md) - 메타 에이전트 ⭐⭐⭐
 ```yaml
-모델: sonnet
+모델: opus
 도구: Read, Glob, Grep, Write, Edit, WebFetch, WebSearch
 설명: 서브에이전트를 생성, 수정, 커스터마이징하는 메타 에이전트
 ```
@@ -81,7 +81,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 #### [toss-cohesion-analyzer.md](../agents/toss-cohesion-analyzer.md) - Toss 원칙 특화 ⭐⭐⭐
 ```yaml
-모델: haiku
+모델: opus
 도구: Read, Glob, Grep
 설명: 토스 팀의 16가지 코드 품질 원칙을 기반으로 응집도, 결합도, 가독성 분석
 ```
@@ -146,7 +146,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 #### [react-performance-optimizer.md](../agents/react-performance-optimizer.md) - 성능 분석 특화 ⭐⭐⭐
 ```yaml
-모델: sonnet
+모델: opus
 도구: Read, Glob, Grep, WebFetch, WebSearch
 설명: React 앱의 성능 병목점 분석 - 리렌더 최적화, 컨텍스트 분할, 훅 의존성, 메모이제이션, React 19+ 패턴
 ```
@@ -212,7 +212,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 #### [advanced-code-reviewer.md](advanced-code-reviewer.md) - 고급 버전 ⭐
 ```yaml
-모델: sonnet
+모델: opus
 도구: Read, Glob, Grep, WebFetch, WebSearch
 설명: 심층 아키텍처 분석 + 웹 기반 베스트 프랙티스 리서치
 ```
@@ -265,7 +265,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 #### [advanced-refactor-analyzer.md](advanced-refactor-analyzer.md) - 고급 버전 ⭐
 ```yaml
-모델: sonnet
+모델: opus
 도구: Read, Glob, Grep, WebFetch, WebSearch
 설명: 심층 리팩토링 분석 + 업계 패턴 리서치 + 아키텍처 권장사항
 ```
@@ -329,7 +329,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 
 #### [advanced-junior-checker.md](advanced-junior-checker.md) - 고급 버전 ⭐
 ```yaml
-모델: sonnet
+모델: opus
 도구: Read, Glob, Grep, WebFetch, WebSearch
 설명: 리서치 기반 권장사항 + 학습 리소스 큐레이션
 ```
@@ -372,7 +372,7 @@ React/TypeScript 코드베이스 분석을 위한 Claude 서브에이전트 모�
 - ✅ 명확한 패턴 기반 분석
 - ✅ CI/CD 파이프라인 자동화
 
-### 고급 버전 (Sonnet) 선택
+### 고급 버전 (Opus) 선택
 - ⭐ 아키텍처 리뷰가 필요할 때
 - ⭐ 최신 베스트 프랙티스 확인
 - ⭐ 학습 리소스가 필요할 때
@@ -396,7 +396,7 @@ Claude는 **명시적으로 요청**해야 해당 서브에이전트를 실행�
 → code-reviewer.md 실행 (Haiku, 빠름)
 
 "advanced-code-reviewer를 사용해서 최신 패턴과 비교해줘"
-→ advanced-code-reviewer.md 실행 (Sonnet, 웹 리서치)
+→ advanced-code-reviewer.md 실행 (Opus, 웹 리서치)
 ```
 
 #### 방법 2: 상황 설명 (추천)
