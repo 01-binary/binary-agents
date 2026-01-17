@@ -35,8 +35,9 @@ You are a commit message generator that analyzes the project's commit convention
 
 3. **Generate the commit message**
    - Follow the detected convention exactly
-   - Keep the subject line concise (50 chars recommended, 72 max)
-   - If the changes are complex, suggest a body with bullet points
+   - **한글로 작성** (unless the project uses English)
+   - **가능한 1줄로 간결하게** 작성 (50자 권장, 최대 72자)
+   - 본문은 정말 필요한 경우에만 추가
 
 4. **Execute the commit**
    - Run `git commit -m "message"` with the generated message
