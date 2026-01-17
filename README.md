@@ -1,10 +1,10 @@
 # Binary Agents
 
-Claude Code 서브에이전트 컬렉션 및 동기화 도구
+Claude Code 서브에이전트 및 슬래시 명령어 컬렉션 + 동기화 도구
 
 ## 소개
 
-`binary-agents`는 Claude Code의 강력한 서브에이전트들을 모아놓은 모노레포입니다. 코드 리뷰, 리팩토링 분석, 주니어 개발자 친화성 체크 등 다양한 서브에이전트와 이를 프로젝트에 쉽게 설치할 수 있는 CLI 도구를 제공합니다.
+`binary-agents`는 Claude Code의 강력한 서브에이전트와 슬래시 명령어를 모아놓은 모노레포입니다. 코드 리뷰, 리팩토링 분석, 주니어 개발자 친화성 체크 등 다양한 서브에이전트와 자동 커밋 등의 슬래시 명령어를 제공하며, 이를 프로젝트에 쉽게 설치할 수 있는 CLI 도구를 포함합니다.
 
 ## 설치
 
@@ -32,39 +32,48 @@ npx binary-agents sync
 
 ## 사용법
 
-### 로컬 프로젝트에 설치 (기본)
+### 기본 동기화
 
-현재 프로젝트의 `.claude/agents/` 디렉토리에 설치:
+현재 프로젝트의 `.claude/` 디렉토리에 agents와 commands 모두 설치:
 
 ```bash
-# 모든 서브에이전트 동기화
 npx binary-agents sync
+```
 
-# 기본 버전만 (Haiku 모델)
-npx binary-agents sync --basic
+### 선택적 동기화
 
-# 고급 버전만 (Sonnet 모델)
-npx binary-agents sync --advanced
+```bash
+# 서브에이전트만 동기화
+npx binary-agents sync --agents
+
+# 슬래시 명령어만 동기화
+npx binary-agents sync --commands
+
+# 기본 서브에이전트만 (Haiku 모델)
+npx binary-agents sync --agents --basic
+
+# 고급 서브에이전트만 (Opus 모델)
+npx binary-agents sync --agents --advanced
 ```
 
 ### 전역 설치
 
-홈 디렉토리의 `~/.claude/agents/`에 설치 (모든 프로젝트에서 사용 가능):
+홈 디렉토리의 `~/.claude/`에 설치 (모든 프로젝트에서 사용 가능):
 
 ```bash
-# 전역으로 모든 서브에이전트 설치
+# 전역으로 모두 설치
 npx binary-agents sync --global
 # 또는
 npx binary-agents sync -g
 
-# 전역 + 기본 버전만
-npx binary-agents sync --global --basic
+# 전역 + 서브에이전트만
+npx binary-agents sync -g --agents
 
-# 전역 + 고급 버전만
-npx binary-agents sync --global --advanced
+# 전역 + 슬래시 명령어만
+npx binary-agents sync -g --commands
 ```
 
-### 사용 가능한 서브에이전트 목록 보기
+### 목록 보기
 
 ```bash
 npx binary-agents list
@@ -73,17 +82,43 @@ npx binary-agents list
 ## 서브에이전트 종류
 
 ### 기본 버전 (Haiku 모델)
-- `code-reviewer.md` - 코드 리뷰어
-- `refactor-analyzer.md` - 리팩토링 분석기
-- `junior-friendly-checker.md` - 주니어 친화성 체커
+| 이름 | 설명 |
+|------|------|
+| `code-reviewer` | 코드 리뷰어 |
+| `refactor-analyzer` | 리팩토링 분석기 |
+| `junior-friendly-checker` | 주니어 친화성 체커 |
 
 ### 고급 버전 (Opus 모델)
-- `advanced-code-reviewer.md` - 고급 코드 리뷰어
-- `advanced-refactor-analyzer.md` - 고급 리팩토링 분석기
-- `advanced-junior-checker.md` - 고급 주니어 친화성 체커
-- `react-performance-optimizer.md` - React 성능 최적화
-- `toss-cohesion-analyzer.md` - Toss 응집도 분석기
-- `subagent-builder.md` - 서브에이전트 빌더
+| 이름 | 설명 |
+|------|------|
+| `advanced-code-reviewer` | 고급 코드 리뷰어 (웹 검색 포함) |
+| `advanced-refactor-analyzer` | 고급 리팩토링 분석기 (웹 검색 포함) |
+| `advanced-junior-checker` | 고급 주니어 친화성 체커 (웹 검색 포함) |
+| `react-performance-optimizer` | React 성능 최적화 |
+| `toss-cohesion-analyzer` | Toss 팀 원칙 기반 응집도 분석기 |
+| `subagent-builder` | 커스텀 서브에이전트 빌더 |
+
+## 슬래시 명령어
+
+| 명령어 | 설명 |
+|--------|------|
+| `/commit` | git log 분석 후 컨벤션에 맞는 커밋 메시지 자동 생성 및 커밋 |
+
+### /commit 사용법
+
+```bash
+# 1. 변경 사항 스테이징
+git add .
+
+# 2. Claude Code에서 /commit 실행
+/commit
+```
+
+Claude가 자동으로:
+1. 최근 커밋 로그에서 컨벤션 분석
+2. staged changes 확인
+3. 컨벤션에 맞는 커밋 메시지 생성
+4. 커밋 실행
 
 ## 저장소 구조
 
@@ -99,6 +134,8 @@ binary-agents/
 │   ├── toss-cohesion-analyzer.md
 │   ├── react-performance-optimizer.md
 │   └── subagent-builder.md
+├── commands/            # 슬래시 명령어 MD 파일들
+│   └── commit.md
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서
@@ -110,9 +147,9 @@ binary-agents/
 
 ## 작동 원리
 
-1. 로컬 `agents/` 디렉토리에서 서브에이전트 파일 목록 읽기
+1. 로컬 `agents/`, `commands/` 디렉토리에서 파일 목록 읽기
 2. YAML frontmatter 검증
-3. 사용자 프로젝트의 `.claude/agents/` 디렉토리로 복사
+3. 사용자 프로젝트의 `.claude/agents/`, `.claude/commands/` 디렉토리로 복사
 
 ## 요구사항
 
@@ -126,23 +163,24 @@ MIT
 
 이슈 및 PR을 환영합니다!
 
-## 서브에이전트 직접 사용하기
+## 직접 사용하기
 
-NPM 패키지를 설치하지 않고 이 저장소의 서브에이전트를 직접 사용할 수도 있습니다:
+NPM 패키지를 설치하지 않고 이 저장소의 파일을 직접 사용할 수도 있습니다:
 
-1. 저장소 클론:
-   ```bash
-   git clone https://github.com/01-binary/binary-agents.git
-   ```
+```bash
+# 저장소 클론
+git clone https://github.com/01-binary/binary-agents.git
 
-2. 원하는 서브에이전트 파일을 프로젝트의 `.claude/agents/` 디렉토리로 복사:
-   ```bash
-   cp binary-agents/agents/*.md your-project/.claude/agents/
-   ```
+# 서브에이전트 복사
+cp binary-agents/agents/*.md your-project/.claude/agents/
+
+# 슬래시 명령어 복사
+cp binary-agents/commands/*.md your-project/.claude/commands/
+```
 
 ## 관련 링크
 
-- [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code)
+- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
 - [서브에이전트 상세 가이드](docs/SUBAGENTS.md)
 - [Basic vs Advanced 비교](docs/COMPARISON.md)
 - [커스텀 서브에이전트 제작](docs/BUILDER_GUIDE.md)
