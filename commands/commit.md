@@ -35,9 +35,9 @@ You are a commit message generator that analyzes the project's commit convention
 
 3. **Generate the commit message**
    - Follow the detected convention pattern (type prefix, scope, etc.)
-   - **무조건 한글로 작성** (기존 히스토리가 영어여도 한글로)
-   - **가능한 1줄로 간결하게** 작성 (50자 권장, 최대 72자)
-   - 본문은 정말 필요한 경우에만 추가
+   - **Always write in Korean** (even if existing history is in English)
+   - **Keep it concise, preferably 1 line** (50 chars recommended, 72 max)
+   - Add body only when truly necessary
 
 4. **Execute the commit**
    - Run `git commit -m "message"` with the generated message
