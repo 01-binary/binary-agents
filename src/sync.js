@@ -7,8 +7,9 @@ import ora from 'ora';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 모노레포의 agents 디렉토리 경로
+// 모노레포의 agents, commands 디렉토리 경로
 const REPO_AGENTS_DIR = path.join(__dirname, '..', 'agents');
+const REPO_COMMANDS_DIR = path.join(__dirname, '..', 'commands');
 
 /**
  * 로컬 agents 디렉토리에서 서브에이전트 파일 목록 가져오기
@@ -30,6 +31,22 @@ async function fetchSubagentFiles() {
 }
 
 /**
+ * 로컬 commands 디렉토리에서 슬래시 명령어 파일 목록 가져오기
+ */
+async function fetchCommandFiles() {
+  try {
+    const files = await fs.readdir(REPO_COMMANDS_DIR);
+
+    // .md 파일만 필터링
+    const commandFiles = files.filter(file => file.endsWith('.md'));
+
+    return commandFiles;
+  } catch (error) {
+    throw new Error(`Failed to read commands directory: ${error.message}`);
+  }
+}
+
+/**
  * YAML frontmatter가 있는지 검증
  */
 function validateYamlFrontmatter(content) {
@@ -38,7 +55,7 @@ function validateYamlFrontmatter(content) {
 }
 
 /**
- * 로컬에서 파일 읽기
+ * 로컬에서 에이전트 파일 읽기
  */
 async function readAgentFile(filename) {
   const filePath = path.join(REPO_AGENTS_DIR, filename);
@@ -53,28 +70,44 @@ async function readAgentFile(filename) {
 }
 
 /**
- * .claude/agents 디렉토리 생성
- * @param {boolean} isGlobal - true면 ~/.claude/agents, false면 현재 디렉토리의 .claude/agents
+ * 로컬에서 커맨드 파일 읽기
  */
-async function ensureAgentsDirectory(isGlobal = false) {
-  let agentsDir;
+async function readCommandFile(filename) {
+  const filePath = path.join(REPO_COMMANDS_DIR, filename);
+  const content = await fs.readFile(filePath, 'utf-8');
+
+  // YAML frontmatter 검증
+  if (!validateYamlFrontmatter(content)) {
+    throw new Error(`Invalid YAML frontmatter in ${filename}`);
+  }
+
+  return content;
+}
+
+/**
+ * .claude 하위 디렉토리 생성
+ * @param {string} subdir - 하위 디렉토리 이름 ('agents' 또는 'commands')
+ * @param {boolean} isGlobal - true면 ~/.claude/{subdir}, false면 현재 디렉토리의 .claude/{subdir}
+ */
+async function ensureClaudeDirectory(subdir, isGlobal = false) {
+  let targetDir;
 
   if (isGlobal) {
-    // 전역 설치: ~/.claude/agents
+    // 전역 설치: ~/.claude/{subdir}
     const homeDir = process.env.HOME || process.env.USERPROFILE;
-    agentsDir = path.join(homeDir, '.claude', 'agents');
+    targetDir = path.join(homeDir, '.claude', subdir);
   } else {
-    // 로컬 설치: 현재 디렉토리의 .claude/agents
-    agentsDir = path.join(process.cwd(), '.claude', 'agents');
+    // 로컬 설치: 현재 디렉토리의 .claude/{subdir}
+    targetDir = path.join(process.cwd(), '.claude', subdir);
   }
 
   try {
-    await fs.access(agentsDir);
+    await fs.access(targetDir);
   } catch {
-    await fs.mkdir(agentsDir, { recursive: true });
+    await fs.mkdir(targetDir, { recursive: true });
   }
 
-  return agentsDir;
+  return targetDir;
 }
 
 /**
@@ -87,19 +120,15 @@ async function saveFile(agentsDir, filename, content) {
 }
 
 /**
- * 서브에이전트 동기화 메인 함수
+ * 서브에이전트 동기화
  */
-export async function syncSubagents(options = {}) {
-  const { filter = null, global = false } = options;
+async function syncAgentsOnly(options = {}) {
+  const { filter = null, global: isGlobal = false } = options;
 
-  console.log(chalk.blue.bold('\n🤖 Binary Agents Sync\n'));
-
-  if (global) {
-    console.log(chalk.cyan('📍 Global mode: Installing to ~/.claude/agents\n'));
-  }
+  console.log(chalk.yellow.bold('\n📦 Syncing Agents...\n'));
 
   // 로컬 agents 디렉토리에서 파일 목록 가져오기
-  const fetchSpinner = ora('Reading subagent files from local repository...').start();
+  const fetchSpinner = ora('Reading subagent files...').start();
   let allFiles;
 
   try {
@@ -107,7 +136,7 @@ export async function syncSubagents(options = {}) {
     fetchSpinner.succeed(chalk.green(`Found ${allFiles.length} subagent files`));
   } catch (error) {
     fetchSpinner.fail(chalk.red(`Failed to read file list: ${error.message}`));
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, type: 'agents' };
   }
 
   // 필터링된 파일 목록
@@ -122,17 +151,17 @@ export async function syncSubagents(options = {}) {
   }
 
   // .claude/agents 디렉토리 생성
-  const dirMessage = global ? 'Creating ~/.claude/agents directory...' : 'Creating .claude/agents directory...';
+  const dirMessage = isGlobal ? 'Creating ~/.claude/agents directory...' : 'Creating .claude/agents directory...';
   const dirSpinner = ora(dirMessage).start();
   let agentsDir;
 
   try {
-    agentsDir = await ensureAgentsDirectory(global);
-    const successMessage = global ? 'Created ~/.claude/agents directory' : 'Created .claude/agents directory';
+    agentsDir = await ensureClaudeDirectory('agents', isGlobal);
+    const successMessage = isGlobal ? 'Created ~/.claude/agents directory' : 'Created .claude/agents directory';
     dirSpinner.succeed(chalk.green(successMessage));
   } catch (error) {
     dirSpinner.fail(chalk.red(`Failed to create directory: ${error.message}`));
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, type: 'agents' };
   }
 
   // 각 파일 복사
@@ -145,12 +174,8 @@ export async function syncSubagents(options = {}) {
     const fileSpinner = ora(`Copying ${filename}...`).start();
 
     try {
-      // 로컬 파일 읽기
       const content = await readAgentFile(filename);
-
-      // 저장
-      const filePath = await saveFile(agentsDir, filename, content);
-
+      await saveFile(agentsDir, filename, content);
       fileSpinner.succeed(chalk.green(`✓ ${filename}`));
       results.success.push(filename);
     } catch (error) {
@@ -159,49 +184,171 @@ export async function syncSubagents(options = {}) {
     }
   }
 
-  // 결과 요약
-  console.log(chalk.blue.bold('\n📊 Sync Summary\n'));
-  console.log(chalk.green(`✓ Successful: ${results.success.length}/${filesToSync.length}`));
-
-  if (results.failed.length > 0) {
-    console.log(chalk.red(`✗ Failed: ${results.failed.length}/${filesToSync.length}`));
-    console.log(chalk.red('\nFailed files:'));
-    results.failed.forEach(({ filename, error }) => {
-      console.log(chalk.red(`  - ${filename}: ${error}`));
-    });
-  }
-
-  console.log(chalk.cyan(`\n📁 Location: ${agentsDir}\n`));
-
   return {
     success: results.failed.length === 0,
-    results
+    results,
+    type: 'agents',
+    dir: agentsDir,
+    total: filesToSync.length
   };
 }
 
 /**
- * 사용 가능한 서브에이전트 목록 표시
+ * 슬래시 명령어 동기화
  */
-export async function listSubagents() {
-  console.log(chalk.blue.bold('\n🤖 Available Subagents\n'));
+async function syncCommandsOnly(options = {}) {
+  const { global: isGlobal = false } = options;
 
-  const spinner = ora('Reading subagent files from local repository...').start();
+  console.log(chalk.yellow.bold('\n⚡ Syncing Commands...\n'));
+
+  // 로컬 commands 디렉토리에서 파일 목록 가져오기
+  const fetchSpinner = ora('Reading command files...').start();
+  let allFiles;
 
   try {
-    const files = await fetchSubagentFiles();
-    spinner.succeed(chalk.green('Found subagent files'));
-
-    const basic = files.filter(f => !f.startsWith('advanced-'));
-    const advanced = files.filter(f => f.startsWith('advanced-'));
-
-    console.log(chalk.yellow('\nBasic (Haiku model):'));
-    basic.forEach(f => console.log(chalk.white(`  • ${f}`)));
-
-    console.log(chalk.yellow('\nAdvanced (Sonnet model):'));
-    advanced.forEach(f => console.log(chalk.white(`  • ${f}`)));
-
-    console.log(chalk.cyan(`\nTotal: ${files.length} subagents\n`));
+    allFiles = await fetchCommandFiles();
+    fetchSpinner.succeed(chalk.green(`Found ${allFiles.length} command files`));
   } catch (error) {
-    spinner.fail(chalk.red(`Failed to read file list: ${error.message}`));
+    fetchSpinner.fail(chalk.red(`Failed to read file list: ${error.message}`));
+    return { success: false, error: error.message, type: 'commands' };
   }
+
+  // .claude/commands 디렉토리 생성
+  const dirMessage = isGlobal ? 'Creating ~/.claude/commands directory...' : 'Creating .claude/commands directory...';
+  const dirSpinner = ora(dirMessage).start();
+  let commandsDir;
+
+  try {
+    commandsDir = await ensureClaudeDirectory('commands', isGlobal);
+    const successMessage = isGlobal ? 'Created ~/.claude/commands directory' : 'Created .claude/commands directory';
+    dirSpinner.succeed(chalk.green(successMessage));
+  } catch (error) {
+    dirSpinner.fail(chalk.red(`Failed to create directory: ${error.message}`));
+    return { success: false, error: error.message, type: 'commands' };
+  }
+
+  // 각 파일 복사
+  const results = {
+    success: [],
+    failed: []
+  };
+
+  for (const filename of allFiles) {
+    const fileSpinner = ora(`Copying ${filename}...`).start();
+
+    try {
+      const content = await readCommandFile(filename);
+      await saveFile(commandsDir, filename, content);
+      fileSpinner.succeed(chalk.green(`✓ ${filename}`));
+      results.success.push(filename);
+    } catch (error) {
+      fileSpinner.fail(chalk.red(`✗ ${filename}: ${error.message}`));
+      results.failed.push({ filename, error: error.message });
+    }
+  }
+
+  return {
+    success: results.failed.length === 0,
+    results,
+    type: 'commands',
+    dir: commandsDir,
+    total: allFiles.length
+  };
+}
+
+/**
+ * 메인 동기화 함수
+ */
+export async function syncSubagents(options = {}) {
+  const { filter = null, global: isGlobal = false, agents = true, commands = true } = options;
+
+  console.log(chalk.blue.bold('\n🤖 Binary Agents Sync\n'));
+
+  if (isGlobal) {
+    console.log(chalk.cyan('📍 Global mode: Installing to ~/.claude/\n'));
+  }
+
+  const syncResults = [];
+
+  // Agents 동기화
+  if (agents) {
+    const agentResult = await syncAgentsOnly({ filter, global: isGlobal });
+    syncResults.push(agentResult);
+  }
+
+  // Commands 동기화
+  if (commands) {
+    const commandResult = await syncCommandsOnly({ global: isGlobal });
+    syncResults.push(commandResult);
+  }
+
+  // 결과 요약
+  console.log(chalk.blue.bold('\n📊 Sync Summary\n'));
+
+  for (const result of syncResults) {
+    if (result.error) {
+      console.log(chalk.red(`✗ ${result.type}: Failed - ${result.error}`));
+    } else {
+      const icon = result.type === 'agents' ? '🤖' : '⚡';
+      console.log(chalk.green(`${icon} ${result.type}: ${result.results.success.length}/${result.total} successful`));
+
+      if (result.results.failed.length > 0) {
+        console.log(chalk.red(`   Failed files:`));
+        result.results.failed.forEach(({ filename, error }) => {
+          console.log(chalk.red(`     - ${filename}: ${error}`));
+        });
+      }
+
+      console.log(chalk.cyan(`   📁 Location: ${result.dir}`));
+    }
+  }
+
+  console.log('');
+
+  const allSuccess = syncResults.every(r => r.success);
+  return {
+    success: allSuccess,
+    results: syncResults
+  };
+}
+
+/**
+ * 사용 가능한 서브에이전트 및 명령어 목록 표시
+ */
+export async function listSubagents() {
+  console.log(chalk.blue.bold('\n🤖 Binary Agents - Available Items\n'));
+
+  // Agents 목록
+  const agentSpinner = ora('Reading subagent files...').start();
+
+  try {
+    const agentFiles = await fetchSubagentFiles();
+    agentSpinner.succeed(chalk.green(`Found ${agentFiles.length} subagent files`));
+
+    const basic = agentFiles.filter(f => !f.startsWith('advanced-'));
+    const advanced = agentFiles.filter(f => f.startsWith('advanced-'));
+
+    console.log(chalk.yellow('\n📦 Agents - Basic (Haiku model):'));
+    basic.forEach(f => console.log(chalk.white(`  • ${f.replace('.md', '')}`)));
+
+    console.log(chalk.yellow('\n📦 Agents - Advanced (Opus model):'));
+    advanced.forEach(f => console.log(chalk.white(`  • ${f.replace('.md', '')}`)));
+  } catch (error) {
+    agentSpinner.fail(chalk.red(`Failed to read agents: ${error.message}`));
+  }
+
+  // Commands 목록
+  const commandSpinner = ora('Reading command files...').start();
+
+  try {
+    const commandFiles = await fetchCommandFiles();
+    commandSpinner.succeed(chalk.green(`Found ${commandFiles.length} command files`));
+
+    console.log(chalk.yellow('\n⚡ Commands (Slash commands):'));
+    commandFiles.forEach(f => console.log(chalk.white(`  • /${f.replace('.md', '')}`)));
+  } catch (error) {
+    commandSpinner.fail(chalk.red(`Failed to read commands: ${error.message}`));
+  }
+
+  console.log('');
 }
