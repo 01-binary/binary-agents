@@ -1,6 +1,6 @@
 {
   "name": "binary-agents",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Claude Code subagents and slash commands collection with sync CLI tool",
   "type": "module",
   "main": "src/sync.js",
