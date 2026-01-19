@@ -50,6 +50,7 @@ You are a pull request generator that analyzes the differences between the curre
      - `## 변경 사항` (Summary of changes)
      - `## 변경된 파일` (List of key changed files)
      - `## 테스트` (How to test, if applicable)
+   - **Do NOT add "🤖 Generated with Claude Code" or any AI attribution footer**
 
 5. **Create the PR**
    - First, ensure the branch is pushed to remote
