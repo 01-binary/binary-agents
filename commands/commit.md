@@ -38,10 +38,12 @@ You are a commit message generator that analyzes the project's commit convention
    - **Always write in Korean** (even if existing history is in English)
    - **Keep it concise, preferably 1 line** (50 chars recommended, 72 max)
    - Add body only when truly necessary
+   - **Do NOT add Co-Authored-By footer**
 
 4. **Execute the commit**
    - Run `git commit -m "message"` with the generated message
    - If a body is needed, use the multi-line format
+   - **Never include Co-Authored-By in the commit message**
 
 ## Output Format
 
