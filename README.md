@@ -103,6 +103,9 @@ npx binary-agents list
 | 명령어 | 설명 |
 |--------|------|
 | `/commit` | git log 분석 후 컨벤션에 맞는 커밋 메시지 자동 생성 및 커밋 |
+| `/branch` | main에서 pull 후 브랜치 네이밍 컨벤션에 맞는 새 브랜치 생성 |
+| `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
+| `/code-review` | 여러 에이전트를 병렬 실행하여 종합 코드 리뷰 |
 
 ### /commit 사용법
 
@@ -120,6 +123,45 @@ Claude가 자동으로:
 3. 컨벤션에 맞는 커밋 메시지 생성
 4. 커밋 실행
 
+### /branch 사용법
+
+```bash
+# Claude Code에서 /branch 실행
+/branch
+```
+
+Claude가 자동으로:
+1. 기존 브랜치 이름에서 컨벤션 분석
+2. main 브랜치에서 최신 코드 pull
+3. 작업 목적에 맞는 브랜치 이름 생성 (feature/, fix/, chore/ 등)
+4. 새 브랜치 생성 및 전환
+
+### /pr 사용법
+
+```bash
+# Claude Code에서 /pr 실행
+/pr
+```
+
+Claude가 자동으로:
+1. 현재 브랜치와 main 브랜치 차이 분석
+2. 커밋 내역 및 변경 파일 확인
+3. PR 제목 및 설명 생성
+4. GitHub CLI로 PR 생성
+
+### /code-review 사용법
+
+```bash
+# Claude Code에서 /code-review 실행
+/code-review
+```
+
+Claude가 자동으로:
+1. 리뷰 타입 선택 (Quick/Standard/Deep/Full/Custom)
+2. 선택된 에이전트들을 병렬 실행
+3. 결과 집계 및 우선순위 정렬
+4. 종합 리뷰 리포트 생성
+
 ## 저장소 구조
 
 ```
@@ -135,7 +177,10 @@ binary-agents/
 │   ├── react-performance-optimizer.md
 │   └── subagent-builder.md
 ├── commands/            # 슬래시 명령어 MD 파일들
-│   └── commit.md
+│   ├── commit.md
+│   ├── branch.md
+│   ├── pr.md
+│   └── code-review.md
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서
