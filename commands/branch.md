@@ -1,6 +1,6 @@
 ---
 description: Pull from main and create a new branch following the project's branch naming convention
-allowed-tools: Bash(git branch:*), Bash(git checkout:*), Bash(git switch:*), Bash(git pull:*), Bash(git fetch:*), Bash(git log:*), Bash(git rev-parse:*)
+allowed-tools: Bash(git branch:*), Bash(git checkout:*), Bash(git switch:*), Bash(git pull:*), Bash(git fetch:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git remote:*)
 ---
 
 # Auto Branch Creator
@@ -18,8 +18,8 @@ You are a branch creator that pulls the latest from main and creates a new branc
 **Recent commit history (for context):**
 !`git log --oneline -10`
 
-**Main branch name:**
-!`git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main"`
+**Remote info (to detect main branch):**
+!`git remote show origin`
 
 ## Your Task
 
