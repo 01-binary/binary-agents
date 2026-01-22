@@ -48,12 +48,6 @@ npx binary-agents sync --agents
 
 # 슬래시 명령어만 동기화
 npx binary-agents sync --commands
-
-# 기본 서브에이전트만 (Haiku 모델)
-npx binary-agents sync --agents --basic
-
-# 고급 서브에이전트만 (Opus 모델)
-npx binary-agents sync --agents --advanced
 ```
 
 ### 전역 설치
@@ -81,21 +75,13 @@ npx binary-agents list
 
 ## 서브에이전트 종류
 
-### 기본 버전 (Haiku 모델)
 | 이름 | 설명 |
 |------|------|
-| `code-reviewer` | 코드 리뷰어 |
-| `refactor-analyzer` | 리팩토링 분석기 |
-| `junior-friendly-checker` | 주니어 친화성 체커 |
-
-### 고급 버전 (Opus 모델)
-| 이름 | 설명 |
-|------|------|
-| `advanced-code-reviewer` | 고급 코드 리뷰어 (웹 검색 포함) |
-| `advanced-refactor-analyzer` | 고급 리팩토링 분석기 (웹 검색 포함) |
-| `advanced-junior-checker` | 고급 주니어 친화성 체커 (웹 검색 포함) |
+| `code-reviewer` | 코드 리뷰어 (웹 검색 포함) |
+| `refactor-analyzer` | 리팩토링 분석기 (웹 검색 포함) |
+| `junior-checker` | 주니어 친화성 체커 (웹 검색 포함) |
+| `fundamentals-code` | Toss Frontend Fundamentals 기반 코드 품질 분석기 + 점수화 |
 | `react-performance-optimizer` | React 성능 최적화 |
-| `toss-cohesion-analyzer` | Toss 팀 원칙 기반 응집도 분석기 |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
 
 ## 슬래시 명령어
@@ -168,12 +154,9 @@ Claude가 자동으로:
 binary-agents/
 ├── agents/              # 서브에이전트 MD 파일들
 │   ├── code-reviewer.md
-│   ├── advanced-code-reviewer.md
 │   ├── refactor-analyzer.md
-│   ├── advanced-refactor-analyzer.md
-│   ├── junior-friendly-checker.md
-│   ├── advanced-junior-checker.md
-│   ├── toss-cohesion-analyzer.md
+│   ├── junior-checker.md
+│   ├── fundamentals-code.md
 │   ├── react-performance-optimizer.md
 │   └── subagent-builder.md
 ├── commands/            # 슬래시 명령어 MD 파일들
@@ -185,7 +168,6 @@ binary-agents/
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서
 │   ├── SUBAGENTS.md     # 서브에이전트 상세 설명
-│   ├── COMPARISON.md    # Basic vs Advanced 비교
 │   └── BUILDER_GUIDE.md # 커스텀 서브에이전트 제작 가이드
 └── README.md
 ```
@@ -226,6 +208,6 @@ cp binary-agents/commands/*.md your-project/.claude/commands/
 ## 관련 링크
 
 - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
+- [Toss Frontend Fundamentals](https://frontend-fundamentals.com/code-quality/code/)
 - [서브에이전트 상세 가이드](docs/SUBAGENTS.md)
-- [Basic vs Advanced 비교](docs/COMPARISON.md)
 - [커스텀 서브에이전트 제작](docs/BUILDER_GUIDE.md)
