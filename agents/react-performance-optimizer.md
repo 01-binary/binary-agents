@@ -1,7 +1,7 @@
 ---
 name: react-performance-optimizer
 description: React 성능 최적화 분석기. 리렌더링, Context 분할, 훅 의존성, 메모이제이션, React 19+ 패턴 분석
-tools: Read, Glob, Grep, WebFetch, WebSearch
+tools: Read, Glob, Grep, WebFetch, WebSearch, Bash(gh pr:*), Bash(gh api:*)
 model: opus
 ---
 

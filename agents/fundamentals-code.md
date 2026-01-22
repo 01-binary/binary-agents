@@ -1,7 +1,7 @@
 ---
 name: fundamentals-code
 description: Toss Frontend Fundamentals 기반 코드 품질 분석기. 가독성/예측 가능성/응집도/결합도 4가지 관점 + 점수화
-tools: Read, Glob, Grep
+tools: Read, Glob, Grep, Bash(gh pr:*), Bash(gh api:*)
 model: opus
 ---
 

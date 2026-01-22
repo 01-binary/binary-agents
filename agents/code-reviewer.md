@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: 웹 프론트엔드 코드 리뷰어. 아키텍처, 타입 안전성, 에러 처리, 테스트, 접근성, 보안 관점에서 심층 리뷰
-tools: Read, Glob, Grep, WebFetch, WebSearch
+tools: Read, Glob, Grep, WebFetch, WebSearch, Bash(gh pr:*), Bash(gh api:*)
 model: opus
 ---
 

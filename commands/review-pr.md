@@ -72,36 +72,62 @@ Skill은 사용자 설치에 따라 다르며 추가 리뷰 가이드라인/컨�
 
 4. **선택된 에이전트 병렬 실행**
 
-   Task 도구로 에이전트를 **동시에** 실행. 각 에이전트에게 PR diff를 전달:
+   Task 도구로 에이전트를 **동시에** 실행. 각 에이전트에게 **PR 번호만 전달**하고, 에이전트가 직접 diff를 가져오게 함:
 
    ```
-   Task(code-reviewer): "다음 PR의 변경사항을 리뷰해주세요.
+   Task(code-reviewer): "PR #<PR번호>를 리뷰해주세요.
 
-   [PR 정보]
-   - 제목: xxx
-   - 변경 파일: [파일 목록]
+   [작업 순서]
+   1. `gh pr view <PR번호> --json title,body,author,baseRefName,headRefName,changedFiles,additions,deletions`로 PR 정보 확인
+   2. `gh pr diff <PR번호>`로 전체 변경사항 확인
+   3. 필요 시 `Read` 도구로 변경된 파일의 전체 컨텍스트 확인
 
-   [Diff 내용]
-   (gh pr diff 결과)
+   [리뷰 관점]
+   아키텍처, 타입 안전성, 에러 처리, 테스트, 접근성, 보안
 
-   GitHub 리뷰 스타일로 file:line 참조와 함께 발견사항을 반환하세요.
-   심각도를 Must Fix / Should Fix / Consider / Suggestion으로 구분하세요."
+   [출력 형식]
+   - GitHub 리뷰 스타일로 file:line 참조와 함께 발견사항 반환
+   - 심각도를 Must Fix / Should Fix / Consider / Suggestion으로 구분"
 
-   Task(fundamentals-code): "다음 PR의 변경사항을 Toss Frontend Fundamentals 원칙으로 분석해주세요.
-   [같은 PR 정보와 diff]
-   가독성, 예측 가능성, 응집도, 결합도 관점에서 리뷰하세요."
+   Task(fundamentals-code): "PR #<PR번호>를 Toss Frontend Fundamentals 원칙으로 분석해주세요.
 
-   Task(refactor-analyzer): "다음 PR의 변경사항에서 리팩토링 기회를 찾아주세요.
-   [같은 PR 정보와 diff]
-   코드 중복, 복잡성, 추상화 기회를 확인하세요."
+   [작업 순서]
+   1. `gh pr view <PR번호>`로 PR 정보 확인
+   2. `gh pr diff <PR번호>`로 전체 변경사항 확인
+   3. 필요 시 관련 파일 Read
 
-   Task(junior-checker): "다음 PR의 변경사항이 주니어 개발자에게 이해하기 쉬운지 분석해주세요.
-   [같은 PR 정보와 diff]
-   네이밍, 복잡도, 가독성을 확인하세요."
+   [리뷰 관점]
+   가독성, 예측 가능성, 응집도, 결합도 4가지 관점에서 점수화하고 리뷰"
 
-   Task(react-performance-optimizer): "다음 PR의 변경사항에서 React 성능 이슈를 찾아주세요.
-   [같은 PR 정보와 diff]
-   리렌더, 메모이제이션, 훅 최적화 관점에서 리뷰하세요."
+   Task(refactor-analyzer): "PR #<PR번호>에서 리팩토링 기회를 찾아주세요.
+
+   [작업 순서]
+   1. `gh pr view <PR번호>`로 PR 정보 확인
+   2. `gh pr diff <PR번호>`로 전체 변경사항 확인
+   3. 필요 시 관련 파일 Read
+
+   [리뷰 관점]
+   코드 중복, 복잡성, 추상화 기회, 코드 스멜, 아키텍처 부채"
+
+   Task(junior-checker): "PR #<PR번호>가 주니어 개발자에게 이해하기 쉬운지 분석해주세요.
+
+   [작업 순서]
+   1. `gh pr view <PR번호>`로 PR 정보 확인
+   2. `gh pr diff <PR번호>`로 전체 변경사항 확인
+   3. 필요 시 관련 파일 Read
+
+   [리뷰 관점]
+   네이밍, 함수 복잡도, 주석, 구조, 타입, 학습 곡선"
+
+   Task(react-performance-optimizer): "PR #<PR번호>에서 React 성능 이슈를 찾아주세요.
+
+   [작업 순서]
+   1. `gh pr view <PR번호>`로 PR 정보 확인
+   2. `gh pr diff <PR번호>`로 전체 변경사항 확인
+   3. 필요 시 관련 파일 Read
+
+   [리뷰 관점]
+   리렌더링, Context 분할, 훅 의존성, 메모이제이션, React 19+ 패턴"
    ```
 
 5. **결과 종합**

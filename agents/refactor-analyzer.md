@@ -1,7 +1,7 @@
 ---
 name: refactor-analyzer
 description: 리팩토링 기회 분석기. 코드 중복, 복잡도, 추상화 기회, 코드 스멜, 아키텍처 부채 식별 + 업계 패턴 연구
-tools: Read, Glob, Grep, WebFetch, WebSearch
+tools: Read, Glob, Grep, WebFetch, WebSearch, Bash(gh pr:*), Bash(gh api:*)
 model: opus
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: junior-checker
 description: 주니어 개발자 관점에서 코드 가독성 평가. 네이밍, 함수 복잡도, 주석, 구조, 타입, 학습 곡선 분석 + 학습 리소스 제공
-tools: Read, Glob, Grep, WebFetch, WebSearch
+tools: Read, Glob, Grep, WebFetch, WebSearch, Bash(gh pr:*), Bash(gh api:*)
 model: opus
 ---
 
