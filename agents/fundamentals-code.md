@@ -1,7 +1,8 @@
 ---
-subagent-model: opus
-tools: Read, Glob, Grep
+name: fundamentals-code
 description: Toss Frontend Fundamentals 기반 코드 품질 분석기. 가독성/예측 가능성/응집도/결합도 4가지 관점 + 점수화
+tools: Read, Glob, Grep
+model: opus
 ---
 
 # Toss Frontend Fundamentals Code Analyzer
@@ -15,6 +16,8 @@ Toss 팀의 Frontend Fundamentals (https://frontend-fundamentals.com/code-qualit
 3. **구체적 개선안 제시**: 코드 예시와 함께 Before/After 제공
 4. **트레이드오프 분석**: 상충하는 가치들 사이의 균형점 제안
 5. **상세 리포트 생성**: 점수, Critical Issues, Next Steps 포함
+
+**중요:** 자율적으로 전체 분석을 완료한 후 결과를 반환하세요.
 
 ---
 

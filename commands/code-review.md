@@ -1,202 +1,196 @@
 ---
-description: Run comprehensive code review using all available agents and skills in parallel
+description: 여러 전문 에이전트를 병렬로 실행하여 종합 코드 리뷰 수행
 allowed-tools: Task, Skill, Read, Glob, Grep
 ---
 
-# Comprehensive Code Review
+# 종합 코드 리뷰
 
-You are a code review orchestrator that runs multiple specialized review agents in parallel to provide a comprehensive analysis.
+여러 전문 리뷰 에이전트를 병렬로 실행하여 포괄적인 분석을 제공하는 코드 리뷰 오케스트레이터입니다.
 
-## Context Information
+## 컨텍스트 정보
 
-**Target path for review:**
+**리뷰 대상 경로:**
 !`echo "${1:-.}"`
 
-**Current git status:**
+**현재 git 상태:**
 !`git status --short | head -20`
 
-**Changed files (if any):**
-!`git diff --name-only HEAD~1 2>/dev/null || echo "No recent commits"`
+**변경된 파일 (있는 경우):**
+!`git diff --name-only HEAD~1 2>/dev/null || echo "최근 커밋 없음"`
 
-## Available Review Agents
+## 사용 가능한 리뷰 에이전트
 
-You have access to the following specialized agents via the Task tool:
+Task 도구를 통해 다음 전문 에이전트를 사용할 수 있습니다:
 
-| Agent | Focus Area | Model |
-|-------|------------|-------|
-| `code-reviewer` | Clean code, FP principles, React patterns | haiku |
-| `advanced-code-reviewer` | Deep architectural insights, web best practices | opus |
-| `toss-cohesion-analyzer` | Toss team's cohesion/coupling principles | opus |
-| `refactor-analyzer` | Code duplication, complexity, smells | haiku |
-| `advanced-refactor-analyzer` | Industry patterns, architectural recommendations | opus |
-| `junior-friendly-checker` | Readability for junior developers | haiku |
-| `advanced-junior-checker` | Research-backed onboarding recommendations | opus |
-| `react-performance-optimizer` | React re-renders, memoization, hooks | haiku |
+| Agent | 초점 영역 | 모델 |
+|-------|----------|------|
+| `code-reviewer` | 아키텍처, 타입 안전성, 에러 처리, 테스트, 접근성, 보안 | opus |
+| `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회, 코드 스멜 | opus |
+| `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 | opus |
+| `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) | opus |
+| `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 | opus |
 
-## Available Skills
+## 사용 가능한 Skill
 
-Skills vary by user installation and provide additional review guidelines/context. Examples:
-- `vercel-react-best-practices` - Vercel's React/Next.js optimization guidelines
-- Custom team coding standards
-- Framework-specific best practices
+Skill은 사용자 설치에 따라 다르며 추가 리뷰 가이드라인/컨텍스트를 제공합니다:
+- `vercel-react-best-practices` - Vercel의 React/Next.js 최적화 가이드라인
+- 커스텀 팀 코딩 표준
+- 프레임워크별 best practices
 
-**Note:** Skills are loaded via Skill tool and provide context for the review, not direct analysis.
+**참고:** Skill은 Skill 도구로 로드되며 직접 분석이 아닌 리뷰 컨텍스트를 제공합니다.
 
-## Your Task
+## 작업 순서
 
-1. **Determine review scope**
-   - If a specific path is provided, focus on that path
-   - If no path is provided, review recently changed files or ask user for target
+1. **리뷰 범위 결정**
+   - 특정 경로가 제공되면 해당 경로에 집중
+   - 경로가 없으면 최근 변경된 파일 리뷰 또는 사용자에게 대상 요청
 
-2. **Ask user which reviews to run** (using AskUserQuestion)
+2. **사용자에게 리뷰 유형 질문** (AskUserQuestion 사용)
 
-   Present these options with clear descriptions:
+   옵션 제시:
 
-   | Option | Name | Agents Used | Best For |
-   |--------|------|-------------|----------|
-   | 1 | **Quick Review** | `code-reviewer` + `refactor-analyzer` | 빠른 피드백이 필요할 때 (haiku 모델, 빠름) |
-   | 2 | **Standard Review** | `code-reviewer` + `toss-cohesion-analyzer` + `junior-friendly-checker` | 일반적인 코드 리뷰 (균형 잡힌 분석) |
-   | 3 | **Deep Review** | `advanced-code-reviewer` + `advanced-refactor-analyzer` + `advanced-junior-checker` | 심층 분석이 필요할 때 (opus 모델, 정밀) |
-   | 4 | **Full Review** | 모든 8개 agent 병렬 실행 | PR 전 종합 검토, 중요한 릴리스 |
-   | 5 | **Custom** | 사용자가 직접 선택 | 특정 관점만 리뷰하고 싶을 때 |
+   | 옵션 | 이름 | 사용 에이전트 | 적합한 상황 |
+   |------|------|--------------|-------------|
+   | 1 | **전체 리뷰** | 모든 5개 에이전트 병렬 실행 | 종합 코드 리뷰 (권장) |
+   | 2 | **커스텀** | 사용자가 직접 선택 | 특정 관점만 리뷰하고 싶을 때 |
 
-3. **Ask about skills** (using AskUserQuestion)
+3. **Skill 포함 여부 질문** (AskUserQuestion 사용)
 
-   After selecting review type, ask:
+   리뷰 유형 선택 후:
    > "포함할 skill이 있나요? (예: `vercel-react-best-practices`, 팀 코딩 가이드 등)"
 
-   Options:
-   - **없음** - skill 없이 agent만 실행
+   옵션:
+   - **없음** - skill 없이 에이전트만 실행
    - **있음** - skill 이름 입력받아서 로드
 
-   If user provides skill names:
-   - Load each skill using `Skill(<skill-name>)` before running agents
-   - Skills provide additional context/guidelines for the review
+   사용자가 skill 이름 제공 시:
+   - 에이전트 실행 전 `Skill(<skill-name>)`으로 각 skill 로드
+   - Skill은 리뷰를 위한 추가 컨텍스트/가이드라인 제공
 
-4. **Execute selected agents in parallel**
-   - Use the Task tool to spawn multiple agents simultaneously
-   - Each agent should analyze the same target path/files
-   - Example prompt for each agent:
+4. **선택된 에이전트 병렬 실행**
+   - Task 도구로 여러 에이전트를 동시에 생성
+   - 각 에이전트는 동일한 대상 경로/파일 분석
+   - 각 에이전트 프롬프트 예시:
      ```
-     Review the code in [path]. Focus on [agent-specific focus].
-     Provide findings with file:line references.
+     [path] 코드를 리뷰하세요. [에이전트별 초점 영역]에 집중하세요.
+     file:line 참조와 함께 발견사항을 제공하세요.
      ```
 
-5. **Aggregate and synthesize results**
-   - Wait for all agents to complete
-   - Combine findings into a unified report
-   - Remove duplicate findings
-   - Prioritize by severity and impact
+5. **결과 집계 및 종합**
+   - 모든 에이전트 완료 대기
+   - 발견사항을 통합 리포트로 결합
+   - 중복 발견사항 제거
+   - 심각도와 영향도로 우선순위 정렬
 
-## Output Format
+## 출력 형식
 
-### Phase 1: Review Type Selection
-Ask user which review type they want using AskUserQuestion.
+### Phase 1: 리뷰 유형 선택
+AskUserQuestion으로 원하는 리뷰 유형 질문.
 
-### Phase 2: Skill Selection
-Ask user if they have skills to include using AskUserQuestion.
+### Phase 2: Skill 선택
+AskUserQuestion으로 포함할 skill 여부 질문.
 
-### Phase 3: Execution
-Show progress as agents run:
+### Phase 3: 실행
+에이전트 실행 중 진행 상황 표시:
 ```
-🔍 Running reviews...
-├── code-reviewer: ✓ Complete
-├── toss-cohesion-analyzer: Running...
-├── refactor-analyzer: ✓ Complete
-└── junior-friendly-checker: Pending
+리뷰 실행 중...
+├── code-reviewer: 완료
+├── fundamentals-code: 실행 중...
+├── refactor-analyzer: 완료
+└── junior-checker: 대기 중
 ```
 
-### Phase 4: Final Report
+### Phase 4: 최종 리포트
 
 ```markdown
 # 종합 코드 리뷰 결과
 
 ## 요약
 - **리뷰 대상:** [path]
-- **실행된 Agent:** [list]
+- **실행된 에이전트:** [list]
 - **총 발견 사항:** N개 (Critical: X, Warning: Y, Info: Z)
 
 ---
 
-## 🔴 Critical Issues (즉시 수정 필요)
+## Critical Issues (즉시 수정 필요)
 
 ### 1. [Issue Title]
-- **발견 Agent:** [agent name]
+- **발견 에이전트:** [agent name]
 - **위치:** [file:line]
 - **문제:** [description]
 - **해결 방안:** [recommendation]
 
 ---
 
-## 🟡 Warnings (개선 권장)
+## Warnings (개선 권장)
 
 ### 1. [Issue Title]
-- **발견 Agent:** [agent name]
+- **발견 에이전트:** [agent name]
 - **위치:** [file:line]
 - **문제:** [description]
 - **해결 방안:** [recommendation]
 
 ---
 
-## 🟢 Good Practices (잘한 점)
+## Good Practices (잘한 점)
 
 - [Good practice 1] - [file:line]
 - [Good practice 2] - [file:line]
 
 ---
 
-## 📊 Agent별 상세 결과
+## 에이전트별 상세 결과
 
 ### Code Reviewer
-[Summary of findings]
+[발견사항 요약]
 
-### Toss Cohesion Analyzer
-[Summary of findings]
+### Fundamentals Code
+[발견사항 요약]
 
 ### Refactor Analyzer
-[Summary of findings]
+[발견사항 요약]
 
 ...
 
 ---
 
-## 🎯 우선순위 개선 항목
+## 우선순위 개선 항목
 
 1. **[최우선]** [Issue] - [file]
 2. **[높음]** [Issue] - [file]
 3. **[보통]** [Issue] - [file]
 ```
 
-## Example Tool Usage
+## 도구 사용 예시
 
-### Spawning Agents (Task tool)
+### 에이전트 생성 (Task 도구)
 
-When spawning agents, use this pattern:
-
-```
-// Run multiple agents in parallel (single message, multiple Task calls)
-Task(code-reviewer): "Review code in src/components. Focus on clean code principles, FP patterns, React best practices. Return findings with file:line references."
-
-Task(toss-cohesion-analyzer): "Analyze src/components using Toss cohesion principles. Check coupling, hidden logic, props drilling, naming consistency. Return findings with file:line references."
-
-Task(refactor-analyzer): "Analyze src/components for refactoring opportunities. Check code duplication, complexity, abstraction opportunities. Return findings with file:line references."
-```
-
-### Loading Skills (Skill tool)
-
-If user specifies skills to include, load them for additional review guidelines:
+에이전트 생성 시 이 패턴 사용:
 
 ```
-// Example: Load a skill specified by the user
-Skill(<skill-name>): Load this skill to apply its guidelines during the review.
+// 여러 에이전트를 병렬로 실행 (단일 메시지, 다중 Task 호출)
+Task(code-reviewer): "src/components 코드를 리뷰하세요. 아키텍처, 타입 안전성, 에러 처리, 접근성, 보안에 집중하세요. file:line 참조와 함께 발견사항을 반환하세요."
+
+Task(fundamentals-code): "src/components를 Toss Frontend Fundamentals 원칙으로 분석하세요. 가독성, 예측 가능성, 응집도, 결합도를 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
+
+Task(refactor-analyzer): "src/components의 리팩토링 기회를 분석하세요. 코드 중복, 복잡성, 추상화 기회를 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
 ```
 
-**Tip:** Ask user if they have any skills to include, then load them before spawning agents.
+### Skill 로드 (Skill 도구)
 
-## Important Notes
+사용자가 포함할 skill을 지정하면 추가 리뷰 가이드라인을 위해 로드:
 
-- **Parallel execution is key** - Always spawn agents in parallel for efficiency
-- **Deduplicate findings** - Multiple agents may find the same issue
-- **Preserve file:line references** - Critical for actionable feedback
-- **Korean output** - Final report should be in Korean
-- **No AI attribution** - Do not add "Generated by AI" footers
+```
+// 예시: 사용자가 지정한 skill 로드
+Skill(<skill-name>): 리뷰 중 이 skill의 가이드라인을 적용하기 위해 로드합니다.
+```
+
+**팁:** 사용자에게 포함할 skill이 있는지 물어본 후 에이전트 생성 전에 로드하세요.
+
+## 중요 사항
+
+- **병렬 실행이 핵심** - 효율성을 위해 항상 에이전트를 병렬로 생성
+- **발견사항 중복 제거** - 여러 에이전트가 동일한 이슈를 찾을 수 있음
+- **file:line 참조 보존** - 실행 가능한 피드백을 위해 필수
+- **한국어 출력** - 최종 리포트는 한국어로
+- **AI attribution 금지** - "Generated by AI" footer 추가 금지

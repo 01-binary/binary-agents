@@ -4,72 +4,22 @@ Claude Code 서브에이전트 및 슬래시 명령어 컬렉션 + 동기화 도
 
 ## 소개
 
-`binary-agents`는 Claude Code의 강력한 서브에이전트와 슬래시 명령어를 모아놓은 모노레포입니다. 코드 리뷰, 리팩토링 분석, 주니어 개발자 친화성 체크 등 다양한 서브에이전트와 자동 커밋 등의 슬래시 명령어를 제공하며, 이를 프로젝트에 쉽게 설치할 수 있는 CLI 도구를 포함합니다.
-
-## 설치
-
-### NPX 사용 (권장)
-
-별도 설치 없이 바로 사용:
-
-```bash
-npx binary-agents sync
-```
-
-### 글로벌 설치
-
-```bash
-npm install -g binary-agents
-binary-agents sync
-```
-
-### 로컬 설치
-
-```bash
-npm install binary-agents
-npx binary-agents sync
-```
+`binary-agents`는 Claude Code의 강력한 서브에이전트와 슬래시 명령어를 모아놓은 모노레포입니다. 코드 리뷰, 리팩토링 분석, 주니어 개발자 친화성 체크 등 다양한 서브에이전트와 자동 커밋/PR 생성 등의 슬래시 명령어를 제공하며, 이를 프로젝트에 쉽게 설치할 수 있는 CLI 도구를 포함합니다.
 
 ## 사용법
 
-### 기본 동기화
-
-현재 프로젝트의 `.claude/` 디렉토리에 agents와 commands 모두 설치:
-
 ```bash
+# 현재 프로젝트에 설치 (.claude/)
 npx binary-agents sync
-```
 
-### 선택적 동기화
-
-```bash
-# 서브에이전트만 동기화
-npx binary-agents sync --agents
-
-# 슬래시 명령어만 동기화
-npx binary-agents sync --commands
-```
-
-### 전역 설치
-
-홈 디렉토리의 `~/.claude/`에 설치 (모든 프로젝트에서 사용 가능):
-
-```bash
-# 전역으로 모두 설치
-npx binary-agents sync --global
-# 또는
+# 전역 설치 (~/.claude/)
 npx binary-agents sync -g
 
-# 전역 + 서브에이전트만
-npx binary-agents sync -g --agents
+# 에이전트만 / 명령어만
+npx binary-agents sync --agents
+npx binary-agents sync --commands
 
-# 전역 + 슬래시 명령어만
-npx binary-agents sync -g --commands
-```
-
-### 목록 보기
-
-```bash
+# 목록 보기
 npx binary-agents list
 ```
 
@@ -77,11 +27,11 @@ npx binary-agents list
 
 | 이름 | 설명 |
 |------|------|
-| `code-reviewer` | 코드 리뷰어 (웹 검색 포함) |
-| `refactor-analyzer` | 리팩토링 분석기 (웹 검색 포함) |
-| `junior-checker` | 주니어 친화성 체커 (웹 검색 포함) |
-| `fundamentals-code` | Toss Frontend Fundamentals 기반 코드 품질 분석기 + 점수화 |
-| `react-performance-optimizer` | React 성능 최적화 |
+| `code-reviewer` | 아키텍처, 타입 안전성, 에러 처리, 테스트, 접근성, 보안 리뷰 |
+| `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회, 코드 스멜 분석 |
+| `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 체크 |
+| `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) |
+| `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
 
 ## 슬래시 명령어
@@ -91,6 +41,7 @@ npx binary-agents list
 | `/commit` | git log 분석 후 컨벤션에 맞는 커밋 메시지 자동 생성 및 커밋 |
 | `/branch` | main에서 pull 후 브랜치 네이밍 컨벤션에 맞는 새 브랜치 생성 |
 | `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
+| `/review-pr` | PR 링크를 받아 변경사항 분석 후 GitHub 스타일 라인별 코드 리뷰 |
 | `/code-review` | 여러 에이전트를 병렬 실행하여 종합 코드 리뷰 |
 
 ### /commit 사용법
@@ -135,6 +86,22 @@ Claude가 자동으로:
 3. PR 제목 및 설명 생성
 4. GitHub CLI로 PR 생성
 
+### /review-pr 사용법
+
+```bash
+# PR 번호로 실행
+/review-pr 123
+
+# PR URL로 실행
+/review-pr https://github.com/owner/repo/pull/123
+```
+
+Claude가 자동으로:
+1. PR 정보 및 diff 가져오기
+2. 리뷰 타입 선택 (전체 리뷰/커스텀)
+3. 5개 에이전트를 병렬 실행하여 분석
+4. GitHub 스타일 라인별 코드 리뷰 생성
+
 ### /code-review 사용법
 
 ```bash
@@ -143,7 +110,7 @@ Claude가 자동으로:
 ```
 
 Claude가 자동으로:
-1. 리뷰 타입 선택 (Quick/Standard/Deep/Full/Custom)
+1. 리뷰 타입 선택 (전체 리뷰/커스텀)
 2. 선택된 에이전트들을 병렬 실행
 3. 결과 집계 및 우선순위 정렬
 4. 종합 리뷰 리포트 생성
@@ -163,11 +130,11 @@ binary-agents/
 │   ├── commit.md
 │   ├── branch.md
 │   ├── pr.md
+│   ├── review-pr.md
 │   └── code-review.md
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서
-│   ├── SUBAGENTS.md     # 서브에이전트 상세 설명
 │   └── BUILDER_GUIDE.md # 커스텀 서브에이전트 제작 가이드
 └── README.md
 ```
@@ -209,5 +176,4 @@ cp binary-agents/commands/*.md your-project/.claude/commands/
 
 - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
 - [Toss Frontend Fundamentals](https://frontend-fundamentals.com/code-quality/code/)
-- [서브에이전트 상세 가이드](docs/SUBAGENTS.md)
 - [커스텀 서브에이전트 제작](docs/BUILDER_GUIDE.md)

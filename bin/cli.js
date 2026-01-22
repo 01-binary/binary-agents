@@ -14,26 +14,15 @@ program
 program
   .command('sync')
   .description('Sync agents and commands to .claude/ (local) or ~/.claude/ (global)')
-  .option('--basic', 'Sync only basic (Haiku) subagents')
-  .option('--advanced', 'Sync only advanced (Opus) subagents')
   .option('-g, --global', 'Install to ~/.claude/ instead of current directory')
   .option('--agents', 'Sync only agents (subagents)')
   .option('--commands', 'Sync only commands (slash commands)')
   .action(async (options) => {
-    let filter = null;
-
-    if (options.basic) {
-      filter = 'basic';
-    } else if (options.advanced) {
-      filter = 'advanced';
-    }
-
     // --agents 또는 --commands가 명시되지 않으면 둘 다 동기화
     const syncAgents = options.agents || (!options.agents && !options.commands);
     const syncCommands = options.commands || (!options.agents && !options.commands);
 
     const result = await syncSubagents({
-      filter,
       global: options.global || false,
       agents: syncAgents,
       commands: syncCommands

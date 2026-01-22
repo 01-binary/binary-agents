@@ -18,11 +18,8 @@ async function fetchSubagentFiles() {
   try {
     const files = await fs.readdir(REPO_AGENTS_DIR);
 
-    // .md 파일만 필터링 (서브에이전트 파일들)
-    const subagentFiles = files.filter(file =>
-      file.endsWith('.md') &&
-      file.includes('-')  // 하이픈이 있는 파일만 (서브에이전트 파일들)
-    );
+    // .md 파일만 필터링
+    const subagentFiles = files.filter(file => file.endsWith('.md'));
 
     return subagentFiles;
   } catch (error) {
@@ -123,31 +120,20 @@ async function saveFile(agentsDir, filename, content) {
  * 서브에이전트 동기화
  */
 async function syncAgentsOnly(options = {}) {
-  const { filter = null, global: isGlobal = false } = options;
+  const { global: isGlobal = false } = options;
 
   console.log(chalk.yellow.bold('\n📦 Syncing Agents...\n'));
 
   // 로컬 agents 디렉토리에서 파일 목록 가져오기
   const fetchSpinner = ora('Reading subagent files...').start();
-  let allFiles;
+  let filesToSync;
 
   try {
-    allFiles = await fetchSubagentFiles();
-    fetchSpinner.succeed(chalk.green(`Found ${allFiles.length} subagent files`));
+    filesToSync = await fetchSubagentFiles();
+    fetchSpinner.succeed(chalk.green(`Found ${filesToSync.length} subagent files`));
   } catch (error) {
     fetchSpinner.fail(chalk.red(`Failed to read file list: ${error.message}`));
     return { success: false, error: error.message, type: 'agents' };
-  }
-
-  // 필터링된 파일 목록
-  let filesToSync = allFiles;
-
-  if (filter === 'basic') {
-    filesToSync = allFiles.filter(f => !f.startsWith('advanced-'));
-    console.log(chalk.yellow(`📌 Syncing basic subagents only (${filesToSync.length} files)\n`));
-  } else if (filter === 'advanced') {
-    filesToSync = allFiles.filter(f => f.startsWith('advanced-'));
-    console.log(chalk.yellow(`📌 Syncing advanced subagents only (${filesToSync.length} files)\n`));
   }
 
   // .claude/agents 디렉토리 생성
@@ -260,7 +246,7 @@ async function syncCommandsOnly(options = {}) {
  * 메인 동기화 함수
  */
 export async function syncSubagents(options = {}) {
-  const { filter = null, global: isGlobal = false, agents = true, commands = true } = options;
+  const { global: isGlobal = false, agents = true, commands = true } = options;
 
   console.log(chalk.blue.bold('\n🤖 Binary Agents Sync\n'));
 
@@ -272,7 +258,7 @@ export async function syncSubagents(options = {}) {
 
   // Agents 동기화
   if (agents) {
-    const agentResult = await syncAgentsOnly({ filter, global: isGlobal });
+    const agentResult = await syncAgentsOnly({ global: isGlobal });
     syncResults.push(agentResult);
   }
 
@@ -325,14 +311,8 @@ export async function listSubagents() {
     const agentFiles = await fetchSubagentFiles();
     agentSpinner.succeed(chalk.green(`Found ${agentFiles.length} subagent files`));
 
-    const basic = agentFiles.filter(f => !f.startsWith('advanced-'));
-    const advanced = agentFiles.filter(f => f.startsWith('advanced-'));
-
-    console.log(chalk.yellow('\n📦 Agents - Basic (Haiku model):'));
-    basic.forEach(f => console.log(chalk.white(`  • ${f.replace('.md', '')}`)));
-
-    console.log(chalk.yellow('\n📦 Agents - Advanced (Opus model):'));
-    advanced.forEach(f => console.log(chalk.white(`  • ${f.replace('.md', '')}`)));
+    console.log(chalk.yellow('\n📦 Agents:'));
+    agentFiles.forEach(f => console.log(chalk.white(`  • ${f.replace('.md', '')}`)));
   } catch (error) {
     agentSpinner.fail(chalk.red(`Failed to read agents: ${error.message}`));
   }

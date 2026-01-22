@@ -1,62 +1,62 @@
 ---
-description: Pull from main and create a new branch following the project's branch naming convention
+description: main에서 pull 후 프로젝트의 브랜치 네이밍 컨벤션을 따르는 새 브랜치 생성
 allowed-tools: Bash(git branch:*), Bash(git checkout:*), Bash(git switch:*), Bash(git pull:*), Bash(git fetch:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git remote:*)
 ---
 
-# Auto Branch Creator
+# 자동 브랜치 생성기
 
-You are a branch creator that pulls the latest from main and creates a new branch following the project's naming conventions.
+main에서 최신 코드를 pull하고 프로젝트의 네이밍 컨벤션을 따르는 새 브랜치를 생성합니다.
 
-## Context Information
+## 컨텍스트 정보
 
-**Current branch:**
+**현재 브랜치:**
 !`git rev-parse --abbrev-ref HEAD`
 
-**All branches (for convention analysis):**
+**모든 브랜치 (컨벤션 분석용):**
 !`git branch -a --sort=-committerdate`
 
-**Recent commit history (for context):**
+**최근 커밋 히스토리 (컨텍스트용):**
 !`git log --oneline -10`
 
-**Remote info (to detect main branch):**
+**Remote 정보 (main 브랜치 감지용):**
 !`git remote show origin`
 
-## Your Task
+## 작업 순서
 
-1. **Analyze branch naming convention** from the existing branches above
-   - Identify patterns (e.g., `feature/xxx`, `feat/xxx`, `fix/xxx`, `chore/xxx`, `hotfix/xxx`, `{username}/xxx`, etc.)
-   - Note the separator style (slash `/`, dash `-`, etc.)
-   - If no clear convention exists, default to `{type}/{description}` format
+1. **브랜치 네이밍 컨벤션 분석**
+   - 위 기존 브랜치들에서 패턴 식별 (예: `feature/xxx`, `feat/xxx`, `fix/xxx`, `chore/xxx`, `hotfix/xxx`, `{username}/xxx` 등)
+   - 구분자 스타일 확인 (슬래시 `/`, 대시 `-` 등)
+   - 명확한 컨벤션이 없으면 `{type}/{description}` 형식을 기본으로 사용
 
-2. **Pull latest from main**
-   - Switch to main branch: `git checkout main` or `git switch main`
-   - Pull latest changes: `git pull origin main`
-   - If there are uncommitted changes, warn the user first
+2. **main에서 최신 코드 pull**
+   - main 브랜치로 전환: `git checkout main` 또는 `git switch main`
+   - 최신 변경사항 pull: `git pull origin main`
+   - 커밋되지 않은 변경사항이 있으면 먼저 사용자에게 경고
 
-3. **Understand the user's intent**
-   - Ask the user what they want to work on if not clear from context
-   - Determine the appropriate branch type:
-     - `feature/` or `feat/` - New feature
-     - `fix/` - Bug fix
-     - `chore/` - Maintenance, refactoring, tooling
-     - `hotfix/` - Urgent production fix
-     - `docs/` - Documentation changes
+3. **사용자 의도 파악**
+   - 컨텍스트에서 명확하지 않으면 무엇을 작업할 건지 물어보기
+   - 적절한 브랜치 유형 결정:
+     - `feature/` 또는 `feat/` - 새 기능
+     - `fix/` - 버그 수정
+     - `chore/` - 유지보수, 리팩토링, 도구 설정
+     - `hotfix/` - 긴급 프로덕션 수정
+     - `docs/` - 문서 변경
 
-4. **Generate and create the branch**
-   - Follow the detected convention pattern
-   - Use lowercase and hyphens for the description part (e.g., `feature/add-user-auth`)
-   - Keep it concise but descriptive
-   - Create the branch: `git checkout -b {branch-name}` or `git switch -c {branch-name}`
+4. **브랜치 생성**
+   - 감지된 컨벤션 패턴 따르기
+   - description 부분은 소문자와 하이픈 사용 (예: `feature/add-user-auth`)
+   - 간결하면서도 설명적으로
+   - 브랜치 생성: `git checkout -b {branch-name}` 또는 `git switch -c {branch-name}`
 
-## Output Format
+## 출력 형식
 
-1. Show detected branch convention (if any)
-2. Pull from main and show result
-3. Create the new branch
-4. Confirm success with the new branch name
+1. 감지된 브랜치 컨벤션 표시 (있는 경우)
+2. main에서 pull하고 결과 표시
+3. 새 브랜치 생성
+4. 새 브랜치 이름으로 성공 확인
 
-## Important Notes
+## 중요 사항
 
-- If there are uncommitted changes, warn the user and suggest stashing or committing first
-- If the user is already on a feature branch with uncommitted work, ask before switching
-- Always pull the latest main before creating the new branch to avoid conflicts later
+- 커밋되지 않은 변경사항이 있으면 사용자에게 경고하고 stash 또는 커밋 먼저 제안
+- 사용자가 이미 커밋되지 않은 작업이 있는 feature 브랜치에 있으면 전환 전 확인
+- 나중에 충돌을 피하기 위해 새 브랜치 생성 전 항상 최신 main pull
