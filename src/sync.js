@@ -117,10 +117,28 @@ async function saveFile(agentsDir, filename, content) {
 }
 
 /**
+ * 디렉토리 내 .md 파일 삭제
+ */
+async function cleanDirectory(dirPath) {
+  try {
+    const files = await fs.readdir(dirPath);
+    const mdFiles = files.filter(f => f.endsWith('.md'));
+
+    for (const file of mdFiles) {
+      await fs.unlink(path.join(dirPath, file));
+    }
+
+    return mdFiles.length;
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * 서브에이전트 동기화
  */
 async function syncAgentsOnly(options = {}) {
-  const { global: isGlobal = false } = options;
+  const { global: isGlobal = false, clean = false } = options;
 
   console.log(chalk.yellow.bold('\n📦 Syncing Agents...\n'));
 
@@ -148,6 +166,13 @@ async function syncAgentsOnly(options = {}) {
   } catch (error) {
     dirSpinner.fail(chalk.red(`Failed to create directory: ${error.message}`));
     return { success: false, error: error.message, type: 'agents' };
+  }
+
+  // clean 옵션이 있으면 기존 파일 삭제
+  if (clean) {
+    const cleanSpinner = ora('Cleaning existing agent files...').start();
+    const deletedCount = await cleanDirectory(agentsDir);
+    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} existing files`));
   }
 
   // 각 파일 복사
@@ -183,7 +208,7 @@ async function syncAgentsOnly(options = {}) {
  * 슬래시 명령어 동기화
  */
 async function syncCommandsOnly(options = {}) {
-  const { global: isGlobal = false } = options;
+  const { global: isGlobal = false, clean = false } = options;
 
   console.log(chalk.yellow.bold('\n⚡ Syncing Commands...\n'));
 
@@ -211,6 +236,13 @@ async function syncCommandsOnly(options = {}) {
   } catch (error) {
     dirSpinner.fail(chalk.red(`Failed to create directory: ${error.message}`));
     return { success: false, error: error.message, type: 'commands' };
+  }
+
+  // clean 옵션이 있으면 기존 파일 삭제
+  if (clean) {
+    const cleanSpinner = ora('Cleaning existing command files...').start();
+    const deletedCount = await cleanDirectory(commandsDir);
+    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} existing files`));
   }
 
   // 각 파일 복사
@@ -246,7 +278,7 @@ async function syncCommandsOnly(options = {}) {
  * 메인 동기화 함수
  */
 export async function syncSubagents(options = {}) {
-  const { global: isGlobal = false, agents = true, commands = true } = options;
+  const { global: isGlobal = false, agents = true, commands = true, clean = false } = options;
 
   console.log(chalk.blue.bold('\n🤖 Binary Agents Sync\n'));
 
@@ -254,17 +286,21 @@ export async function syncSubagents(options = {}) {
     console.log(chalk.cyan('📍 Global mode: Installing to ~/.claude/\n'));
   }
 
+  if (clean) {
+    console.log(chalk.yellow('🧹 Clean mode: Removing existing files before sync\n'));
+  }
+
   const syncResults = [];
 
   // Agents 동기화
   if (agents) {
-    const agentResult = await syncAgentsOnly({ global: isGlobal });
+    const agentResult = await syncAgentsOnly({ global: isGlobal, clean });
     syncResults.push(agentResult);
   }
 
   // Commands 동기화
   if (commands) {
-    const commandResult = await syncCommandsOnly({ global: isGlobal });
+    const commandResult = await syncCommandsOnly({ global: isGlobal, clean });
     syncResults.push(commandResult);
   }
 

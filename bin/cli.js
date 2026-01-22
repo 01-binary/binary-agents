@@ -17,6 +17,7 @@ program
   .option('-g, --global', 'Install to ~/.claude/ instead of current directory')
   .option('--agents', 'Sync only agents (subagents)')
   .option('--commands', 'Sync only commands (slash commands)')
+  .option('--clean', 'Remove existing files before sync')
   .action(async (options) => {
     // --agents 또는 --commands가 명시되지 않으면 둘 다 동기화
     const syncAgents = options.agents || (!options.agents && !options.commands);
@@ -25,7 +26,8 @@ program
     const result = await syncSubagents({
       global: options.global || false,
       agents: syncAgents,
-      commands: syncCommands
+      commands: syncCommands,
+      clean: options.clean || false
     });
 
     if (!result.success) {

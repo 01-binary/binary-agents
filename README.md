@@ -19,6 +19,9 @@ npx binary-agents sync -g
 npx binary-agents sync --agents
 npx binary-agents sync --commands
 
+# 기존 파일 삭제 후 새로 설치
+npx binary-agents sync --clean
+
 # 목록 보기
 npx binary-agents list
 ```
