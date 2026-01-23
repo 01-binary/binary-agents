@@ -35,7 +35,6 @@ npx binary-agents list
 | `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 체크 |
 | `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
-| `figma-implementation-checker` | Figma 디자인과 구현 코드 비교, 디자인 토큰 검증 |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
 
 ## 슬래시 명령어
@@ -47,6 +46,7 @@ npx binary-agents list
 | `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
 | `/review-pr` | PR 링크를 받아 변경사항 분석 후 GitHub 스타일 라인별 코드 리뷰 |
 | `/code-review` | 여러 에이전트를 병렬 실행하여 종합 코드 리뷰 |
+| `/figma-check` | Figma MCP로 디자인 정보를 가져와 구현 코드와 비교 분석 |
 
 ### /commit 사용법
 
@@ -129,14 +129,14 @@ binary-agents/
 │   ├── junior-checker.md
 │   ├── fundamentals-code.md
 │   ├── react-performance-optimizer.md
-│   ├── figma-implementation-checker.md
 │   └── subagent-builder.md
 ├── commands/            # 슬래시 명령어 MD 파일들
 │   ├── commit.md
 │   ├── branch.md
 │   ├── pr.md
 │   ├── review-pr.md
-│   └── code-review.md
+│   ├── code-review.md
+│   └── figma-check.md
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서
