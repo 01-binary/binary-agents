@@ -35,6 +35,7 @@ npx binary-agents list
 | `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 체크 |
 | `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
+| `figma-implementation-checker` | Figma 디자인과 구현 코드 비교, 디자인 토큰 검증 |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
 
 ## 슬래시 명령어
@@ -128,6 +129,7 @@ binary-agents/
 │   ├── junior-checker.md
 │   ├── fundamentals-code.md
 │   ├── react-performance-optimizer.md
+│   ├── figma-implementation-checker.md
 │   └── subagent-builder.md
 ├── commands/            # 슬래시 명령어 MD 파일들
 │   ├── commit.md
