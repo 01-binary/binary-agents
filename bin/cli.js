@@ -1,50 +1,90 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander';
+import { select } from '@inquirer/prompts';
 import { syncSubagents, listSubagents } from '../src/sync.js';
 import chalk from 'chalk';
 
-const program = new Command();
+async function main() {
+  const args = process.argv.slice(2);
 
-program
-  .name('binary-agents')
-  .description('Sync Claude Code subagents from 01-binary/subagents repository')
-  .version('1.0.0');
+  // list 명령어는 바로 실행
+  if (args[0] === 'list') {
+    await listSubagents();
+    return;
+  }
 
-program
-  .command('sync')
-  .description('Sync agents and commands to .claude/ (local) or ~/.claude/ (global)')
-  .option('-g, --global', 'Install to ~/.claude/ instead of current directory')
-  .option('--agents', 'Sync only agents (subagents)')
-  .option('--commands', 'Sync only commands (slash commands)')
-  .option('-c, --clean', 'Remove existing files before sync')
-  .action(async (options) => {
-    // --agents 또는 --commands가 명시되지 않으면 둘 다 동기화
-    const syncAgents = options.agents || (!options.agents && !options.commands);
-    const syncCommands = options.commands || (!options.agents && !options.commands);
+  // help 또는 --help
+  if (args[0] === 'help' || args[0] === '--help' || args[0] === '-h') {
+    showHelp();
+    return;
+  }
 
-    const result = await syncSubagents({
-      global: options.global || false,
-      agents: syncAgents,
-      commands: syncCommands,
-      clean: options.clean || false
+  // 대화형 설치 시작
+  console.log(chalk.blue.bold('\n🤖 Binary Agents 설치\n'));
+
+  try {
+    // 1. 설치 위치 선택
+    const location = await select({
+      message: '어디에 설치하시겠습니까?',
+      choices: [
+        { name: '현재 프로젝트 (.claude/)', value: 'local' },
+        { name: '전역 (~/.claude/)', value: 'global' }
+      ]
     });
+
+    // 2. 설치 항목 선택
+    const items = await select({
+      message: '무엇을 설치하시겠습니까?',
+      choices: [
+        { name: '모두 (에이전트 + 명령어)', value: 'all' },
+        { name: '에이전트만', value: 'agents' },
+        { name: '명령어만', value: 'commands' }
+      ]
+    });
+
+    // 3. 기존 파일 삭제 여부
+    const clean = await select({
+      message: '기존 파일을 삭제하고 새로 설치할까요?',
+      choices: [
+        { name: '예 (기존 파일 삭제)', value: true },
+        { name: '아니오 (기존 파일 유지)', value: false }
+      ]
+    });
+
+    // 옵션 구성
+    const options = {
+      global: location === 'global',
+      agents: items === 'all' || items === 'agents',
+      commands: items === 'all' || items === 'commands',
+      clean
+    };
+
+    // 동기화 실행
+    const result = await syncSubagents(options);
 
     if (!result.success) {
       process.exit(1);
     }
-  });
-
-program
-  .command('list')
-  .description('List available agents and commands')
-  .action(async () => {
-    await listSubagents();
-  });
-
-// 기본 명령어가 없으면 help 표시
-if (process.argv.length === 2) {
-  program.help();
+  } catch (error) {
+    // Ctrl+C로 취소한 경우
+    if (error.name === 'ExitPromptError') {
+      console.log(chalk.yellow('\n\n취소되었습니다.\n'));
+      process.exit(0);
+    }
+    throw error;
+  }
 }
 
-program.parse();
+function showHelp() {
+  console.log(chalk.blue.bold('\n🤖 Binary Agents\n'));
+  console.log('Claude Code 서브에이전트 및 슬래시 명령어 설치 도구\n');
+  console.log(chalk.yellow('사용법:'));
+  console.log('  npx binary-agents        대화형 설치');
+  console.log('  npx binary-agents list   사용 가능한 에이전트/명령어 목록');
+  console.log('  npx binary-agents help   도움말 표시\n');
+}
+
+main().catch(error => {
+  console.error(chalk.red(`\n오류: ${error.message}\n`));
+  process.exit(1);
+});
