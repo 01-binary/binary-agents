@@ -27,8 +27,8 @@ async function main() {
     const location = await select({
       message: '어디에 설치하시겠습니까?',
       choices: [
-        { name: '현재 프로젝트 (.claude/)', value: 'local' },
-        { name: '전역 (~/.claude/)', value: 'global' }
+        { name: '전역 (~/.claude/)', value: 'global' },
+        { name: '현재 프로젝트 (.claude/)', value: 'local' }
       ]
     });
 
