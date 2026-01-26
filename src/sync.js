@@ -117,18 +117,20 @@ async function saveFile(agentsDir, filename, content) {
 }
 
 /**
- * 디렉토리 내 .md 파일 삭제
+ * binary-agents로 설치된 파일만 삭제
+ * @param {string} dirPath - 대상 디렉토리
+ * @param {string[]} targetFiles - 삭제할 파일명 목록
  */
-async function cleanDirectory(dirPath) {
+async function cleanDirectory(dirPath, targetFiles) {
   try {
-    const files = await fs.readdir(dirPath);
-    const mdFiles = files.filter(f => f.endsWith('.md'));
+    const existingFiles = await fs.readdir(dirPath);
+    const filesToDelete = existingFiles.filter(f => targetFiles.includes(f));
 
-    for (const file of mdFiles) {
+    for (const file of filesToDelete) {
       await fs.unlink(path.join(dirPath, file));
     }
 
-    return mdFiles.length;
+    return filesToDelete.length;
   } catch {
     return 0;
   }
@@ -168,11 +170,11 @@ async function syncAgentsOnly(options = {}) {
     return { success: false, error: error.message, type: 'agents' };
   }
 
-  // clean 옵션이 있으면 기존 파일 삭제
+  // clean 옵션이 있으면 binary-agents 파일만 삭제
   if (clean) {
-    const cleanSpinner = ora('Cleaning existing agent files...').start();
-    const deletedCount = await cleanDirectory(agentsDir);
-    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} existing files`));
+    const cleanSpinner = ora('Cleaning binary-agents files...').start();
+    const deletedCount = await cleanDirectory(agentsDir, filesToSync);
+    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents files`));
   }
 
   // 각 파일 복사
@@ -238,11 +240,11 @@ async function syncCommandsOnly(options = {}) {
     return { success: false, error: error.message, type: 'commands' };
   }
 
-  // clean 옵션이 있으면 기존 파일 삭제
+  // clean 옵션이 있으면 binary-agents 파일만 삭제
   if (clean) {
-    const cleanSpinner = ora('Cleaning existing command files...').start();
-    const deletedCount = await cleanDirectory(commandsDir);
-    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} existing files`));
+    const cleanSpinner = ora('Cleaning binary-agents files...').start();
+    const deletedCount = await cleanDirectory(commandsDir, allFiles);
+    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents files`));
   }
 
   // 각 파일 복사
@@ -287,7 +289,7 @@ export async function syncSubagents(options = {}) {
   }
 
   if (clean) {
-    console.log(chalk.yellow('🧹 Clean mode: Removing existing files before sync\n'));
+    console.log(chalk.yellow('🧹 Clean mode: binary-agents로 설치한 파일만 삭제 (커스텀 파일 보존)\n'));
   }
 
   const syncResults = [];

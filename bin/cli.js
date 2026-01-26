@@ -44,9 +44,9 @@ async function main() {
 
     // 3. 기존 파일 삭제 여부
     const clean = await select({
-      message: '기존 파일을 삭제하고 새로 설치할까요?',
+      message: '기존 binary-agents 파일을 삭제하고 새로 설치할까요?',
       choices: [
-        { name: '예 (기존 파일 삭제)', value: true },
+        { name: '예 (binary-agents 파일만 삭제, 커스텀 파일 보존)', value: true },
         { name: '아니오 (기존 파일 유지)', value: false }
       ]
     });
