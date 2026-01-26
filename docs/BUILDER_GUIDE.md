@@ -52,6 +52,7 @@ Builder가 자동으로:
 | `junior-checker` | 주니어 친화성 |
 | `fundamentals-code` | Toss Frontend Fundamentals 기반 분석 |
 | `react-performance-optimizer` | React 성능 최적화 |
+| `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과) |
 
 ### 커스터마이징 예시
 

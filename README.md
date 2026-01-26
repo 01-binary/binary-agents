@@ -35,6 +35,7 @@ npx binary-agents list
 | `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 체크 |
 | `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
+| `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
 
 ## 슬래시 명령어
@@ -46,6 +47,7 @@ npx binary-agents list
 | `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
 | `/review-pr` | PR 링크를 받아 변경사항 분석 후 GitHub 스타일 라인별 코드 리뷰 |
 | `/code-review` | 여러 에이전트를 병렬 실행하여 종합 코드 리뷰 |
+| `/design-to-code` | 설계/요구사항을 분석하여 구현 계획 생성 |
 | `/figma-check` | Figma MCP로 디자인 정보를 가져와 구현 코드와 비교 분석 |
 
 ### /commit 사용법
@@ -103,7 +105,7 @@ Claude가 자동으로:
 Claude가 자동으로:
 1. PR 정보 및 diff 가져오기
 2. 리뷰 타입 선택 (전체 리뷰/커스텀)
-3. 5개 에이전트를 병렬 실행하여 분석
+3. 6개 에이전트를 병렬 실행하여 분석
 4. GitHub 스타일 라인별 코드 리뷰 생성
 
 ### /code-review 사용법
@@ -119,6 +121,27 @@ Claude가 자동으로:
 3. 결과 집계 및 우선순위 정렬
 4. 종합 리뷰 리포트 생성
 
+### /design-to-code 사용법
+
+```bash
+# 1. 먼저 설계/요구사항 설명
+"사용자 프로필 페이지를 만들어야 해.
+- 프로필 이미지, 이름, 이메일 표시
+- 프로필 수정 모달
+- 비밀번호 변경 기능"
+
+# 2. Claude Code에서 /design-to-code 실행
+/design-to-code
+```
+
+Claude가 자동으로:
+1. 대화 컨텍스트에서 설계/요구사항 파악
+2. Explore 에이전트로 코드베이스 분석
+3. Plan 에이전트로 구현 계획 수립
+4. fundamentals-code, refactor-analyzer로 설계 검증
+5. React 프로젝트면 react-principles-reviewer도 실행
+6. 종합 구현 계획 리포트 생성
+
 ## 저장소 구조
 
 ```
@@ -129,6 +152,7 @@ binary-agents/
 │   ├── junior-checker.md
 │   ├── fundamentals-code.md
 │   ├── react-performance-optimizer.md
+│   ├── react-principles-reviewer.md
 │   └── subagent-builder.md
 ├── commands/            # 슬래시 명령어 MD 파일들
 │   ├── commit.md
@@ -136,6 +160,7 @@ binary-agents/
 │   ├── pr.md
 │   ├── review-pr.md
 │   ├── code-review.md
+│   ├── design-to-code.md
 │   └── figma-check.md
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
