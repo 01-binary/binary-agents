@@ -45,6 +45,7 @@ npx binary-agents list
 | `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) |
+| `maintainable-code-reviewer` | 유지보수성 리뷰 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
 
 ## 슬래시 명령어
@@ -162,6 +163,7 @@ binary-agents/
 │   ├── fundamentals-code.md
 │   ├── react-performance-optimizer.md
 │   ├── react-principles-reviewer.md
+│   ├── maintainable-code-reviewer.md
 │   └── subagent-builder.md
 ├── commands/            # 슬래시 명령어 MD 파일들
 │   ├── commit.md

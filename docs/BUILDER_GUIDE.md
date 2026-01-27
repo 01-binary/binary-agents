@@ -53,6 +53,7 @@ Builder가 자동으로:
 | `fundamentals-code` | Toss Frontend Fundamentals 기반 분석 |
 | `react-performance-optimizer` | React 성능 최적화 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과) |
+| `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙) |
 
 ### 커스터마이징 예시
 

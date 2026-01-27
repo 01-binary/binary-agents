@@ -30,6 +30,7 @@ Task 도구를 통해 다음 전문 에이전트를 사용할 수 있습니다:
 | `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) | opus |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 | opus |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) | opus |
+| `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) | opus |
 
 ## 사용 가능한 Skill
 
@@ -54,7 +55,7 @@ Skill은 사용자 설치에 따라 다르며 추가 리뷰 가이드라인/컨�
 
    | 옵션 | 이름 | 사용 에이전트 | 적합한 상황 |
    |------|------|--------------|-------------|
-   | 1 | **전체 리뷰** | 모든 6개 에이전트 병렬 실행 | 종합 코드 리뷰 (권장) |
+   | 1 | **전체 리뷰** | 모든 7개 에이전트 병렬 실행 | 종합 코드 리뷰 (권장) |
    | 2 | **커스텀** | 사용자가 직접 선택 | 특정 관점만 리뷰하고 싶을 때 |
 
 3. **Skill 포함 여부 질문** (AskUserQuestion 사용)
