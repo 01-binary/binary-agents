@@ -33,15 +33,17 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git c
    - 이 변경들의 주요 목적은 무엇인가?
    - 별도 커밋으로 분리해야 할 여러 논리적 변경이 있는가?
 
-3. **커밋 메시지 생성**
+3. **커밋 메시지 생성 및 확인**
    - 감지된 컨벤션 패턴 따르기 (type prefix, scope 등)
    - **한국어로 작성** (기존 히스토리가 영어여도)
    - **간결하게, 가능하면 1줄** (권장 50자, 최대 72자)
    - body는 정말 필요할 때만 추가
    - **Co-Authored-By footer 추가 금지**
+   - **생성한 커밋 메시지를 사용자에게 보여주고 확인받기**
+   - 사용자가 수정을 원하면 반영 후 다시 확인
 
 4. **커밋 실행**
-   - 생성된 메시지로 `git commit -m "message"` 실행
+   - **사용자가 승인한 후에만** `git commit -m "message"` 실행
    - body가 필요하면 멀티라인 포맷 사용
    - **커밋 메시지에 Co-Authored-By 절대 포함 금지**
 
@@ -51,6 +53,6 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git c
 - 감지된 컨벤션 패턴
 - 변경사항 요약
 
-그 다음 커밋 명령 직접 실행.
+그 다음 커밋 메시지를 제안하고 사용자 확인 후 실행.
 
 Staged 변경사항이 없으면 사용자에게 알리고 먼저 `git add` 사용을 제안.
