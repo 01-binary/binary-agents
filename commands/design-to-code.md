@@ -73,7 +73,10 @@ Task(Plan): "다음 설계를 구현하기 위한 계획을 수립하세요:
 
 | 에이전트 | 검증 내용 |
 |----------|----------|
-| `fundamentals-code` | 가독성, 예측 가능성, 응집도, 결합도 관점에서 설계 검증 |
+| `fundamentals-readability` | 가독성 관점에서 설계 검증 |
+| `fundamentals-predictability` | 예측 가능성 관점에서 설계 검증 |
+| `fundamentals-cohesion` | 응집도 관점에서 설계 검증 |
+| `fundamentals-coupling` | 결합도 관점에서 설계 검증 |
 | `refactor-analyzer` | 추상화 기회, 재사용 가능한 컴포넌트 식별 |
 
 **조건부 에이전트 (React 프로젝트):**
@@ -93,10 +96,22 @@ Task(Plan): "다음 설계를 구현하기 위한 계획을 수립하세요:
 **에이전트 실행 예시:**
 
 ```
-// 필수 에이전트 (항상 실행)
-Task(fundamentals-code): "다음 구현 계획을 Toss Frontend Fundamentals 원칙으로 검증하세요:
+// 필수 에이전트 (항상 실행 - 4개 병렬)
+Task(fundamentals-readability): "다음 구현 계획을 가독성 원칙으로 검증하세요:
 [Plan 결과]
-가독성, 예측 가능성, 응집도, 결합도 관점에서 개선점을 제안하세요."
+코드 분리, 추상화, 함수 쪼개기, 조건 네이밍, 매직 넘버, 시점 이동 관점에서 개선점을 제안하세요."
+
+Task(fundamentals-predictability): "다음 구현 계획을 예측 가능성 원칙으로 검증하세요:
+[Plan 결과]
+이름 충돌, 반환 타입 통일, 숨은 로직 관점에서 개선점을 제안하세요."
+
+Task(fundamentals-cohesion): "다음 구현 계획을 응집도 원칙으로 검증하세요:
+[Plan 결과]
+디렉토리 구조, 매직 넘버 관리, 폼 응집도 관점에서 개선점을 제안하세요."
+
+Task(fundamentals-coupling): "다음 구현 계획을 결합도 원칙으로 검증하세요:
+[Plan 결과]
+단일 책임, 중복 코드 허용, Props Drilling 관점에서 개선점을 제안하세요."
 
 Task(refactor-analyzer): "다음 구현 계획에서 추상화 기회를 분석하세요:
 [Plan 결과]
@@ -195,13 +210,13 @@ export function NewComponent({ ... }: Props) {
 
 ## 4. 설계 검증 결과
 
-### fundamentals-code 검증
-| 원칙 | 상태 | 피드백 |
-|------|------|--------|
-| 가독성 | ✅/🟡/🔴 | [피드백] |
-| 예측 가능성 | ✅/🟡/🔴 | [피드백] |
-| 응집도 | ✅/🟡/🔴 | [피드백] |
-| 결합도 | ✅/🟡/🔴 | [피드백] |
+### Toss Fundamentals 검증
+| 원칙 | 에이전트 | 상태 | 피드백 |
+|------|----------|------|--------|
+| 가독성 | fundamentals-readability | ✅/🟡/🔴 | [피드백] |
+| 예측 가능성 | fundamentals-predictability | ✅/🟡/🔴 | [피드백] |
+| 응집도 | fundamentals-cohesion | ✅/🟡/🔴 | [피드백] |
+| 결합도 | fundamentals-coupling | ✅/🟡/🔴 | [피드백] |
 
 ### refactor-analyzer 검증
 **추상화 기회:**

@@ -42,7 +42,10 @@ npx binary-agents list
 | `code-reviewer` | 아키텍처, 타입 안전성, 에러 처리, 테스트, 접근성, 보안 리뷰 |
 | `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회, 코드 스멜 분석 |
 | `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 체크 |
-| `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) |
+| `fundamentals-readability` | Toss Fundamentals - 가독성 (코드 분리, 추상화, 함수 쪼개기, 조건 네이밍, 매직 넘버) |
+| `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 (이름 충돌, 반환 타입 통일, 숨은 로직) |
+| `fundamentals-cohesion` | Toss Fundamentals - 응집도 (디렉토리 구조, 매직 넘버 관리, 폼 응집도) |
+| `fundamentals-coupling` | Toss Fundamentals - 결합도 (단일 책임, 중복 코드 허용, Props Drilling) |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) |
 | `maintainable-code-reviewer` | 유지보수성 리뷰 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) |
@@ -148,7 +151,7 @@ Claude가 자동으로:
 1. 대화 컨텍스트에서 설계/요구사항 파악
 2. Explore 에이전트로 코드베이스 분석
 3. Plan 에이전트로 구현 계획 수립
-4. fundamentals-code, refactor-analyzer로 설계 검증
+4. fundamentals-readability/predictability/cohesion/coupling, refactor-analyzer로 설계 검증
 5. React 프로젝트면 react-principles-reviewer도 실행
 6. 종합 구현 계획 리포트 생성
 
@@ -160,7 +163,10 @@ binary-agents/
 │   ├── code-reviewer.md
 │   ├── refactor-analyzer.md
 │   ├── junior-checker.md
-│   ├── fundamentals-code.md
+│   ├── fundamentals-readability.md
+│   ├── fundamentals-predictability.md
+│   ├── fundamentals-cohesion.md
+│   ├── fundamentals-coupling.md
 │   ├── react-performance-optimizer.md
 │   ├── react-principles-reviewer.md
 │   ├── maintainable-code-reviewer.md

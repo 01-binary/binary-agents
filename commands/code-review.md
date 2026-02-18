@@ -27,7 +27,10 @@ Task 도구를 통해 다음 전문 에이전트를 사용할 수 있습니다:
 | `code-reviewer` | 아키텍처, 타입 안전성, 에러 처리, 테스트, 접근성, 보안 | opus |
 | `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회, 코드 스멜 | opus |
 | `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 | opus |
-| `fundamentals-code` | Toss Frontend Fundamentals 기반 (가독성, 예측 가능성, 응집도, 결합도) | opus |
+| `fundamentals-readability` | Toss Fundamentals - 가독성 (코드 분리, 추상화, 함수 쪼개기, 조건 네이밍, 매직 넘버, 시점 이동, 삼항 연산자, 비교 순서) | opus |
+| `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 (이름 충돌, 반환 타입 통일, 숨은 로직) | opus |
+| `fundamentals-cohesion` | Toss Fundamentals - 응집도 (디렉토리 구조, 매직 넘버 관리, 폼 응집도) | opus |
+| `fundamentals-coupling` | Toss Fundamentals - 결합도 (단일 책임, 중복 코드 허용, Props Drilling) | opus |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 | opus |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) | opus |
 | `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) | opus |
@@ -55,7 +58,7 @@ Skill은 사용자 설치에 따라 다르며 추가 리뷰 가이드라인/컨�
 
    | 옵션 | 이름 | 사용 에이전트 | 적합한 상황 |
    |------|------|--------------|-------------|
-   | 1 | **전체 리뷰** | 모든 7개 에이전트 병렬 실행 | 종합 코드 리뷰 (권장) |
+   | 1 | **전체 리뷰** | 모든 10개 에이전트 병렬 실행 | 종합 코드 리뷰 (권장) |
    | 2 | **커스텀** | 사용자가 직접 선택 | 특정 관점만 리뷰하고 싶을 때 |
 
 3. **Skill 포함 여부 질문** (AskUserQuestion 사용)
@@ -99,7 +102,7 @@ AskUserQuestion으로 포함할 skill 여부 질문.
 ```
 리뷰 실행 중...
 ├── code-reviewer: 완료
-├── fundamentals-code: 실행 중...
+├── fundamentals-readability: 실행 중...
 ├── refactor-analyzer: 완료
 └── junior-checker: 대기 중
 ```
@@ -112,7 +115,7 @@ AskUserQuestion으로 포함할 skill 여부 질문.
 ## 요약
 - **리뷰 대상:** [path]
 - **실행된 에이전트:** [list]
-- **총 발견 사항:** N개 (Critical: X, Warning: Y, Info: Z)
+- **총 발견 사항:** N개 (Critical: X, Recommended Improvements: Y, Best Practices Found: Z)
 
 ---
 
@@ -126,7 +129,7 @@ AskUserQuestion으로 포함할 skill 여부 질문.
 
 ---
 
-## Warnings (개선 권장)
+## Recommended Improvements (권장 개선)
 
 ### 1. [Issue Title]
 - **발견 에이전트:** [agent name]
@@ -136,7 +139,7 @@ AskUserQuestion으로 포함할 skill 여부 질문.
 
 ---
 
-## Good Practices (잘한 점)
+## Best Practices Found (잘하고 있음)
 
 - [Good practice 1] - [file:line]
 - [Good practice 2] - [file:line]
@@ -148,7 +151,7 @@ AskUserQuestion으로 포함할 skill 여부 질문.
 ### Code Reviewer
 [발견사항 요약]
 
-### Fundamentals Code
+### Fundamentals (Readability / Predictability / Cohesion / Coupling)
 [발견사항 요약]
 
 ### Refactor Analyzer
@@ -158,11 +161,14 @@ AskUserQuestion으로 포함할 skill 여부 질문.
 
 ---
 
-## 우선순위 개선 항목
+## Metrics
 
-1. **[최우선]** [Issue] - [file]
-2. **[높음]** [Issue] - [file]
-3. **[보통]** [Issue] - [file]
+| 지표 | 수치 |
+|------|------|
+| 총 파일 수 | X |
+| Critical 이슈 | N |
+| Recommended Improvements | M |
+| Best Practices Found | P |
 ```
 
 ## 도구 사용 예시
@@ -175,7 +181,13 @@ AskUserQuestion으로 포함할 skill 여부 질문.
 // 여러 에이전트를 병렬로 실행 (단일 메시지, 다중 Task 호출)
 Task(code-reviewer): "src/components 코드를 리뷰하세요. 아키텍처, 타입 안전성, 에러 처리, 접근성, 보안에 집중하세요. file:line 참조와 함께 발견사항을 반환하세요."
 
-Task(fundamentals-code): "src/components를 Toss Frontend Fundamentals 원칙으로 분석하세요. 가독성, 예측 가능성, 응집도, 결합도를 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
+Task(fundamentals-readability): "src/components를 Toss Fundamentals 가독성 원칙으로 분석하세요. 코드 분리, 추상화, 조건 네이밍, 매직 넘버, 시점 이동, 삼항 연산자를 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
+
+Task(fundamentals-predictability): "src/components를 Toss Fundamentals 예측 가능성 원칙으로 분석하세요. 이름 충돌, 반환 타입 통일, 숨은 로직을 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
+
+Task(fundamentals-cohesion): "src/components를 Toss Fundamentals 응집도 원칙으로 분석하세요. 디렉토리 구조, 매직 넘버 관리, 폼 응집도를 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
+
+Task(fundamentals-coupling): "src/components를 Toss Fundamentals 결합도 원칙으로 분석하세요. 단일 책임, 중복 코드 허용, Props Drilling을 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
 
 Task(refactor-analyzer): "src/components의 리팩토링 기회를 분석하세요. 코드 중복, 복잡성, 추상화 기회를 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
 

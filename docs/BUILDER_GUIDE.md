@@ -50,7 +50,10 @@ Builder가 자동으로:
 | `code-reviewer` | 아키텍처, 타입, 에러 처리, 테스트, 접근성, 보안 |
 | `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회 |
 | `junior-checker` | 주니어 친화성 |
-| `fundamentals-code` | Toss Frontend Fundamentals 기반 분석 |
+| `fundamentals-readability` | Toss Fundamentals - 가독성 |
+| `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 |
+| `fundamentals-cohesion` | Toss Fundamentals - 응집도 |
+| `fundamentals-coupling` | Toss Fundamentals - 결합도 |
 | `react-performance-optimizer` | React 성능 최적화 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과) |
 | `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙) |
@@ -60,7 +63,7 @@ Builder가 자동으로:
 **프레임워크 특화:**
 ```bash
 "code-reviewer를 Next.js 14 App Router에 맞게 수정해줘"
-"fundamentals-code를 Vue 3에 맞게 적용해줘"
+"fundamentals-readability를 Vue 3에 맞게 적용해줘"
 ```
 
 **도메인 특화:**

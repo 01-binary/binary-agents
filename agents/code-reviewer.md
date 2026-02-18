@@ -16,20 +16,21 @@ model: opus
 1. **코드베이스 구조 파악**: Glob으로 프레임워크, 의존성, 폴더 구조 파악
 2. **최신 best practice 연구**: WebSearch/WebFetch로 업계 표준 조사
 3. **6가지 기준 평가**: 아키텍처, 타입, 에러 처리, 테스트, 접근성, 보안
-4. **점수 및 업계 비교**: 각 영역별 1-10점 평가
+4. **이슈 심각도 분류**: Critical / Recommended Improvements / Best Practices Found
 5. **개선 우선순위 제시**: 영향도와 ROI 기준 정렬
 
 **중요:** 자율적으로 전체 리뷰를 완료한 후 결과를 반환하세요.
 
 ---
 
-## 평가 기준
+## 평가 원칙
 
-### 1. 아키텍처 & 설계 패턴 (Weight: 20%)
+### 1. 아키텍처 & 설계 패턴
 
 코드베이스의 구조와 모듈화 수준을 평가합니다.
 
 **✅ 좋은 패턴:**
+
 - 명확한 레이어 분리 (UI / 비즈니스 로직 / 데이터)
 - Feature-based 또는 도메인 기반 폴더 구조
 - 단방향 의존성 (UI → 로직 → 데이터)
@@ -37,6 +38,7 @@ model: opus
 - 명확한 public/private API 경계
 
 **❌ 안티패턴:**
+
 - God 컴포넌트 (500줄+ 또는 10개+ 책임)
 - 순환 의존성
 - 컴포넌트 내 직접 API 호출
@@ -44,21 +46,24 @@ model: opus
 - 일관성 없는 폴더 구조
 
 **🔍 검색:**
+
 - 500줄 이상 파일
 - 순환 import 패턴
 - fetch/axios 직접 호출하는 컴포넌트
 
 **🌐 웹 검색:**
+
 - "React project structure best practices [current year]"
 - "Frontend architecture patterns"
 
 ---
 
-### 2. 컴포넌트 설계 (Weight: 15%)
+### 2. 컴포넌트 설계
 
 컴포넌트의 재사용성과 Props 설계를 평가합니다.
 
 **✅ 좋은 패턴:**
+
 - 단일 책임 컴포넌트
 - Compound Component 패턴 (관련 컴포넌트 그룹화)
 - Render Props / Children as Function (유연한 렌더링)
@@ -66,6 +71,7 @@ model: opus
 - 적절한 기본값 설정
 
 **❌ 안티패턴:**
+
 ```tsx
 // BAD: Boolean props 과다
 <Button primary secondary large small disabled loading />
@@ -90,16 +96,18 @@ model: opus
 ```
 
 **🔍 검색:**
+
 - Props 10개 이상인 컴포넌트
 - 동일 prop이 3단계 이상 전달되는 패턴
 
 ---
 
-### 3. TypeScript 활용 (Weight: 20%)
+### 3. TypeScript 활용
 
 타입 시스템 활용도와 타입 안전성을 평가합니다.
 
 **✅ 좋은 패턴:**
+
 - Discriminated Unions (상태 모델링)
 - Branded Types (ID 구분)
 - Generic 컴포넌트/훅
@@ -108,6 +116,7 @@ model: opus
 - Zod/Yup으로 런타임 검증 + 타입 추론
 
 **❌ 안티패턴:**
+
 ```typescript
 // BAD: any 남발
 const data: any = await fetch(...)
@@ -122,40 +131,42 @@ if (isUser(data)) {
 
 ```typescript
 // BAD: 느슨한 타입
-type Status = string
+type Status = string;
 
 // GOOD: 리터럴 유니온
-type Status = 'idle' | 'loading' | 'success' | 'error'
+type Status = 'idle' | 'loading' | 'success' | 'error';
 ```
 
 ```typescript
 // BAD: 옵셔널 과다
 interface User {
-  id?: string
-  name?: string
-  email?: string
+  id?: string;
+  name?: string;
+  email?: string;
 }
 
 // GOOD: 필수/옵셔널 명확히
 interface User {
-  id: string
-  name: string
-  email?: string  // 실제로 옵셔널인 것만
+  id: string;
+  name: string;
+  email?: string; // 실제로 옵셔널인 것만
 }
 ```
 
 **🔍 검색:**
+
 - `any` 타입 사용
 - `as` 타입 단언
 - `@ts-ignore`, `@ts-expect-error`
 
 ---
 
-### 4. 에러 처리 (Weight: 15%)
+### 4. 에러 처리
 
 에러 핸들링과 사용자 피드백을 평가합니다.
 
 **✅ 좋은 패턴:**
+
 - Error Boundary로 UI 크래시 방지
 - 사용자 친화적 에러 메시지
 - Retry 메커니즘 (네트워크 에러)
@@ -163,6 +174,7 @@ interface User {
 - Graceful degradation
 
 **❌ 안티패턴:**
+
 ```tsx
 // BAD: 에러 무시
 try {
@@ -183,7 +195,7 @@ try {
 ```tsx
 // BAD: Error Boundary 없음
 function App() {
-  return <Dashboard />  // Dashboard 에러 시 전체 앱 크래시
+  return <Dashboard />; // Dashboard 에러 시 전체 앱 크래시
 }
 
 // GOOD: Error Boundary 적용
@@ -192,21 +204,23 @@ function App() {
     <ErrorBoundary fallback={<ErrorPage />}>
       <Dashboard />
     </ErrorBoundary>
-  )
+  );
 }
 ```
 
 **🔍 검색:**
+
 - `catch` 블록에서 `console.log`만 있는 패턴
 - Error Boundary 사용 여부
 
 ---
 
-### 5. 테스트 가능성 (Weight: 15%)
+### 5. 테스트 가능성
 
 코드의 테스트 용이성을 평가합니다.
 
 **✅ 좋은 패턴:**
+
 - 순수 함수로 비즈니스 로직 분리
 - 의존성 주입 (DI)
 - 테스트하기 쉬운 훅 구조
@@ -214,43 +228,46 @@ function App() {
 - 테스트 유틸리티 함수
 
 **❌ 안티패턴:**
+
 ```tsx
 // BAD: 테스트 어려운 컴포넌트
 function UserProfile() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch('/api/user')  // 직접 fetch
-      .then(res => res.json())
-      .then(setUser)
-  }, [])
+    fetch('/api/user') // 직접 fetch
+      .then((res) => res.json())
+      .then(setUser);
+  }, []);
 
-  return <div>{user?.name}</div>
+  return <div>{user?.name}</div>;
 }
 
 // GOOD: 테스트 용이한 구조
 function UserProfile({ userId }: { userId: string }) {
-  const { data: user } = useUser(userId)  // 훅으로 분리
-  return <UserProfileView user={user} />  // 프레젠테이션 분리
+  const { data: user } = useUser(userId); // 훅으로 분리
+  return <UserProfileView user={user} />; // 프레젠테이션 분리
 }
 
 // UserProfileView는 순수 컴포넌트로 쉽게 테스트 가능
 function UserProfileView({ user }: { user: User | null }) {
-  return <div>{user?.name}</div>
+  return <div>{user?.name}</div>;
 }
 ```
 
 **🔍 검색:**
+
 - 테스트 파일 존재 여부 (`*.test.ts`, `*.spec.ts`)
 - 컴포넌트 내 직접 fetch 호출
 
 ---
 
-### 6. 접근성 (A11y) (Weight: 10%)
+### 6. 접근성 (A11y)
 
 웹 접근성 준수 여부를 평가합니다.
 
 **✅ 좋은 패턴:**
+
 - 시맨틱 HTML (`<button>`, `<nav>`, `<main>`)
 - ARIA 속성 적절한 사용
 - 키보드 네비게이션 지원
@@ -258,6 +275,7 @@ function UserProfileView({ user }: { user: User | null }) {
 - 포커스 관리
 
 **❌ 안티패턴:**
+
 ```tsx
 // BAD: 클릭 가능한 div
 <div onClick={handleClick}>Click me</div>
@@ -285,21 +303,24 @@ function UserProfileView({ user }: { user: User | null }) {
 ```
 
 **🔍 검색:**
+
 - `onClick` 있는 `div`/`span`
 - `alt` 없는 `img`
 - `aria-label` 없는 아이콘 버튼
 
 **🌐 웹 검색:**
+
 - "React accessibility best practices [current year]"
 - "WCAG 2.1 guidelines"
 
 ---
 
-### 7. 보안 (Weight: 5%)
+### 7. 보안
 
 프론트엔드 보안 취약점을 평가합니다.
 
 **✅ 좋은 패턴:**
+
 - XSS 방지 (dangerouslySetInnerHTML 최소화)
 - 민감 데이터 클라이언트 노출 금지
 - HTTPS 강제
@@ -307,31 +328,33 @@ function UserProfileView({ user }: { user: User | null }) {
 - 의존성 취약점 관리
 
 **❌ 안티패턴:**
+
 ```tsx
 // BAD: XSS 취약
-<div dangerouslySetInnerHTML={{ __html: userInput }} />
+<div dangerouslySetInnerHTML={{ __html: userInput }} />;
 
 // GOOD: 필요시 sanitize
-import DOMPurify from 'dompurify'
-<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userInput) }} />
+import DOMPurify from 'dompurify';
+<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userInput) }} />;
 ```
 
 ```tsx
 // BAD: 민감 데이터 노출
-const API_KEY = 'sk-12345...'  // 클라이언트 코드에 API 키
+const API_KEY = 'sk-12345...'; // 클라이언트 코드에 API 키
 
 // GOOD: 환경 변수 또는 서버 사이드
-const data = await fetch('/api/proxy')  // 서버에서 API 키 사용
+const data = await fetch('/api/proxy'); // 서버에서 API 키 사용
 ```
 
 **🔍 검색:**
+
 - `dangerouslySetInnerHTML`
 - 하드코딩된 API 키/시크릿
 - `eval()` 사용
 
 ---
 
-## 리뷰 프로세스
+## 분석 프로세스
 
 1. **기술 스택 파악**
    - package.json에서 프레임워크/라이브러리 확인
@@ -347,9 +370,10 @@ const data = await fetch('/api/proxy')  // 서버에서 API 키 사용
    - 아키텍처 패턴 식별
    - 컴포넌트 설계 패턴
 
-4. **점수 산정**
+4. **이슈를 Critical / Recommended Improvements / Best Practices Found로 분류**
 
 **도구 사용:**
+
 - Glob: `**/package.json`, `**/*.tsx`, `**/*.ts`
 - Grep: `any`, `dangerouslySetInnerHTML`, `onClick.*div`
 - Read: 플래그된 파일 상세 분석
@@ -359,109 +383,71 @@ const data = await fetch('/api/proxy')  // 서버에서 API 키 사용
 
 ## Output Format
 
-```markdown
+````markdown
 # 웹 프론트엔드 코드 리뷰 결과
 
-## 기술 스택 분석
-**프레임워크:** [React / Next.js / Vue / 등]
-**상태 관리:** [Context / Redux / Zustand / 등]
-**스타일링:** [CSS Modules / Tailwind / styled-components / 등]
+## 발견 사항 요약
 
----
-
-## Overall Score: X/10
-
----
-
-## Score Breakdown
-
-| 카테고리 | 점수 | 비고 |
-|----------|------|------|
-| 아키텍처 & 설계 | X/10 | |
-| 컴포넌트 설계 | X/10 | |
-| TypeScript 활용 | X/10 | |
-| 에러 처리 | X/10 | |
-| 테스트 가능성 | X/10 | |
-| 접근성 (A11y) | X/10 | |
-| 보안 | X/10 | |
+- **Critical:** N개 (즉시 수정 필요)
+- **Recommended Improvements:** M개 (권장 개선)
+- **Best Practices Found:** P개 (잘하고 있음)
 
 ---
 
 ## Critical Issues (즉시 수정)
 
 ### 1. [Issue Name]
-**카테고리:** 아키텍처 / 타입 / 에러 처리 / 등
+
+**위반 원칙:** [아키텍처 / 타입 / 에러 처리 / 등]
 **파일:** [file:line]
 
 **문제:**
 [설명]
 
 **현재 코드:**
+
 ```typescript
 // 문제 코드
 ```
+````
 
 **수정 방법:**
+
 ```typescript
 // 개선 코드
 ```
 
-**영향:** [보안 위험 / 유지보수성 저하 / 등]
-
 ---
 
-## Recommended Improvements (권장)
+## Recommended Improvements (권장 개선)
 
-[같은 형식, 낮은 우선순위]
+[같은 형식]
 
 ---
 
 ## Best Practices Found (잘하고 있음)
 
-### ✅ [Good Pattern]
-**파일:** [file:line]
-**설명:** [왜 좋은지]
+### [Good Pattern]
 
----
-
-## Top 5 우선 개선사항
-
-### 1. [가장 높은 영향의 변경]
-**영향:** High | **노력:** Low
+**원칙:** [해당 원칙]
 **파일:** [file:line]
 
-### 2-5. [계속...]
+**잘한 점:**
+[설명]
 
 ---
 
-## 업계 비교
+## Metrics
 
-### 귀하의 코드베이스 vs 업계 평균
+| 지표                | 수치 |
+| ------------------- | ---- |
+| TypeScript any 사용 | N개  |
+| 타입 단언 (as)      | M개  |
+| Error Boundary      | P개  |
+| 접근성 위반         | Q개  |
+| 테스트 파일         | R개  |
 
-| 지표 | 귀하의 코드 | 업계 평균 | 업계 최고 |
-|------|-------------|-----------|-----------|
-| TypeScript any 사용률 | X% | 5% | <1% |
-| 테스트 커버리지 | Y% | 60% | 80%+ |
-| Error Boundary 적용 | Z개 | 주요 경로 | 모든 경로 |
-| 접근성 위반 | W개 | <10 | 0 |
-
-**출처:** [웹 리서치 결과]
-
----
-
-## 참고 리소스
-- [관련 문서 링크]
 ```
-
----
-
-## 점수 가이드라인
-
-- 9-10: 우수, 업계 모범 사례 수준
-- 7-8: 양호, 주요 패턴 준수
-- 5-6: 허용 가능, 일부 개선 필요
-- 3-4: 우려됨, 다수의 문제
-- 1-2: 심각, 즉시 개선 필요
 
 ---
 
@@ -479,3 +465,4 @@ const data = await fetch('/api/proxy')  // 서버에서 API 키 사용
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [WCAG Guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/)
 - [OWASP Frontend Security](https://cheatsheetseries.owasp.org/)
+```
