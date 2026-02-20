@@ -54,6 +54,7 @@ Builder가 자동으로:
 | `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 |
 | `fundamentals-cohesion` | Toss Fundamentals - 응집도 |
 | `fundamentals-coupling` | Toss Fundamentals - 결합도 |
+| `react-state-reviewer` | React 상태관리 (상태 성질 기반 배치, Context, 전역 상태) |
 | `react-performance-optimizer` | React 성능 최적화 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과) |
 | `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙) |

@@ -31,6 +31,7 @@ Task 도구를 통해 다음 전문 에이전트를 사용할 수 있습니다:
 | `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 (이름 충돌, 반환 타입 통일, 숨은 로직) | opus |
 | `fundamentals-cohesion` | Toss Fundamentals - 응집도 (디렉토리 구조, 매직 넘버 관리, 폼 응집도) | opus |
 | `fundamentals-coupling` | Toss Fundamentals - 결합도 (단일 책임, 중복 코드 허용, Props Drilling) | opus |
+| `react-state-reviewer` | React 상태관리 (상태 성질 기반 배치, Context 오용, 5단계 에스컬레이터) | opus |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 | opus |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) | opus |
 | `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) | opus |
@@ -58,7 +59,7 @@ Skill은 사용자 설치에 따라 다르며 추가 리뷰 가이드라인/컨�
 
    | 옵션 | 이름 | 사용 에이전트 | 적합한 상황 |
    |------|------|--------------|-------------|
-   | 1 | **전체 리뷰** | 모든 10개 에이전트 병렬 실행 | 종합 코드 리뷰 (권장) |
+   | 1 | **전체 리뷰** | 모든 11개 에이전트 병렬 실행 | 종합 코드 리뷰 (권장) |
    | 2 | **커스텀** | 사용자가 직접 선택 | 특정 관점만 리뷰하고 싶을 때 |
 
 3. **Skill 포함 여부 질문** (AskUserQuestion 사용)
@@ -190,6 +191,8 @@ Task(fundamentals-cohesion): "src/components를 Toss Fundamentals 응집도 원�
 Task(fundamentals-coupling): "src/components를 Toss Fundamentals 결합도 원칙으로 분석하세요. 단일 책임, 중복 코드 허용, Props Drilling을 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
 
 Task(refactor-analyzer): "src/components의 리팩토링 기회를 분석하세요. 코드 중복, 복잡성, 추상화 기회를 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
+
+Task(react-state-reviewer): "src/components의 상태관리 패턴을 리뷰하세요. 상태 성질(수명/범위/빈도) 기반 도구 적절성, Context 오용, 5단계 에스컬레이터 준수, 서버/클라이언트 상태 분리를 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
 
 Task(react-principles-reviewer): "src/components를 React 개발 원칙으로 리뷰하세요. 응집도/명시성 패턴, Props 관리, 네이밍 원칙, 부수효과 위치, AsyncBoundary 사용을 확인하세요. file:line 참조와 함께 발견사항을 반환하세요."
 ```

@@ -46,6 +46,7 @@ npx binary-agents list
 | `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 (이름 충돌, 반환 타입 통일, 숨은 로직) |
 | `fundamentals-cohesion` | Toss Fundamentals - 응집도 (디렉토리 구조, 매직 넘버 관리, 폼 응집도) |
 | `fundamentals-coupling` | Toss Fundamentals - 결합도 (단일 책임, 중복 코드 허용, Props Drilling) |
+| `react-state-reviewer` | React 상태관리 리뷰 (상태 성질 기반 배치, Context 오용, 5단계 에스컬레이터) |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) |
 | `maintainable-code-reviewer` | 유지보수성 리뷰 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) |
@@ -167,6 +168,7 @@ binary-agents/
 │   ├── fundamentals-predictability.md
 │   ├── fundamentals-cohesion.md
 │   ├── fundamentals-coupling.md
+│   ├── react-state-reviewer.md
 │   ├── react-performance-optimizer.md
 │   ├── react-principles-reviewer.md
 │   ├── maintainable-code-reviewer.md

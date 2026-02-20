@@ -25,6 +25,7 @@ Task 도구를 통해 다음 전문 에이전트를 사용할 수 있습니다:
 | `fundamentals-coupling` | Toss Fundamentals - 결합도 |
 | `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회, 코드 스멜 |
 | `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 |
+| `react-state-reviewer` | React 상태관리 (상태 성질 기반 배치, Context 오용, 5단계 에스컬레이터) |
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) |
 | `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) |
@@ -141,6 +142,16 @@ Skill은 사용자 설치에 따라 다르며 추가 리뷰 가이드라인/컨�
 
    [리뷰 관점]
    네이밍, 함수 복잡도, 주석, 구조, 타입, 학습 곡선"
+
+   Task(react-state-reviewer): "PR #<PR번호>의 상태관리 패턴을 리뷰해주세요.
+
+   [작업 순서]
+   1. `gh pr view <PR번호>`로 PR 정보 확인
+   2. `gh pr diff <PR번호>`로 전체 변경사항 확인
+   3. 필요 시 관련 파일 Read
+
+   [리뷰 관점]
+   상태 성질(수명/범위/빈도) 기반 배치 적절성, Context 오용, 5단계 에스컬레이터 준수, 서버/클라이언트 상태 분리"
 
    Task(react-performance-optimizer): "PR #<PR번호>에서 React 성능 이슈를 찾아주세요.
 
