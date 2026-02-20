@@ -61,6 +61,7 @@ npx binary-agents list
 | `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
 | `/review-pr` | PR 링크를 받아 변경사항 분석 후 GitHub 스타일 라인별 코드 리뷰 |
 | `/code-review` | 여러 에이전트를 병렬 실행하여 종합 코드 리뷰 |
+| `/fundamentals-review` | Toss Fundamentals 4개 + React 상태관리 집중 리뷰 |
 | `/design-to-code` | 설계/요구사항을 분석하여 구현 계획 생성 |
 | `/figma-check` | Figma MCP로 디자인 정보를 가져와 구현 코드와 비교 분석 |
 
@@ -179,6 +180,7 @@ binary-agents/
 │   ├── pr.md
 │   ├── review-pr.md
 │   ├── code-review.md
+│   ├── fundamentals-review.md
 │   ├── design-to-code.md
 │   └── figma-check.md
 ├── bin/                 # CLI 실행 파일
