@@ -64,6 +64,7 @@ npx binary-agents list
 | `/fundamentals-review` | Toss Fundamentals 4개 + React 상태관리 집중 리뷰 |
 | `/design-to-code` | 설계/요구사항을 분석하여 구현 계획 생성 |
 | `/figma-check` | Figma MCP로 디자인 정보를 가져와 구현 코드와 비교 분석 |
+| `/review-comments` | 현재 브랜치 PR의 리뷰 코멘트를 분석하여 개선 필요 여부 판단 및 변경 방법 제시 |
 
 ### /commit 사용법
 
@@ -136,6 +137,19 @@ Claude가 자동으로:
 3. 결과 집계 및 우선순위 정렬
 4. 종합 리뷰 리포트 생성
 
+### /review-comments 사용법
+
+```bash
+# Claude Code에서 /review-comments 실행
+/review-comments
+```
+
+Claude가 자동으로:
+1. 현재 브랜치의 PR에서 리뷰 코멘트 수집
+2. 해당 파일의 현재 코드와 비교하여 이미 해결되었는지 확인
+3. 각 코멘트를 분류 (🔴 개선 필요 / 🟡 논의 필요 / 🟢 조치 불필요)
+4. 개선 필요 항목에 왜, 어떻게 바꿔야 하는지 구체적 방법 제시
+
 ### /design-to-code 사용법
 
 ```bash
@@ -182,7 +196,8 @@ binary-agents/
 │   ├── code-review.md
 │   ├── fundamentals-review.md
 │   ├── design-to-code.md
-│   └── figma-check.md
+│   ├── figma-check.md
+│   └── review-comments.md
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서
