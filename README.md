@@ -65,6 +65,7 @@ npx binary-agents list
 | `/design-to-code` | 설계/요구사항을 분석하여 구현 계획 생성 |
 | `/figma-check` | Figma MCP로 디자인 정보를 가져와 구현 코드와 비교 분석 |
 | `/review-comments` | 현재 브랜치 PR의 리뷰 코멘트를 분석하여 개선 필요 여부 판단 및 변경 방법 제시 |
+| `/impact-check` | git diff를 분석하여 작업 내용을 정리하고 side effect를 엄밀하게 검증 |
 
 ### /commit 사용법
 
@@ -150,6 +151,31 @@ Claude가 자동으로:
 3. 각 코멘트를 분류 (🔴 개선 필요 / 🟡 논의 필요 / 🟢 조치 불필요)
 4. 개선 필요 항목에 왜, 어떻게 바꿔야 하는지 구체적 방법 제시
 
+### /impact-check 사용법
+
+```bash
+# 자동 선택 (staged 우선, 없으면 브랜치 vs main)
+/impact-check
+
+# staged만 분석
+/impact-check staged
+
+# 브랜치 전체 분석
+/impact-check branch
+
+# 특정 커밋 분석
+/impact-check <커밋해시>
+
+# 커밋 범위 분석
+/impact-check <해시1>..<해시2>
+```
+
+Claude가 자동으로:
+1. 지정된 범위의 diff 수집 및 작업 내용을 논리 단위로 정리
+2. 8가지 체크리스트로 side effect 엄밀 검증 (심볼 사용처, Public API, 타입 전파, 시그니처 변경, 설정/환경, 암묵적 동작 변경, 테스트, 외부 의존성)
+3. 발견된 이슈를 🔴 High / 🟡 Medium / 🟢 Low로 분류
+4. 각 이슈에 대해 file:line 근거와 권장 조치 제시
+
 ### /design-to-code 사용법
 
 ```bash
@@ -197,11 +223,13 @@ binary-agents/
 │   ├── fundamentals-review.md
 │   ├── design-to-code.md
 │   ├── figma-check.md
-│   └── review-comments.md
+│   ├── review-comments.md
+│   └── impact-check.md
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서
-│   └── BUILDER_GUIDE.md # 커스텀 서브에이전트 제작 가이드
+│   ├── BUILDER_GUIDE.md # 커스텀 서브에이전트 제작 가이드
+│   └── INTRODUCTION.md  # 프로젝트 소개 문서
 └── README.md
 ```
 

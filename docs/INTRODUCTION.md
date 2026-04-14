@@ -65,6 +65,19 @@ PR 없이도 특정 경로의 코드를 종합 리뷰합니다.
 
 → 최대 11개 에이전트 병렬 실행 → Critical / Recommended / Best Practices로 분류
 
+### /impact-check — 변경사항 영향 분석
+
+git diff를 분석해서 **뭘 했는지 정리**하고 **side effect를 엄밀하게 검증**합니다.
+
+```bash
+/impact-check              # 자동 (staged 우선)
+/impact-check staged       # staged만
+/impact-check branch       # 브랜치 vs main
+/impact-check <해시>       # 특정 커밋
+```
+
+→ 작업 내용 논리 단위 정리 → 8가지 체크리스트로 side effect 검증 → 🔴/🟡/🟢 위험도 분류 + 근거/조치 제시
+
 ### /review-comments — 리뷰 코멘트 분석
 
 PR에 달린 리뷰 코멘트를 분석해서 뭘 고쳐야 하는지 정리해줍니다.
@@ -134,6 +147,12 @@ Figma MCP로 디자인 정보를 가져와서 실제 코드와 차이를 분석�
 
 ```
 /review-comments → 뭘 고쳐야 하는지 확인 → 수정 → /commit
+```
+
+### 커밋/PR 전 셀프 체크
+
+```
+/impact-check → side effect 확인 → 수정 → /commit → /pr
 ```
 
 ### 코드 품질 점검
