@@ -16,7 +16,7 @@ allowed-tools: Bash(gh pr:*), Bash(gh api:*), Bash(git diff:*), Bash(git rev-par
 !`gh pr view --json number,title,state,author,url,reviewDecision,reviews 2>/dev/null || echo "PR을 찾을 수 없습니다"`
 
 **PR 리뷰 코멘트 (라인별):**
-!`gh pr view --json number --jq '.number' 2>/dev/null | xargs -I{} gh api repos/:owner/:repo/pulls/{}/comments --jq '.[] | "---\n작성자: \(.user.login)\n파일: \(.path):\(.line // .original_line // "N/A")\n상태: \(.position // "outdated")\n내용: \(.body)\n"' 2>/dev/null || echo "리뷰 코멘트 없음"`
+!`gh pr view --json number --jq '.number' 2>/dev/null | xargs -I{} gh api --hostname "$(git remote get-url origin 2>/dev/null | sed -E 's#^[^@/]+@([^:]+):.*#\1#; s#^https?://([^/]+)/.*#\1#')" repos/:owner/:repo/pulls/{}/comments --jq '.[] | "---\n작성자: \(.user.login)\n파일: \(.path):\(.line // .original_line // "N/A")\n상태: \(.position // "outdated")\n내용: \(.body)\n"' 2>/dev/null || echo "리뷰 코멘트 없음"`
 
 **PR 일반 코멘트:**
 !`gh pr view --json comments --jq '.comments[] | "---\n작성자: \(.author.login)\n내용: \(.body)\n"' 2>/dev/null || echo "일반 코멘트 없음"`
