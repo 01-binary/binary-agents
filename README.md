@@ -1,10 +1,10 @@
 # Binary Agents
 
-Claude Code 서브에이전트 및 슬래시 명령어 컬렉션 + 동기화 도구
+Claude Code 서브에이전트, 슬래시 명령어, 스킬 컬렉션 + 동기화 도구
 
 ## 소개
 
-`binary-agents`는 Claude Code의 강력한 서브에이전트와 슬래시 명령어를 모아놓은 모노레포입니다. 코드 리뷰, 리팩토링 분석, 주니어 개발자 친화성 체크 등 다양한 서브에이전트와 자동 커밋/PR 생성 등의 슬래시 명령어를 제공하며, 이를 프로젝트에 쉽게 설치할 수 있는 CLI 도구를 포함합니다.
+`binary-agents`는 Claude Code의 서브에이전트, 슬래시 명령어, 스킬을 모아놓은 모노레포입니다. 코드 리뷰, 리팩토링 분석, 주니어 개발자 친화성 체크 등 다양한 서브에이전트와 자동 커밋/PR 생성 등의 슬래시 명령어, 코드를 쓸 때 자동으로 적용되는 스킬을 제공하며, 이를 프로젝트에 쉽게 설치할 수 있는 CLI 도구를 포함합니다.
 
 ## 사용법
 
@@ -26,9 +26,10 @@ npx binary-agents list
   현재 프로젝트 (.claude/)
 
 ? 무엇을 설치하시겠습니까?
-❯ 모두 (에이전트 + 명령어)
-  에이전트만
+❯ 모두 (에이전트 + 명령어 + 스킬)
+  에이전트만 (에이전트가 쓰는 스킬 포함)
   명령어만
+  스킬만
 
 ? 기존 binary-agents 파일을 삭제하고 새로 설치할까요?
 ❯ 예 (binary-agents 파일만 삭제, 커스텀 파일 보존)
@@ -50,7 +51,19 @@ npx binary-agents list
 | `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) |
 | `maintainable-code-reviewer` | 유지보수성 리뷰 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) |
+| `root-cause-reviewer` | Toss Fundamentals - 근본 원인 (증상을 덮는 코드, 에러 처리, 비동기 경쟁, cleanup, 순수 함수 분리, 데드코드) |
+| `a11y-reviewer` | Toss Fundamentals - 접근성 (클릭 가능한 div, 폼과 버튼 type, 요소 중첩, 아이콘 버튼, 입력 레이블, 테이블 행 클릭) |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
+
+## 스킬
+
+스킬은 판단 기준을 담은 지식 묶음입니다. Claude가 관련 코드를 작성할 때 설명(description)을 보고 자동으로 불러오고, 리뷰 에이전트도 frontmatter의 `skills`로 미리 불러와 기준으로 씁니다.
+
+| 이름 | 설명 | 쓰는 에이전트 |
+|------|------|--------------|
+| `fe-tradeoffs` | 4원칙이 부딪힐 때의 판단 기준, 원칙을 깨도 되는 경우, 하지 말아야 할 제안, 추상화를 볼 때 세 가지 질문 | fundamentals 4개, `/fundamentals-review` |
+| `fe-root-cause` | 진단 → 재현 → 수정 → 재발 방지, 증상 덮기와 근본 원인 수정 구분, 순수 함수 분리, 데드코드, 디버깅 사례 8개 | `root-cause-reviewer` |
+| `fe-a11y` | 접근성 6가지 패턴과 ESLint(jsx-a11y)로 넘길 범위 | `a11y-reviewer` |
 
 ## 슬래시 명령어
 
@@ -61,7 +74,7 @@ npx binary-agents list
 | `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
 | `/review-pr` | PR 링크를 받아 변경사항 분석 후 GitHub 스타일 라인별 코드 리뷰 |
 | `/code-review` | 여러 에이전트를 병렬 실행하여 종합 코드 리뷰 |
-| `/fundamentals-review` | Toss Fundamentals 4개 + React 상태관리 집중 리뷰 |
+| `/fundamentals-review` | Toss Fundamentals 4원칙 + 근본 원인 + 접근성 + 상태관리 리뷰를 병렬 실행하고 이슈 단위로 합쳐 원칙 충돌까지 판단 |
 | `/design-to-code` | 설계/요구사항을 분석하여 구현 계획 생성 |
 | `/figma-check` | Figma MCP로 디자인 정보를 가져와 구현 코드와 비교 분석 |
 | `/review-comments` | 현재 브랜치 PR의 리뷰 코멘트를 분석하여 개선 필요 여부 판단 및 변경 방법 제시 |
@@ -138,6 +151,33 @@ Claude가 자동으로:
 3. 결과 집계 및 우선순위 정렬
 4. 종합 리뷰 리포트 생성
 
+### /fundamentals-review 사용법
+
+```bash
+# 브랜치 변경 전부 (기본): main에서 갈라진 뒤의 커밋 + staged + 로컬 변경 + 새 파일
+/fundamentals-review
+
+# git add 한 것만
+/fundamentals-review staged
+
+# git add 안 한 로컬 변경과 새 파일만
+/fundamentals-review unstaged
+
+# 경로의 파일 전체 (처음 보는 코드, 과제 코드)
+/fundamentals-review src/features
+
+# 결과를 fundamentals-review.md로 저장 (다른 인자와 함께 사용)
+/fundamentals-review staged --save
+```
+
+Claude가 자동으로:
+1. 인자에 맞는 범위의 파일과 변경 줄 수집
+2. 관점 선택 (4원칙 + 근본 원인은 항상, JSX가 있으면 접근성, React면 상태관리)
+3. 관점별 에이전트 병렬 실행
+4. 같은 문제를 하나로 묶고, 원칙끼리 부딪히는 제안은 `fe-tradeoffs` 기준으로 판단
+5. Critical 항목은 해당 코드를 다시 열어 검증
+6. 이슈마다 원칙·루브릭 태그(① 코드 모습 ② 기술 부채 ③ 근본 원인 ④ 사용자 경험), 확신도, 근거 한 문장을 붙여 출력
+
 ### /review-comments 사용법
 
 ```bash
@@ -213,6 +253,8 @@ binary-agents/
 │   ├── react-performance-optimizer.md
 │   ├── react-principles-reviewer.md
 │   ├── maintainable-code-reviewer.md
+│   ├── root-cause-reviewer.md
+│   ├── a11y-reviewer.md
 │   └── subagent-builder.md
 ├── commands/            # 슬래시 명령어 MD 파일들
 │   ├── commit.md
@@ -225,19 +267,24 @@ binary-agents/
 │   ├── figma-check.md
 │   ├── review-comments.md
 │   └── impact-check.md
+├── skills/              # 스킬 폴더들 (SKILL.md + 부속 파일)
+│   ├── fe-tradeoffs/
+│   ├── fe-root-cause/
+│   └── fe-a11y/
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서
 │   ├── BUILDER_GUIDE.md # 커스텀 서브에이전트 제작 가이드
-│   └── INTRODUCTION.md  # 프로젝트 소개 문서
+│   ├── INTRODUCTION.md  # 프로젝트 소개 문서
+│   └── CLAUDE-RULES-TEMPLATE.md # 프로젝트 CLAUDE.md에 붙여 쓸 프론트엔드 규칙 템플릿
 └── README.md
 ```
 
 ## 작동 원리
 
-1. 로컬 `agents/`, `commands/` 디렉토리에서 파일 목록 읽기
-2. YAML frontmatter 검증
-3. 사용자 프로젝트의 `.claude/agents/`, `.claude/commands/` 디렉토리로 복사
+1. 로컬 `agents/`, `commands/`, `skills/` 디렉토리에서 목록 읽기
+2. YAML frontmatter 검증 (스킬은 `SKILL.md`)
+3. 사용자 프로젝트의 `.claude/agents/`, `.claude/commands/`, `.claude/skills/` 디렉토리로 복사 (스킬은 폴더째 복사)
 
 ## 요구사항
 
@@ -264,6 +311,9 @@ cp binary-agents/agents/*.md your-project/.claude/agents/
 
 # 슬래시 명령어 복사
 cp binary-agents/commands/*.md your-project/.claude/commands/
+
+# 스킬 복사 (폴더째)
+cp -R binary-agents/skills/* your-project/.claude/skills/
 ```
 
 ## 관련 링크

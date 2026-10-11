@@ -58,6 +58,8 @@ Builder가 자동으로:
 | `react-performance-optimizer` | React 성능 최적화 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과) |
 | `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙) |
+| `root-cause-reviewer` | 근본 원인 (증상을 덮는 코드, 에러 처리, 비동기 경쟁, 데드코드) |
+| `a11y-reviewer` | 접근성 (클릭 가능한 div, 폼, 요소 중첩, 아이콘 버튼, 레이블) |
 
 ### 커스터마이징 예시
 
