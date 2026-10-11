@@ -71,12 +71,12 @@ npx binary-agents@latest list
 
 | 명령어 | 설명 |
 |--------|------|
-| `/commit` | git log 분석 후 컨벤션에 맞는 커밋 메시지 자동 생성 및 커밋 |
-| `/branch` | main에서 pull 후 브랜치 네이밍 컨벤션에 맞는 새 브랜치 생성 |
+| `/commit` | git log 분석 후 컨벤션에 맞는 커밋 메시지 생성, 여러 변경이 섞였으면 나눠서 커밋 |
+| `/branch` | 기본 브랜치(자동 감지 또는 `--from`)를 최신으로 받은 뒤 네이밍 컨벤션에 맞는 새 브랜치 생성 |
 | `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
 | `/fundamentals-review` | Toss Fundamentals 4원칙 + 근본 원인 + 접근성 + 상태관리 + React 패턴 리뷰를 병렬 실행하고 이슈 단위로 합쳐 원칙 충돌까지 판단 |
 | `/design-to-code` | 설계/요구사항을 분석하여 구현 계획 생성 |
-| `/review-comments` | 현재 브랜치 PR의 리뷰 코멘트를 분석하여 개선 필요 여부 판단 및 변경 방법 제시 |
+| `/review-comments` | PR 리뷰 코멘트(resolve된 스레드 제외)를 스킬 기준으로 분석해 개선 필요 여부, 변경 방법, 답글 초안 제시 |
 
 ### /commit 사용법
 
@@ -90,22 +90,23 @@ git add .
 
 Claude가 자동으로:
 1. 최근 커밋 로그에서 컨벤션 분석
-2. staged changes 확인
-3. 컨벤션에 맞는 커밋 메시지 생성
-4. 커밋 실행
+2. staged changes 확인 (lock 파일 등은 내용까지 읽지 않음)
+3. 여러 논리적 변경이 섞여 있으면 나눠서 커밋하는 안 제시 (묶음별 파일과 메시지)
+4. 확인 후 커밋 실행 (나누는 경우 묶음별로 다시 stage해서 커밋)
 
 ### /branch 사용법
 
 ```bash
-# Claude Code에서 /branch 실행
-/branch
+/branch                          # 기본 브랜치 기준, 작업 내용은 물어봄
+/branch 로그인 기능 추가          # 설명으로 이름 자동 결정
+/branch --from develop 결제 수정  # develop 기준으로 생성
 ```
 
 Claude가 자동으로:
-1. 기존 브랜치 이름에서 컨벤션 분석
-2. main 브랜치에서 최신 코드 pull
-3. 작업 목적에 맞는 브랜치 이름 생성 (feature/, fix/, chore/ 등)
-4. 새 브랜치 생성 및 전환
+1. 기준 브랜치 결정 (`--from` 또는 origin/HEAD 자동 감지, 없으면 main → master)
+2. 최근 브랜치 이름에서 컨벤션 분석
+3. 기준 브랜치를 `git pull --ff-only`로 최신화 (origin이 없으면 건너뜀)
+4. 작업 목적에 맞는 브랜치 이름 생성 (feature/, fix/, chore/ 등) 후 확인받고 생성
 
 ### /pr 사용법
 
@@ -150,15 +151,15 @@ Claude가 자동으로:
 ### /review-comments 사용법
 
 ```bash
-# Claude Code에서 /review-comments 실행
-/review-comments
+/review-comments          # 현재 브랜치의 PR
+/review-comments 123      # PR 번호 지정 (URL도 가능)
 ```
 
 Claude가 자동으로:
-1. 현재 브랜치의 PR에서 리뷰 코멘트 수집
+1. PR의 리뷰 스레드 수집 (resolve된 스레드는 제외하고 개수만 표시)
 2. 해당 파일의 현재 코드와 비교하여 이미 해결되었는지 확인
-3. 각 코멘트를 분류 (🔴 개선 필요 / 🟡 논의 필요 / 🟢 조치 불필요)
-4. 개선 필요 항목에 왜, 어떻게 바꿔야 하는지 구체적 방법 제시
+3. 코드 품질 코멘트는 `fe-*` 스킬을 근거로 판단해 분류 (🔴 개선 필요 / 🟡 논의 필요 / 🟢 조치 불필요)
+4. 🔴·🟡 항목에 왜, 어떻게 바꿔야 하는지 제시하고, 🟡에는 근거를 담은 답글 초안 작성 (게시하지 않음)
 
 ### /design-to-code 사용법
 
