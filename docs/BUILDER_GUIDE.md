@@ -47,13 +47,12 @@ Builder가 자동으로:
 
 | 에이전트 | 용도 |
 |----------|------|
-| `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회 |
 | `fundamentals-readability` | Toss Fundamentals - 가독성 |
 | `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 |
 | `fundamentals-cohesion` | Toss Fundamentals - 응집도 |
 | `fundamentals-coupling` | Toss Fundamentals - 결합도 |
 | `react-state-reviewer` | React 상태관리 (상태 성질 기반 배치, Context, 전역 상태) |
-| `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과) |
+| `react-principles-reviewer` | React 컴포넌트 패턴 (데이터 소유, 부수효과 위치, 데이터 Fetching·비동기 경계, 네이밍, 메모이제이션) |
 | `root-cause-reviewer` | 근본 원인 (증상을 덮는 코드, 에러 처리, 비동기 경쟁, 데드코드) |
 | `a11y-reviewer` | 접근성 (클릭 가능한 div, 폼, 요소 중첩, 아이콘 버튼, 레이블) |
 
@@ -62,7 +61,7 @@ Builder가 자동으로:
 **프레임워크 특화:**
 ```bash
 "react-principles-reviewer를 Next.js App Router에 맞게 수정해줘"
-"refactor-analyzer를 Vue 3에 맞게 적용해줘"
+"react-state-reviewer를 Vue 3(Pinia)에 맞게 적용해줘"
 ```
 
 **도메인 특화:**
@@ -73,7 +72,7 @@ Builder가 자동으로:
 
 **기능 추가:**
 ```bash
-"refactor-analyzer에 자동 수정 기능 추가해줘"
+"root-cause-reviewer에 자동 수정 기능 추가해줘"
 "a11y-reviewer를 웹 리서치 포함 버전으로 업그레이드해줘"
 ```
 

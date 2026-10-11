@@ -41,13 +41,12 @@ npx binary-agents@latest list
 
 | 이름 | 설명 |
 |------|------|
-| `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회, 코드 스멜 분석 |
 | `fundamentals-readability` | Toss Fundamentals - 가독성 (코드 분리, 추상화, 함수 쪼개기, 조건 네이밍, 매직 넘버) |
 | `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 (이름 충돌, 반환 타입 통일, 숨은 로직) |
 | `fundamentals-cohesion` | Toss Fundamentals - 응집도 (디렉토리 구조, 매직 넘버 관리, 폼 응집도) |
 | `fundamentals-coupling` | Toss Fundamentals - 결합도 (단일 책임, 중복 코드 허용, Props Drilling) |
 | `react-state-reviewer` | React 상태관리 리뷰 (상태 성질 기반 배치, Context 오용, 5단계 에스컬레이터) |
-| `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) |
+| `react-principles-reviewer` | React 컴포넌트 패턴 (데이터 소유, 부수효과 위치, 데이터 Fetching·비동기 경계, 네이밍, 메모이제이션) |
 | `root-cause-reviewer` | Toss Fundamentals - 근본 원인 (증상을 덮는 코드, 에러 처리, 비동기 경쟁, cleanup, 순수 함수 분리, 데드코드) |
 | `a11y-reviewer` | Toss Fundamentals - 접근성 (클릭 가능한 div, 폼과 버튼 type, 요소 중첩, 아이콘 버튼, 입력 레이블, 테이블 행 클릭) |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
@@ -65,6 +64,8 @@ npx binary-agents@latest list
 | `fe-tradeoffs` | 4원칙이 부딪힐 때의 판단 기준, 원칙을 깨도 되는 경우, 하지 말아야 할 제안, 추상화를 볼 때 세 가지 질문 | fundamentals 4개, `/fundamentals-review` |
 | `fe-root-cause` | 진단 → 재현 → 수정 → 재발 방지, 증상 덮기와 근본 원인 수정 구분, 순수 함수 분리, 데드코드, 디버깅 사례 8개 | `root-cause-reviewer` |
 | `fe-a11y` | 접근성 6가지 패턴과 ESLint(jsx-a11y)로 넘길 범위 | `a11y-reviewer` |
+| `fe-react` | 컴포넌트 데이터 소유, 부수효과 위치, 데이터 Fetching·Suspense·AsyncBoundary, 네이밍, 메모이제이션 기준 | `react-principles-reviewer` |
+| `fe-state` | 상태 성질(수명·범위·빈도)로 도구 고르기, 5단계 에스컬레이터, Context·서버 상태·전역 스토어 기준 | `react-state-reviewer` |
 
 ## 슬래시 명령어
 
@@ -176,7 +177,7 @@ Claude가 자동으로:
 1. 대화 컨텍스트에서 설계/요구사항 파악
 2. Explore 에이전트로 코드베이스 분석
 3. Plan 에이전트로 구현 계획 수립
-4. fundamentals-readability/predictability/cohesion/coupling, refactor-analyzer로 설계 검증
+4. fundamentals-readability/predictability/cohesion/coupling으로 설계 검증 (공통화·재사용 판단은 fe-tradeoffs 기준)
 5. React 프로젝트면 react-principles-reviewer도 실행
 6. 종합 구현 계획 리포트 생성
 
@@ -185,7 +186,6 @@ Claude가 자동으로:
 ```
 binary-agents/
 ├── agents/              # 서브에이전트 MD 파일들
-│   ├── refactor-analyzer.md
 │   ├── fundamentals-readability.md
 │   ├── fundamentals-predictability.md
 │   ├── fundamentals-cohesion.md
@@ -209,7 +209,9 @@ binary-agents/
 │   ├── fe-coupling/
 │   ├── fe-tradeoffs/
 │   ├── fe-root-cause/
-│   └── fe-a11y/
+│   ├── fe-a11y/
+│   ├── fe-state/
+│   └── fe-react/
 ├── bin/                 # CLI 실행 파일
 ├── src/                 # CLI 소스 코드
 ├── docs/                # 문서

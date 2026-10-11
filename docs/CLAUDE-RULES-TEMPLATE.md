@@ -36,6 +36,8 @@
 - 코드 품질은 `fe-readability`, `fe-predictability`, `fe-cohesion`, `fe-coupling` 스킬을 따른다.
 - 원칙끼리 부딪히거나 공통화·추상화를 정할 때는 `fe-tradeoffs` 스킬을 따른다.
 - 버그를 고칠 때는 `fe-root-cause` 스킬을, 클릭·폼·버튼 UI를 만들 때는 `fe-a11y` 스킬을 따른다.
+- 상태를 어디에 둘지(useState, Context, 전역 스토어, 서버 상태, URL)는 `fe-state` 스킬을 따른다.
+- 컴포넌트 데이터 소유, 데이터 fetching과 비동기 경계, 네이밍, 메모이제이션은 `fe-react` 스킬을 따른다.
 ```
 
 ---
