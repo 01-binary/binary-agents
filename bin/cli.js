@@ -36,9 +36,10 @@ async function main() {
     const items = await select({
       message: '무엇을 설치하시겠습니까?',
       choices: [
-        { name: '모두 (에이전트 + 명령어)', value: 'all' },
-        { name: '에이전트만', value: 'agents' },
-        { name: '명령어만', value: 'commands' }
+        { name: '모두 (에이전트 + 명령어 + 스킬)', value: 'all' },
+        { name: '에이전트만 (에이전트가 쓰는 스킬 포함)', value: 'agents' },
+        { name: '명령어만', value: 'commands' },
+        { name: '스킬만', value: 'skills' }
       ]
     });
 
@@ -56,6 +57,8 @@ async function main() {
       global: location === 'global',
       agents: items === 'all' || items === 'agents',
       commands: items === 'all' || items === 'commands',
+      // 에이전트가 frontmatter의 skills로 스킬을 미리 불러오므로 에이전트 설치 시 함께 설치
+      skills: items === 'all' || items === 'agents' || items === 'skills',
       clean
     };
 
@@ -77,10 +80,10 @@ async function main() {
 
 function showHelp() {
   console.log(chalk.blue.bold('\n🤖 Binary Agents\n'));
-  console.log('Claude Code 서브에이전트 및 슬래시 명령어 설치 도구\n');
+  console.log('Claude Code 서브에이전트, 슬래시 명령어, 스킬 설치 도구\n');
   console.log(chalk.yellow('사용법:'));
   console.log('  npx binary-agents        대화형 설치');
-  console.log('  npx binary-agents list   사용 가능한 에이전트/명령어 목록');
+  console.log('  npx binary-agents list   사용 가능한 에이전트/명령어/스킬 목록');
   console.log('  npx binary-agents help   도움말 표시\n');
 }
 

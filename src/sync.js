@@ -7,9 +7,10 @@ import ora from 'ora';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 모노레포의 agents, commands 디렉토리 경로
+// 모노레포의 agents, commands, skills 디렉토리 경로
 const REPO_AGENTS_DIR = path.join(__dirname, '..', 'agents');
 const REPO_COMMANDS_DIR = path.join(__dirname, '..', 'commands');
+const REPO_SKILLS_DIR = path.join(__dirname, '..', 'skills');
 
 /**
  * 로컬 agents 디렉토리에서 서브에이전트 파일 목록 가져오기
@@ -40,6 +41,49 @@ async function fetchCommandFiles() {
     return commandFiles;
   } catch (error) {
     throw new Error(`Failed to read commands directory: ${error.message}`);
+  }
+}
+
+/**
+ * 로컬 skills 디렉토리에서 스킬 폴더 목록 가져오기 (SKILL.md가 있는 폴더만)
+ */
+async function fetchSkillDirs() {
+  try {
+    const entries = await fs.readdir(REPO_SKILLS_DIR, { withFileTypes: true });
+    const skillDirs = [];
+
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      try {
+        await fs.access(path.join(REPO_SKILLS_DIR, entry.name, 'SKILL.md'));
+        skillDirs.push(entry.name);
+      } catch {
+        // SKILL.md가 없는 폴더는 스킬이 아니므로 건너뜀
+      }
+    }
+
+    return skillDirs;
+  } catch (error) {
+    throw new Error(`Failed to read skills directory: ${error.message}`);
+  }
+}
+
+/**
+ * 폴더를 하위 파일까지 그대로 복사
+ */
+async function copyDirectory(source, target) {
+  await fs.mkdir(target, { recursive: true });
+  const entries = await fs.readdir(source, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const sourcePath = path.join(source, entry.name);
+    const targetPath = path.join(target, entry.name);
+
+    if (entry.isDirectory()) {
+      await copyDirectory(sourcePath, targetPath);
+    } else {
+      await fs.copyFile(sourcePath, targetPath);
+    }
   }
 }
 
@@ -83,7 +127,7 @@ async function readCommandFile(filename) {
 
 /**
  * .claude 하위 디렉토리 생성
- * @param {string} subdir - 하위 디렉토리 이름 ('agents' 또는 'commands')
+ * @param {string} subdir - 하위 디렉토리 이름 ('agents', 'commands', 'skills')
  * @param {boolean} isGlobal - true면 ~/.claude/{subdir}, false면 현재 디렉토리의 .claude/{subdir}
  */
 async function ensureClaudeDirectory(subdir, isGlobal = false) {
@@ -134,6 +178,28 @@ async function cleanDirectory(dirPath, targetFiles) {
   } catch {
     return 0;
   }
+}
+
+/**
+ * binary-agents로 설치된 스킬 폴더만 삭제
+ * @param {string} dirPath - 대상 디렉토리 (.claude/skills)
+ * @param {string[]} targetDirs - 삭제할 스킬 폴더명 목록
+ */
+async function cleanSkillDirectories(dirPath, targetDirs) {
+  let deletedCount = 0;
+
+  for (const dirName of targetDirs) {
+    const targetPath = path.join(dirPath, dirName);
+    try {
+      await fs.access(targetPath);
+    } catch {
+      continue;
+    }
+    await fs.rm(targetPath, { recursive: true, force: true });
+    deletedCount++;
+  }
+
+  return deletedCount;
 }
 
 /**
@@ -277,10 +343,87 @@ async function syncCommandsOnly(options = {}) {
 }
 
 /**
+ * 스킬 동기화 (스킬은 SKILL.md와 부속 파일이 든 폴더 단위로 복사)
+ */
+async function syncSkillsOnly(options = {}) {
+  const { global: isGlobal = false, clean = false } = options;
+
+  console.log(chalk.yellow.bold('\n📚 Syncing Skills...\n'));
+
+  // 로컬 skills 디렉토리에서 스킬 폴더 목록 가져오기
+  const fetchSpinner = ora('Reading skill directories...').start();
+  let skillDirs;
+
+  try {
+    skillDirs = await fetchSkillDirs();
+    fetchSpinner.succeed(chalk.green(`Found ${skillDirs.length} skills`));
+  } catch (error) {
+    fetchSpinner.fail(chalk.red(`Failed to read skill list: ${error.message}`));
+    return { success: false, error: error.message, type: 'skills' };
+  }
+
+  // .claude/skills 디렉토리 생성
+  const dirMessage = isGlobal ? 'Creating ~/.claude/skills directory...' : 'Creating .claude/skills directory...';
+  const dirSpinner = ora(dirMessage).start();
+  let skillsDir;
+
+  try {
+    skillsDir = await ensureClaudeDirectory('skills', isGlobal);
+    const successMessage = isGlobal ? 'Created ~/.claude/skills directory' : 'Created .claude/skills directory';
+    dirSpinner.succeed(chalk.green(successMessage));
+  } catch (error) {
+    dirSpinner.fail(chalk.red(`Failed to create directory: ${error.message}`));
+    return { success: false, error: error.message, type: 'skills' };
+  }
+
+  // clean 옵션이 있으면 binary-agents 스킬 폴더만 삭제
+  if (clean) {
+    const cleanSpinner = ora('Cleaning binary-agents skills...').start();
+    const deletedCount = await cleanSkillDirectories(skillsDir, skillDirs);
+    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents skills`));
+  }
+
+  // 각 스킬 폴더 복사
+  const results = {
+    success: [],
+    failed: []
+  };
+
+  for (const skillName of skillDirs) {
+    const skillSpinner = ora(`Copying ${skillName}/...`).start();
+
+    try {
+      const sourceDir = path.join(REPO_SKILLS_DIR, skillName);
+      const content = await fs.readFile(path.join(sourceDir, 'SKILL.md'), 'utf-8');
+
+      // YAML frontmatter 검증
+      if (!validateYamlFrontmatter(content)) {
+        throw new Error(`Invalid YAML frontmatter in ${skillName}/SKILL.md`);
+      }
+
+      await copyDirectory(sourceDir, path.join(skillsDir, skillName));
+      skillSpinner.succeed(chalk.green(`✓ ${skillName}/`));
+      results.success.push(skillName);
+    } catch (error) {
+      skillSpinner.fail(chalk.red(`✗ ${skillName}: ${error.message}`));
+      results.failed.push({ filename: skillName, error: error.message });
+    }
+  }
+
+  return {
+    success: results.failed.length === 0,
+    results,
+    type: 'skills',
+    dir: skillsDir,
+    total: skillDirs.length
+  };
+}
+
+/**
  * 메인 동기화 함수
  */
 export async function syncSubagents(options = {}) {
-  const { global: isGlobal = false, agents = true, commands = true, clean = false } = options;
+  const { global: isGlobal = false, agents = true, commands = true, skills = true, clean = false } = options;
 
   console.log(chalk.blue.bold('\n🤖 Binary Agents Sync\n'));
 
@@ -306,6 +449,12 @@ export async function syncSubagents(options = {}) {
     syncResults.push(commandResult);
   }
 
+  // Skills 동기화
+  if (skills) {
+    const skillResult = await syncSkillsOnly({ global: isGlobal, clean });
+    syncResults.push(skillResult);
+  }
+
   // 결과 요약
   console.log(chalk.blue.bold('\n📊 Sync Summary\n'));
 
@@ -313,7 +462,7 @@ export async function syncSubagents(options = {}) {
     if (result.error) {
       console.log(chalk.red(`✗ ${result.type}: Failed - ${result.error}`));
     } else {
-      const icon = result.type === 'agents' ? '🤖' : '⚡';
+      const icon = { agents: '🤖', commands: '⚡', skills: '📚' }[result.type];
       console.log(chalk.green(`${icon} ${result.type}: ${result.results.success.length}/${result.total} successful`));
 
       if (result.results.failed.length > 0) {
@@ -366,6 +515,19 @@ export async function listSubagents() {
     commandFiles.forEach(f => console.log(chalk.white(`  • /${f.replace('.md', '')}`)));
   } catch (error) {
     commandSpinner.fail(chalk.red(`Failed to read commands: ${error.message}`));
+  }
+
+  // Skills 목록
+  const skillSpinner = ora('Reading skill directories...').start();
+
+  try {
+    const skillDirs = await fetchSkillDirs();
+    skillSpinner.succeed(chalk.green(`Found ${skillDirs.length} skills`));
+
+    console.log(chalk.yellow('\n📚 Skills:'));
+    skillDirs.forEach(name => console.log(chalk.white(`  • ${name}`)));
+  } catch (error) {
+    skillSpinner.fail(chalk.red(`Failed to read skills: ${error.message}`));
   }
 
   console.log('');
