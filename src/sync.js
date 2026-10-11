@@ -11,6 +11,107 @@ const __dirname = path.dirname(__filename);
 const REPO_AGENTS_DIR = path.join(__dirname, '..', 'agents');
 const REPO_COMMANDS_DIR = path.join(__dirname, '..', 'commands');
 const REPO_SKILLS_DIR = path.join(__dirname, '..', 'skills');
+const PACKAGE_JSON_PATH = path.join(__dirname, '..', 'package.json');
+
+// 설치 기록 파일 (.claude 폴더 안). 다음 설치 때 패키지에서 빠진 파일을 찾아 지우는 데 쓴다
+const MANIFEST_FILENAME = '.binary-agents-manifest.json';
+
+// 설치 기록을 남기지 않던 1.x 버전이 설치할 수 있었던 모든 파일 이름 (git 이력 기준)
+// 설치 기록이 없는 예전 설치에서도, 이 중 지금 패키지에 없는 이름은 지운다.
+// 앞으로 파일을 지울 때는 설치 기록이 처리하므로 이 목록은 고칠 필요가 없다.
+const PRE_MANIFEST_FILES = {
+  agents: [
+    'advanced-code-reviewer.md',
+    'advanced-junior-checker.md',
+    'advanced-refactor-analyzer.md',
+    'code-reviewer.md',
+    'figma-implementation-checker.md',
+    'fundamentals-code.md',
+    'fundamentals-cohesion.md',
+    'fundamentals-coupling.md',
+    'fundamentals-predictability.md',
+    'fundamentals-readability.md',
+    'junior-checker.md',
+    'junior-friendly-checker.md',
+    'maintainable-code-reviewer.md',
+    'react-performance-optimizer.md',
+    'react-principles-reviewer.md',
+    'react-state-reviewer.md',
+    'refactor-analyzer.md',
+    'subagent-builder.md',
+    'toss-cohesion-analyzer.md'
+  ],
+  commands: [
+    'branch.md',
+    'code-review.md',
+    'commit.md',
+    'design-to-code.md',
+    'figma-check.md',
+    'fundamentals-review.md',
+    'impact-check.md',
+    'pr.md',
+    'review-comments.md',
+    'review-pr.md'
+  ],
+  skills: []
+};
+
+/**
+ * 설치 대상 .claude 폴더 경로
+ */
+function getClaudeRoot(isGlobal) {
+  if (isGlobal) {
+    const homeDir = process.env.HOME || process.env.USERPROFILE;
+    return path.join(homeDir, '.claude');
+  }
+  return path.join(process.cwd(), '.claude');
+}
+
+/**
+ * 패키지 버전 읽기
+ */
+export async function getPackageVersion() {
+  const raw = await fs.readFile(PACKAGE_JSON_PATH, 'utf-8');
+  return JSON.parse(raw).version;
+}
+
+/**
+ * 이전 설치 기록 읽기 (없으면 빈 기록)
+ */
+async function readManifest(claudeRoot) {
+  try {
+    const raw = await fs.readFile(path.join(claudeRoot, MANIFEST_FILENAME), 'utf-8');
+    const parsed = JSON.parse(raw);
+    return {
+      version: parsed.version ?? null,
+      agents: parsed.agents ?? [],
+      commands: parsed.commands ?? [],
+      skills: parsed.skills ?? []
+    };
+  } catch {
+    return { version: null, agents: [], commands: [], skills: [] };
+  }
+}
+
+/**
+ * 설치 기록 저장
+ */
+async function writeManifest(claudeRoot, manifest) {
+  await fs.mkdir(claudeRoot, { recursive: true });
+  const content = { ...manifest, updatedAt: new Date().toISOString() };
+  await fs.writeFile(path.join(claudeRoot, MANIFEST_FILENAME), `${JSON.stringify(content, null, 2)}\n`, 'utf-8');
+}
+
+/**
+ * 예전에 설치했지만 지금 패키지에는 없는 이름 찾기
+ * @param {'agents'|'commands'|'skills'} type
+ * @param {string[]} currentNames - 지금 패키지에 있는 이름
+ * @param {object} previousManifest - 이전 설치 기록
+ */
+function findObsoleteNames(type, currentNames, previousManifest) {
+  const candidates = new Set([...previousManifest[type], ...PRE_MANIFEST_FILES[type]]);
+  return [...candidates].filter(name => !currentNames.includes(name));
+}
 
 /**
  * 로컬 agents 디렉토리에서 서브에이전트 파일 목록 가져오기
@@ -206,7 +307,7 @@ async function cleanSkillDirectories(dirPath, targetDirs) {
  * 서브에이전트 동기화
  */
 async function syncAgentsOnly(options = {}) {
-  const { global: isGlobal = false, clean = false } = options;
+  const { global: isGlobal = false, clean = false, previousManifest } = options;
 
   console.log(chalk.yellow.bold('\n📦 Syncing Agents...\n'));
 
@@ -236,11 +337,12 @@ async function syncAgentsOnly(options = {}) {
     return { success: false, error: error.message, type: 'agents' };
   }
 
-  // clean 옵션이 있으면 binary-agents 파일만 삭제
+  // clean 옵션이 있으면 binary-agents 파일만 삭제 (패키지에서 빠진 예전 파일 포함)
   if (clean) {
     const cleanSpinner = ora('Cleaning binary-agents files...').start();
     const deletedCount = await cleanDirectory(agentsDir, filesToSync);
-    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents files`));
+    const removedCount = await cleanDirectory(agentsDir, findObsoleteNames('agents', filesToSync, previousManifest));
+    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents files, removed ${removedCount} files no longer in binary-agents`));
   }
 
   // 각 파일 복사
@@ -276,7 +378,7 @@ async function syncAgentsOnly(options = {}) {
  * 슬래시 명령어 동기화
  */
 async function syncCommandsOnly(options = {}) {
-  const { global: isGlobal = false, clean = false } = options;
+  const { global: isGlobal = false, clean = false, previousManifest } = options;
 
   console.log(chalk.yellow.bold('\n⚡ Syncing Commands...\n'));
 
@@ -310,7 +412,8 @@ async function syncCommandsOnly(options = {}) {
   if (clean) {
     const cleanSpinner = ora('Cleaning binary-agents files...').start();
     const deletedCount = await cleanDirectory(commandsDir, allFiles);
-    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents files`));
+    const removedCount = await cleanDirectory(commandsDir, findObsoleteNames('commands', allFiles, previousManifest));
+    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents files, removed ${removedCount} files no longer in binary-agents`));
   }
 
   // 각 파일 복사
@@ -346,7 +449,7 @@ async function syncCommandsOnly(options = {}) {
  * 스킬 동기화 (스킬은 SKILL.md와 부속 파일이 든 폴더 단위로 복사)
  */
 async function syncSkillsOnly(options = {}) {
-  const { global: isGlobal = false, clean = false } = options;
+  const { global: isGlobal = false, clean = false, previousManifest } = options;
 
   console.log(chalk.yellow.bold('\n📚 Syncing Skills...\n'));
 
@@ -380,7 +483,8 @@ async function syncSkillsOnly(options = {}) {
   if (clean) {
     const cleanSpinner = ora('Cleaning binary-agents skills...').start();
     const deletedCount = await cleanSkillDirectories(skillsDir, skillDirs);
-    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents skills`));
+    const removedCount = await cleanSkillDirectories(skillsDir, findObsoleteNames('skills', skillDirs, previousManifest));
+    cleanSpinner.succeed(chalk.green(`Cleaned ${deletedCount} binary-agents skills, removed ${removedCount} skills no longer in binary-agents`));
   }
 
   // 각 스킬 폴더 복사
@@ -435,25 +539,41 @@ export async function syncSubagents(options = {}) {
     console.log(chalk.yellow('🧹 Clean mode: binary-agents로 설치한 파일만 삭제 (커스텀 파일 보존)\n'));
   }
 
+  const claudeRoot = getClaudeRoot(isGlobal);
+  const previousManifest = await readManifest(claudeRoot);
+  const packageVersion = await getPackageVersion();
+  const syncOptions = { global: isGlobal, clean, previousManifest };
+
   const syncResults = [];
 
   // Agents 동기화
   if (agents) {
-    const agentResult = await syncAgentsOnly({ global: isGlobal, clean });
+    const agentResult = await syncAgentsOnly(syncOptions);
     syncResults.push(agentResult);
   }
 
   // Commands 동기화
   if (commands) {
-    const commandResult = await syncCommandsOnly({ global: isGlobal, clean });
+    const commandResult = await syncCommandsOnly(syncOptions);
     syncResults.push(commandResult);
   }
 
   // Skills 동기화
   if (skills) {
-    const skillResult = await syncSkillsOnly({ global: isGlobal, clean });
+    const skillResult = await syncSkillsOnly(syncOptions);
     syncResults.push(skillResult);
   }
+
+  // 설치 기록 갱신: 이번에 설치한 종류만 바꾸고, 나머지 종류는 이전 기록을 유지
+  // clean이 아니면 지우지 못한 예전 파일을 다음 정리 때 찾을 수 있게 기록에 남긴다
+  const nextManifest = { ...previousManifest, version: packageVersion };
+  for (const result of syncResults) {
+    if (!result.results) continue;
+    nextManifest[result.type] = clean
+      ? result.results.success
+      : [...new Set([...result.results.success, ...previousManifest[result.type]])];
+  }
+  await writeManifest(claudeRoot, nextManifest);
 
   // 결과 요약
   console.log(chalk.blue.bold('\n📊 Sync Summary\n'));
@@ -476,6 +596,10 @@ export async function syncSubagents(options = {}) {
     }
   }
 
+  const versionMessage = previousManifest.version && previousManifest.version !== packageVersion
+    ? `${previousManifest.version} → ${packageVersion}`
+    : packageVersion;
+  console.log(chalk.cyan(`📌 Installed version: ${versionMessage}`));
   console.log('');
 
   const allSuccess = syncResults.every(r => r.success);
