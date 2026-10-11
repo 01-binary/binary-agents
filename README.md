@@ -9,11 +9,11 @@ Claude Code 서브에이전트, 슬래시 명령어, 스킬 컬렉션 + 동기�
 ## 사용법
 
 ```bash
-# 대화형 설치 (권장)
-npx binary-agents
+# 대화형 설치 (권장): @latest를 붙여야 npx 캐시와 상관없이 항상 최신 버전으로 실행됩니다
+npx binary-agents@latest
 
 # 목록 보기
-npx binary-agents list
+npx binary-agents@latest list
 ```
 
 실행하면 대화형으로 설치 옵션을 선택할 수 있습니다:
@@ -30,11 +30,12 @@ npx binary-agents list
   에이전트만 (에이전트가 쓰는 스킬 포함)
   명령어만
   스킬만
-
-? 기존 binary-agents 파일을 삭제하고 새로 설치할까요?
-❯ 예 (binary-agents 파일만 삭제, 커스텀 파일 보존)
-  아니오 (기존 파일 유지)
 ```
+
+설치할 때마다 설치 위치의 binary-agents 파일을 **패키지 내용과 똑같이** 맞춥니다.
+- 바뀐 파일은 새로 쓰고, 패키지에서 빠진 예전 파일은 지웁니다.
+- 직접 만든 에이전트·명령어·스킬은 이름이 겹치지 않는 한 그대로 둡니다.
+- 예전 버전(npx 캐시)으로 실행하면 시작할 때 경고하고 `@latest`로 다시 실행하라고 안내합니다.
 
 ## 서브에이전트 종류
 
@@ -222,7 +223,11 @@ binary-agents/
 
 1. 로컬 `agents/`, `commands/`, `skills/` 디렉토리에서 목록 읽기
 2. YAML frontmatter 검증 (스킬은 `SKILL.md`)
-3. 사용자 프로젝트의 `.claude/agents/`, `.claude/commands/`, `.claude/skills/` 디렉토리로 복사 (스킬은 폴더째 복사)
+3. 설치 위치의 binary-agents 파일을 지우고 다시 복사 (스킬은 폴더째 복사)
+4. 패키지에서 빠진 예전 파일 정리
+   - 지난 설치 기록(`.claude/.binary-agents-manifest.json`)에는 있는데 지금 패키지에는 없는 파일
+   - 설치 기록이 생기기 전에 패키지에서 빠진 파일(설치기에 목록으로 들어 있음)
+5. 이번 설치 내용과 버전을 설치 기록에 저장
 
 ## 요구사항
 

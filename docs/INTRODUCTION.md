@@ -11,8 +11,10 @@ Claude Code에서 쓸 수 있는 **AI 서브에이전트 + 슬래시 커맨드 +
 설치는 한 줄이면 됩니다:
 
 ```bash
-npx binary-agents
+npx binary-agents@latest
 ```
+
+설치할 때마다 패키지 내용과 똑같이 맞춰서, 패키지에서 빠진 예전 파일은 지우고 직접 만든 파일은 그대로 둡니다.
 
 ---
 
