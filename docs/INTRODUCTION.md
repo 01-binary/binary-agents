@@ -4,7 +4,7 @@
 
 Claude Code에서 쓸 수 있는 **AI 서브에이전트 + 슬래시 커맨드 + 스킬** 모음입니다.
 
-- 서브에이전트: 각자 전문 분야가 다른 **AI 코드 리뷰어 13명**
+- 서브에이전트: 각자 전문 분야가 다른 **AI 코드 리뷰어 9명**
 - 슬래시 커맨드: 커밋, PR, 브랜치 등 **반복 작업 자동화**
 - 스킬: 코드를 쓸 때 자동으로 적용되는 **판단 기준** (4원칙, 원칙 충돌과 예외, 근본 원인, 접근성)
 
@@ -45,40 +45,6 @@ git add .
 
 → 커밋 내역 + 변경 파일 분석 → PR 제목/설명 생성 → GitHub에 PR 생성
 
-### /review-pr — PR 코드 리뷰
-
-PR 링크를 주면 여러 에이전트가 **동시에** 리뷰합니다.
-
-```bash
-/review-pr 123
-/review-pr https://github.com/owner/repo/pull/123
-```
-
-→ PR diff 분석 → 에이전트 병렬 실행 → 심각도별 정리된 리뷰 리포트
-
-### /code-review — 종합 코드 리뷰
-
-PR 없이도 특정 경로의 코드를 종합 리뷰합니다.
-
-```bash
-/code-review src/components
-```
-
-→ 최대 11개 에이전트 병렬 실행 → Critical / Recommended / Best Practices로 분류
-
-### /impact-check — 변경사항 영향 분석
-
-git diff를 분석해서 **뭘 했는지 정리**하고 **side effect를 엄밀하게 검증**합니다.
-
-```bash
-/impact-check              # 자동 (staged 우선)
-/impact-check staged       # staged만
-/impact-check branch       # 브랜치 vs main
-/impact-check <해시>       # 특정 커밋
-```
-
-→ 작업 내용 논리 단위 정리 → 8가지 체크리스트로 side effect 검증 → 🔴/🟡/🟢 위험도 분류 + 근거/조치 제시
-
 ### /review-comments — 리뷰 코멘트 분석
 
 PR에 달린 리뷰 코멘트를 분석해서 뭘 고쳐야 하는지 정리해줍니다.
@@ -112,14 +78,6 @@ PR에 달린 리뷰 코멘트를 분석해서 뭘 고쳐야 하는지 정리해�
 /design-to-code
 ```
 
-### /figma-check — 디자인 vs 구현 비교
-
-Figma MCP로 디자인 정보를 가져와서 실제 코드와 차이를 분석합니다.
-
-```bash
-/figma-check
-```
-
 ---
 
 ## 서브에이전트 (AI 리뷰어)
@@ -128,17 +86,13 @@ Figma MCP로 디자인 정보를 가져와서 실제 코드와 차이를 분석�
 
 | 에이전트 | 전문 분야 |
 |----------|-----------|
-| **code-reviewer** | 아키텍처, 타입 안전성, 에러 처리, 보안, 접근성 |
-| **junior-checker** | 주니어 개발자가 읽기 쉬운 코드인가? |
 | **refactor-analyzer** | 중복 코드, 복잡도, 리팩토링 기회 |
 | **fundamentals-readability** | 가독성 (함수 분리, 네이밍, 매직 넘버) |
 | **fundamentals-predictability** | 예측 가능성 (이름 충돌, 숨은 로직) |
 | **fundamentals-cohesion** | 응집도 (디렉토리 구조, 관련 코드 모음) |
 | **fundamentals-coupling** | 결합도 (단일 책임, Props Drilling) |
 | **react-state-reviewer** | 상태관리 (Context 오용, 서버/클라이언트 상태 분리) |
-| **react-performance-optimizer** | 리렌더링, 메모이제이션, 훅 최적화 |
 | **react-principles-reviewer** | React 개발 원칙 (Props 관리, 부수효과) |
-| **maintainable-code-reviewer** | 유지보수성 (UI-코드 대응, 분리 원칙) |
 | **root-cause-reviewer** | 근본 원인 (증상을 덮는 코드, 에러 처리, 비동기 경쟁, 데드코드) |
 | **a11y-reviewer** | 접근성 (클릭 가능한 div, 폼, 요소 중첩, 아이콘 버튼, 레이블) |
 
@@ -177,13 +131,13 @@ Claude가 관련 코드를 쓸 때 자동으로 불러오고, 리뷰 에이전�
 ### 커밋/PR 전 셀프 체크
 
 ```
-/impact-check → side effect 확인 → 수정 → /commit → /pr
+/fundamentals-review staged → 리포트 확인 → 수정 → /commit → /pr
 ```
 
 ### 코드 품질 점검
 
 ```
-/code-review src/components → 리포트 확인 → 개선
+/fundamentals-review src/components → 리포트 확인 → 개선
 ```
 
 ### 새 기능 시작

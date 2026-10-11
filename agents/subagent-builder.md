@@ -586,12 +586,12 @@ Write 도구로 `.md` 파일 생성:
 
 ### 예시 2: 기술 스택에 맞게 커스터마이징
 
-**사용자:** "code-reviewer를 Vue 3 Composition API에 맞게 적용해줘"
+**사용자:** "react-principles-reviewer를 Vue 3 Composition API에 맞게 적용해줘"
 
 **프로세스:**
 1. **기존 읽기:**
    ```typescript
-   Read("code-reviewer.md")
+   Read("react-principles-reviewer.md")
    ```
 
 2. **Vue 특정 리서치:**
@@ -606,7 +606,7 @@ Write 도구로 `.md` 파일 생성:
 
 4. **새 파일 생성:**
    ```typescript
-   Write("code-reviewer-vue3.md", [커스터마이즈된 내용])
+   Write("vue-principles-reviewer.md", [커스터마이즈된 내용])
    ```
 
 5. **변경사항 설명:**
@@ -616,12 +616,12 @@ Write 도구로 `.md` 파일 생성:
 
 ### 예시 3: 새 평가 기준 추가
 
-**사용자:** "code-reviewer에 성능 관련 기준을 추가해줘"
+**사용자:** "react-principles-reviewer에 성능 관련 기준을 추가해줘"
 
 **프로세스:**
 1. **현재 버전 읽기:**
    ```typescript
-   Read("code-reviewer.md")
+   Read("react-principles-reviewer.md")
    ```
 
 2. **변경사항 결정:**
@@ -632,11 +632,10 @@ Write 도구로 `.md` 파일 생성:
 
 3. **도메인 리서치:**
    - WebSearch("React performance best practices [current year]")
-   - 기존 react-performance-optimizer.md 참고
 
 4. **수정 적용:**
    ```typescript
-   Edit("code-reviewer.md", [변경사항])
+   Edit("react-principles-reviewer.md", [변경사항])
    ```
 
 5. **변경사항 검증:**

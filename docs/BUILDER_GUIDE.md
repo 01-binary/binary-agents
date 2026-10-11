@@ -21,19 +21,19 @@ Builder가 자동으로:
 ### 2. 기존 에이전트 수정
 
 ```bash
-"code-reviewer를 Vue 3 Composition API에 맞게 수정해줘"
+"react-principles-reviewer를 Vue 3 Composition API에 맞게 수정해줘"
 ```
 
 Builder가 자동으로:
-1. 기존 `code-reviewer.md` 읽기
+1. 기존 `react-principles-reviewer.md` 읽기
 2. Vue 3 베스트 프랙티스 검색
 3. React 패턴을 Vue 패턴으로 변경
-4. `code-reviewer-vue3.md` 생성
+4. `vue-principles-reviewer.md` 생성
 
 ### 3. 팀 규칙 추가
 
 ```bash
-"junior-checker에 우리 회사 네이밍 규칙을 추가해줘:
+"react-principles-reviewer에 우리 회사 네이밍 규칙을 추가해줘:
 - 컴포넌트는 PascalCase
 - 훅은 use로 시작
 - 상수는 UPPER_SNAKE_CASE"
@@ -47,17 +47,13 @@ Builder가 자동으로:
 
 | 에이전트 | 용도 |
 |----------|------|
-| `code-reviewer` | 아키텍처, 타입, 에러 처리, 테스트, 접근성, 보안 |
 | `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회 |
-| `junior-checker` | 주니어 친화성 |
 | `fundamentals-readability` | Toss Fundamentals - 가독성 |
 | `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 |
 | `fundamentals-cohesion` | Toss Fundamentals - 응집도 |
 | `fundamentals-coupling` | Toss Fundamentals - 결합도 |
 | `react-state-reviewer` | React 상태관리 (상태 성질 기반 배치, Context, 전역 상태) |
-| `react-performance-optimizer` | React 성능 최적화 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과) |
-| `maintainable-code-reviewer` | 유지보수성 (UI-코드 1:1 대응, 분리의 4원칙) |
 | `root-cause-reviewer` | 근본 원인 (증상을 덮는 코드, 에러 처리, 비동기 경쟁, 데드코드) |
 | `a11y-reviewer` | 접근성 (클릭 가능한 div, 폼, 요소 중첩, 아이콘 버튼, 레이블) |
 
@@ -65,20 +61,20 @@ Builder가 자동으로:
 
 **프레임워크 특화:**
 ```bash
-"code-reviewer를 Next.js 14 App Router에 맞게 수정해줘"
-"fundamentals-readability를 Vue 3에 맞게 적용해줘"
+"react-principles-reviewer를 Next.js App Router에 맞게 수정해줘"
+"refactor-analyzer를 Vue 3에 맞게 적용해줘"
 ```
 
 **도메인 특화:**
 ```bash
-"code-reviewer에 금융 앱 보안 규칙 추가해줘"
+"root-cause-reviewer에 금융 앱 금액 계산 규칙 추가해줘"
 "HIPAA 규정을 확인하는 에이전트 만들어줘"
 ```
 
 **기능 추가:**
 ```bash
 "refactor-analyzer에 자동 수정 기능 추가해줘"
-"junior-checker를 웹 리서치 포함 버전으로 업그레이드해줘"
+"a11y-reviewer를 웹 리서치 포함 버전으로 업그레이드해줘"
 ```
 
 ---

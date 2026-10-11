@@ -4,7 +4,7 @@ Claude Code 서브에이전트, 슬래시 명령어, 스킬 컬렉션 + 동기�
 
 ## 소개
 
-`binary-agents`는 Claude Code의 서브에이전트, 슬래시 명령어, 스킬을 모아놓은 모노레포입니다. 코드 리뷰, 리팩토링 분석, 주니어 개발자 친화성 체크 등 다양한 서브에이전트와 자동 커밋/PR 생성 등의 슬래시 명령어, 코드를 쓸 때 자동으로 적용되는 스킬을 제공하며, 이를 프로젝트에 쉽게 설치할 수 있는 CLI 도구를 포함합니다.
+`binary-agents`는 Claude Code의 서브에이전트, 슬래시 명령어, 스킬을 모아놓은 모노레포입니다. Toss Frontend Fundamentals 기반 코드 리뷰와 설계 검증 서브에이전트, 자동 커밋/PR 생성 등의 슬래시 명령어, 코드를 쓸 때 자동으로 적용되는 스킬을 제공하며, 이를 프로젝트에 쉽게 설치할 수 있는 CLI 도구를 포함합니다.
 
 ## 사용법
 
@@ -40,17 +40,13 @@ npx binary-agents list
 
 | 이름 | 설명 |
 |------|------|
-| `code-reviewer` | 아키텍처, 타입 안전성, 에러 처리, 테스트, 접근성, 보안 리뷰 |
 | `refactor-analyzer` | 코드 중복, 복잡성, 추상화 기회, 코드 스멜 분석 |
-| `junior-checker` | 주니어 개발자 관점 가독성, 네이밍, 복잡도 체크 |
 | `fundamentals-readability` | Toss Fundamentals - 가독성 (코드 분리, 추상화, 함수 쪼개기, 조건 네이밍, 매직 넘버) |
 | `fundamentals-predictability` | Toss Fundamentals - 예측 가능성 (이름 충돌, 반환 타입 통일, 숨은 로직) |
 | `fundamentals-cohesion` | Toss Fundamentals - 응집도 (디렉토리 구조, 매직 넘버 관리, 폼 응집도) |
 | `fundamentals-coupling` | Toss Fundamentals - 결합도 (단일 책임, 중복 코드 허용, Props Drilling) |
 | `react-state-reviewer` | React 상태관리 리뷰 (상태 성질 기반 배치, Context 오용, 5단계 에스컬레이터) |
-| `react-performance-optimizer` | React 리렌더, 메모이제이션, 훅 최적화 분석 |
 | `react-principles-reviewer` | React 개발 원칙 (응집도/명시성, Props 관리, 네이밍, 부수효과, AsyncBoundary) |
-| `maintainable-code-reviewer` | 유지보수성 리뷰 (UI-코드 1:1 대응, 분리의 4원칙, 추상화 원칙) |
 | `root-cause-reviewer` | Toss Fundamentals - 근본 원인 (증상을 덮는 코드, 에러 처리, 비동기 경쟁, cleanup, 순수 함수 분리, 데드코드) |
 | `a11y-reviewer` | Toss Fundamentals - 접근성 (클릭 가능한 div, 폼과 버튼 type, 요소 중첩, 아이콘 버튼, 입력 레이블, 테이블 행 클릭) |
 | `subagent-builder` | 커스텀 서브에이전트 빌더 |
@@ -76,13 +72,9 @@ npx binary-agents list
 | `/commit` | git log 분석 후 컨벤션에 맞는 커밋 메시지 자동 생성 및 커밋 |
 | `/branch` | main에서 pull 후 브랜치 네이밍 컨벤션에 맞는 새 브랜치 생성 |
 | `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
-| `/review-pr` | PR 링크를 받아 변경사항 분석 후 GitHub 스타일 라인별 코드 리뷰 |
-| `/code-review` | 여러 에이전트를 병렬 실행하여 종합 코드 리뷰 |
 | `/fundamentals-review` | Toss Fundamentals 4원칙 + 근본 원인 + 접근성 + 상태관리 리뷰를 병렬 실행하고 이슈 단위로 합쳐 원칙 충돌까지 판단 |
 | `/design-to-code` | 설계/요구사항을 분석하여 구현 계획 생성 |
-| `/figma-check` | Figma MCP로 디자인 정보를 가져와 구현 코드와 비교 분석 |
 | `/review-comments` | 현재 브랜치 PR의 리뷰 코멘트를 분석하여 개선 필요 여부 판단 및 변경 방법 제시 |
-| `/impact-check` | git diff를 분석하여 작업 내용을 정리하고 side effect를 엄밀하게 검증 |
 
 ### /commit 사용법
 
@@ -126,35 +118,6 @@ Claude가 자동으로:
 3. PR 제목 및 설명 생성
 4. GitHub CLI로 PR 생성
 
-### /review-pr 사용법
-
-```bash
-# PR 번호로 실행
-/review-pr 123
-
-# PR URL로 실행
-/review-pr https://github.com/owner/repo/pull/123
-```
-
-Claude가 자동으로:
-1. PR 정보 및 diff 가져오기
-2. 리뷰 타입 선택 (전체 리뷰/커스텀)
-3. 6개 에이전트를 병렬 실행하여 분석
-4. GitHub 스타일 라인별 코드 리뷰 생성
-
-### /code-review 사용법
-
-```bash
-# Claude Code에서 /code-review 실행
-/code-review
-```
-
-Claude가 자동으로:
-1. 리뷰 타입 선택 (전체 리뷰/커스텀)
-2. 선택된 에이전트들을 병렬 실행
-3. 결과 집계 및 우선순위 정렬
-4. 종합 리뷰 리포트 생성
-
 ### /fundamentals-review 사용법
 
 ```bash
@@ -195,31 +158,6 @@ Claude가 자동으로:
 3. 각 코멘트를 분류 (🔴 개선 필요 / 🟡 논의 필요 / 🟢 조치 불필요)
 4. 개선 필요 항목에 왜, 어떻게 바꿔야 하는지 구체적 방법 제시
 
-### /impact-check 사용법
-
-```bash
-# 자동 선택 (staged 우선, 없으면 브랜치 vs main)
-/impact-check
-
-# staged만 분석
-/impact-check staged
-
-# 브랜치 전체 분석
-/impact-check branch
-
-# 특정 커밋 분석
-/impact-check <커밋해시>
-
-# 커밋 범위 분석
-/impact-check <해시1>..<해시2>
-```
-
-Claude가 자동으로:
-1. 지정된 범위의 diff 수집 및 작업 내용을 논리 단위로 정리
-2. 8가지 체크리스트로 side effect 엄밀 검증 (심볼 사용처, Public API, 타입 전파, 시그니처 변경, 설정/환경, 암묵적 동작 변경, 테스트, 외부 의존성)
-3. 발견된 이슈를 🔴 High / 🟡 Medium / 🟢 Low로 분류
-4. 각 이슈에 대해 file:line 근거와 권장 조치 제시
-
 ### /design-to-code 사용법
 
 ```bash
@@ -246,17 +184,13 @@ Claude가 자동으로:
 ```
 binary-agents/
 ├── agents/              # 서브에이전트 MD 파일들
-│   ├── code-reviewer.md
 │   ├── refactor-analyzer.md
-│   ├── junior-checker.md
 │   ├── fundamentals-readability.md
 │   ├── fundamentals-predictability.md
 │   ├── fundamentals-cohesion.md
 │   ├── fundamentals-coupling.md
 │   ├── react-state-reviewer.md
-│   ├── react-performance-optimizer.md
 │   ├── react-principles-reviewer.md
-│   ├── maintainable-code-reviewer.md
 │   ├── root-cause-reviewer.md
 │   ├── a11y-reviewer.md
 │   └── subagent-builder.md
@@ -264,13 +198,9 @@ binary-agents/
 │   ├── commit.md
 │   ├── branch.md
 │   ├── pr.md
-│   ├── review-pr.md
-│   ├── code-review.md
 │   ├── fundamentals-review.md
 │   ├── design-to-code.md
-│   ├── figma-check.md
-│   ├── review-comments.md
-│   └── impact-check.md
+│   └── review-comments.md
 ├── skills/              # 스킬 폴더들 (SKILL.md + 부속 파일)
 │   ├── fe-readability/
 │   ├── fe-predictability/
