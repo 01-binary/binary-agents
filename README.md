@@ -61,6 +61,10 @@ npx binary-agents list
 
 | 이름 | 설명 | 쓰는 에이전트 |
 |------|------|--------------|
+| `fe-readability` | 가독성 8가지: 같이 실행되지 않는 코드 분리, 구현 상세 추상화, 함수 쪼개기, 조건·매직 넘버 이름, 시점 이동, 삼항, 비교 순서 | `fundamentals-readability` |
+| `fe-predictability` | 예측 가능성 3가지: 이름 겹치지 않게, 반환 타입 통일, 숨은 로직 드러내기 | `fundamentals-predictability` |
+| `fe-cohesion` | 응집도 3가지: 함께 수정되는 파일 같은 폴더, 매직 넘버 상수, 폼 응집도 | `fundamentals-cohesion` |
+| `fe-coupling` | 결합도 3가지: 책임 하나씩, 중복 코드 허용, Props Drilling 지우기 | `fundamentals-coupling` |
 | `fe-tradeoffs` | 4원칙이 부딪힐 때의 판단 기준, 원칙을 깨도 되는 경우, 하지 말아야 할 제안, 추상화를 볼 때 세 가지 질문 | fundamentals 4개, `/fundamentals-review` |
 | `fe-root-cause` | 진단 → 재현 → 수정 → 재발 방지, 증상 덮기와 근본 원인 수정 구분, 순수 함수 분리, 데드코드, 디버깅 사례 8개 | `root-cause-reviewer` |
 | `fe-a11y` | 접근성 6가지 패턴과 ESLint(jsx-a11y)로 넘길 범위 | `a11y-reviewer` |
@@ -268,6 +272,10 @@ binary-agents/
 │   ├── review-comments.md
 │   └── impact-check.md
 ├── skills/              # 스킬 폴더들 (SKILL.md + 부속 파일)
+│   ├── fe-readability/
+│   ├── fe-predictability/
+│   ├── fe-cohesion/
+│   ├── fe-coupling/
 │   ├── fe-tradeoffs/
 │   ├── fe-root-cause/
 │   └── fe-a11y/

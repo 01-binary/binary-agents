@@ -2,7 +2,7 @@
 
 프로젝트의 `CLAUDE.md`에 붙여 쓰는 규칙 템플릿입니다. toss/frontend-fundamentals 레포 안 today-i-learned 프로젝트의 `.claude/` 규칙에서 프로젝트 고유 내용(GraphQL, 스타일 도구 등)을 빼고 골라서 일반화했습니다. 프로젝트에 맞게 고쳐 쓰세요.
 
-판단이 필요한 기준(원칙 충돌, 예외)은 `fe-tradeoffs` 스킬에 있으므로, 여기에는 **항상 지킬 짧은 규칙**만 둡니다.
+4원칙과 판단이 필요한 기준(원칙 충돌, 예외)은 `fe-*` 스킬에 있으므로, 여기에는 **항상 지킬 짧은 규칙**만 둡니다.
 
 ---
 
@@ -33,6 +33,7 @@
 - `--no-verify`로 훅을 건너뛰지 않는다.
 
 ## 참고 (상황에 따라 판단)
+- 코드 품질은 `fe-readability`, `fe-predictability`, `fe-cohesion`, `fe-coupling` 스킬을 따른다.
 - 원칙끼리 부딪히거나 공통화·추상화를 정할 때는 `fe-tradeoffs` 스킬을 따른다.
 - 버그를 고칠 때는 `fe-root-cause` 스킬을, 클릭·폼·버튼 UI를 만들 때는 `fe-a11y` 스킬을 따른다.
 ```
