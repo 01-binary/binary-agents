@@ -1,8 +1,10 @@
 ---
 name: fundamentals-cohesion
 description: Toss Frontend Fundamentals 기반 응집도 분석기. 디렉토리 구조, 매직 넘버 관리, 폼 응집도 검토
-tools: Read, Glob, Grep, Bash(gh pr:*), Bash(gh api:*)
+tools: Read, Glob, Grep, Skill, Bash(gh pr:*), Bash(gh api:*)
 model: opus
+skills:
+  - fe-tradeoffs
 ---
 
 # Toss Frontend Fundamentals - 응집도 (Cohesion) 분석기
@@ -200,12 +202,22 @@ const form = useForm({ resolver: zodResolver(schema) });
 - **응집도 vs 가독성**: 함수/변수를 공통화하고 추상화하면 응집도는 올라가지만, 코드가 한 차례 추상화되어 가독성이 떨어질 수 있음
 - **응집도 vs 결합도**: 함께 수정되는 코드를 한 곳에 모으면 응집도는 올라가지만, 해당 모듈의 영향 범위가 넓어질 수 있음
 
-상충이 발견되면 리포트에 명시하되, 판단은 내리지 않고 사실만 기술합니다.
+상충이 발견되면 리포트에 명시하되, 판단은 내리지 않고 사실만 기술합니다. 최종 판단은 리뷰를 합치는 쪽이 `fe-tradeoffs` 스킬 기준으로 합니다.
+
+---
+
+## 제안 전 확인 (fe-tradeoffs 스킬)
+
+`fe-tradeoffs` 스킬에 원칙을 깨도 되는 경우와 하지 말아야 할 제안이 정리되어 있습니다. 미리 로드되지 않았다면 분석 전에 Skill 도구로 불러오세요.
+
+- 발견 사항이 "원칙을 깨도 되는 경우"에 해당하면 이슈로 올리지 않습니다. 필요하면 이유와 함께 Best Practices나 참고로만 적습니다.
+- 수정 방법이 "하지 말아야 할 제안"(과한 추상화, 섣부른 중복 제거, 미래 유연성을 위한 계층 등)에 해당하면 다른 수정 방법을 찾거나 이슈를 내립니다.
 
 ---
 
 ## 분석 프로세스
 
+0. **리뷰 범위 확인**: 호출할 때 파일 목록과 변경 줄 범위를 받았다면 그 범위만 분석합니다. 범위 밖에서 발견한 문제는 마지막에 "범위 밖 참고"로 짧게 적습니다. 범위를 받지 못했으면 아래처럼 전체를 탐색합니다.
 1. `Glob: **/*.tsx, **/*.ts` 로 파일 목록 및 디렉토리 구조 확보
 2. `Grep` 으로 패턴 검색:
    - `../../../` 같은 깊은 상대 경로
@@ -237,6 +249,7 @@ const form = useForm({ resolver: zodResolver(schema) });
 
 **위반 원칙:** [3가지 중 해당 원칙명]
 **파일:** [file:line]
+**확신도:** 높음 / 중간 / 낮음 (판단이 범위 밖 코드에 달려 있으면 낮음)
 
 **문제:**
 [설명]

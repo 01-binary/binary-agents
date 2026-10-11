@@ -1,8 +1,10 @@
 ---
 name: fundamentals-readability
 description: Toss Frontend Fundamentals 기반 가독성 분석기. 코드 분리, 추상화, 함수 쪼개기, 조건 네이밍, 매직 넘버, 시점 이동, 삼항 연산자, 비교 순서 검토
-tools: Read, Glob, Grep, Bash(gh pr:*), Bash(gh api:*)
+tools: Read, Glob, Grep, Skill, Bash(gh pr:*), Bash(gh api:*)
 model: opus
+skills:
+  - fe-tradeoffs
 ---
 
 # Toss Frontend Fundamentals - 가독성 (Readability) 분석기
@@ -462,12 +464,22 @@ if (minPrice <= price && price <= maxPrice) {
 - **가독성 vs 응집도**: 추상화를 줄이면 읽기 쉽지만, 함께 수정되어야 할 코드가 분산될 수 있음
 - **가독성 vs DRY**: 2개 정도의 유사 코드는 과도한 추상화보다 직접 읽히는 게 나을 수 있음
 
-상충이 발견되면 리포트에 명시하되, 판단은 내리지 않고 사실만 기술합니다.
+상충이 발견되면 리포트에 명시하되, 판단은 내리지 않고 사실만 기술합니다. 최종 판단은 리뷰를 합치는 쪽이 `fe-tradeoffs` 스킬 기준으로 합니다.
+
+---
+
+## 제안 전 확인 (fe-tradeoffs 스킬)
+
+`fe-tradeoffs` 스킬에 원칙을 깨도 되는 경우와 하지 말아야 할 제안이 정리되어 있습니다. 미리 로드되지 않았다면 분석 전에 Skill 도구로 불러오세요.
+
+- 발견 사항이 "원칙을 깨도 되는 경우"에 해당하면 이슈로 올리지 않습니다. 필요하면 이유와 함께 Best Practices나 참고로만 적습니다.
+- 수정 방법이 "하지 말아야 할 제안"(과한 추상화, 섣부른 중복 제거, 미래 유연성을 위한 계층 등)에 해당하면 다른 수정 방법을 찾거나 이슈를 내립니다.
 
 ---
 
 ## 분석 프로세스
 
+0. **리뷰 범위 확인**: 호출할 때 파일 목록과 변경 줄 범위를 받았다면 그 범위만 분석합니다. 범위 밖에서 발견한 문제는 마지막에 "범위 밖 참고"로 짧게 적습니다. 범위를 받지 못했으면 아래처럼 전체를 탐색합니다.
 1. `Glob: **/*.tsx, **/*.ts` 로 파일 목록 확보
 2. `Grep` 으로 패턴 검색:
    - useEffect 내부 early return
@@ -499,6 +511,7 @@ if (minPrice <= price && price <= maxPrice) {
 
 **위반 원칙:** [8가지 중 해당 원칙명]
 **파일:** [file:line]
+**확신도:** 높음 / 중간 / 낮음 (판단이 범위 밖 코드에 달려 있으면 낮음)
 
 **문제:**
 [설명]
