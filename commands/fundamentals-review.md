@@ -1,5 +1,5 @@
 ---
-description: Fundamentals 4원칙 + 근본 원인 + 접근성 + 상태관리 관점을 병렬로 리뷰하고, 이슈 단위로 합쳐 원칙 충돌까지 판단
+description: Fundamentals 4원칙 + 근본 원인 + 접근성 + 상태관리 + React 패턴 관점을 병렬로 리뷰하고, 이슈 단위로 합쳐 원칙 충돌까지 판단
 argument-hint: "[branch|staged|unstaged|<경로>] [--save]"
 allowed-tools: Task, Agent, Skill, Read, Glob, Grep, Write, Bash(git status:*), Bash(git diff:*), Bash(git ls-files:*), Bash(git merge-base:*), Bash(git rev-parse:*), Bash(git symbolic-ref:*), Bash(git branch:*)
 ---
@@ -31,8 +31,9 @@ Toss Frontend Fundamentals 기준의 여러 관점을 병렬로 실행하고, �
 | 근본 원인 | `root-cause-reviewer` | 항상 |
 | 접근성 | `a11y-reviewer` | 범위에 `.tsx`·`.jsx` 파일이 있을 때 |
 | 상태관리 | `react-state-reviewer` | React 프로젝트일 때 |
+| React 패턴 | `react-principles-reviewer` | 범위에 `.tsx`·`.jsx` 파일이 있을 때 |
 
-판단 기준이 되는 스킬: `fe-readability`, `fe-predictability`, `fe-cohesion`, `fe-coupling`(4원칙), `fe-tradeoffs`(원칙 충돌과 예외), `fe-root-cause`, `fe-a11y`, `fe-state`(상태 배치). 각 에이전트가 자기 스킬을 미리 불러옵니다.
+판단 기준이 되는 스킬: `fe-readability`, `fe-predictability`, `fe-cohesion`, `fe-coupling`(4원칙), `fe-tradeoffs`(원칙 충돌과 예외), `fe-root-cause`, `fe-a11y`, `fe-state`(상태 배치), `fe-react`(React 컴포넌트 패턴). 각 에이전트가 자기 스킬을 미리 불러옵니다.
 
 ## 작업 순서
 
@@ -74,7 +75,7 @@ git 명령은 하나씩 실행하고 결과를 다음 명령에 넣습니다(`$(
 ### 3. 관점 선택
 
 - 항상: fundamentals 4개 + `root-cause-reviewer`
-- 범위에 `.tsx`·`.jsx`가 있으면: `a11y-reviewer`
+- 범위에 `.tsx`·`.jsx`가 있으면: `a11y-reviewer`, `react-principles-reviewer`
 - `package.json`에 `react` 또는 `next` 의존성이 있으면: `react-state-reviewer`
 
 ### 4. 병렬 실행
@@ -94,15 +95,15 @@ git 명령은 하나씩 실행하고 결과를 다음 명령에 넣습니다(`$(
 
 먼저 Skill 도구로 `fe-tradeoffs`를 불러옵니다.
 
-1. **같은 문제 묶기**: 위치가 같거나 원인이 같은 지적은 한 이슈로 합치고, 해당하는 원칙 태그를 모두 붙입니다. 어느 관점에서 나왔는지도 남깁니다.
+1. **같은 문제 묶기**: 위치가 같거나 원인이 같은 지적은 한 이슈로 합치고, 해당하는 원칙 태그를 모두 붙입니다. 어느 관점에서 나왔는지도 남깁니다. 특히 React 패턴 관점은 예측 가능성(부수효과 위치), 근본 원인(Suspense 경계, 요청 경쟁), 상태관리(props와 state)와 겹치기 쉬우니 하나로 묶습니다.
 2. **원칙 충돌 판단**: 관점끼리 반대 방향을 제안하면(예: 응집도는 공통화, 결합도는 중복 허용) `fe-tradeoffs`의 판단 기준으로 한쪽을 고르고 근거를 남깁니다. 코드만으로 판단할 수 없으면 "확인 필요"와 함께 무엇을 확인해야 하는지 적습니다.
 3. **걸러내기**: `fe-tradeoffs`의 "원칙을 깨도 되는 경우"에 해당하는 지적은 빼고, 수정 방법이 "하지 말아야 할 제안"이면 고치거나 뺍니다.
 4. **검증**: Critical 후보는 메인이 해당 `file:line`을 직접 열어 확인합니다. 코드와 맞지 않으면 버리고, 판단이 범위 밖 코드에 달려 있으면 확신도를 낮춰 Recommended로 내립니다. 확신도 "낮음"은 Critical에 두지 않습니다.
 5. **루브릭 태그**: 이슈마다 해당하는 것을 모두 붙입니다.
-   - ① 코드 모습: 가독성·예측 가능성·응집도·결합도, 추상화, 상태 배치
+   - ① 코드 모습: 가독성·예측 가능성·응집도·결합도, 추상화, 상태 배치, React 컴포넌트 패턴(데이터 소유, 네이밍, 메모이제이션)
    - ② 기술 부채: 데드코드, 같은 일을 두 가지 방식으로 하는 코드, 의존성 중복·미사용, 낡은 API
    - ③ 근본 원인: 버그, 증상을 덮는 코드, 조용한 실패
-   - ④ 사용자 경험: 접근성, 사용자에게 보이는 로딩·에러·빈 상태, 입력 흐름
+   - ④ 사용자 경험: 접근성, 사용자에게 보이는 로딩·에러·빈 상태(Suspense·에러 경계, 요청 waterfall), 입력 흐름
 6. **근거 한 문장**: 이슈마다 "왜 문제인가"를 동료에게 말하듯 한 문장으로 씁니다. 원칙 이름만 대지 말고, 이 코드에서 무엇이 어려워지는지 말합니다.
 7. **정렬**: 사용자에게 보이는 문제(③④)와 변경 위험이 큰 것부터 둡니다.
 
