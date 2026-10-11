@@ -9,11 +9,7 @@ allowed-tools: Task, Read, Glob, Grep
 
 ## 컨텍스트 정보
 
-**현재 프로젝트 타입 감지:**
-!`if [ -f "package.json" ] && grep -q '"react"' package.json 2>/dev/null; then echo "React 프로젝트"; else echo "일반 프로젝트"; fi`
-
-**package.json 주요 의존성:**
-!`cat package.json 2>/dev/null | grep -A 20 '"dependencies"' | head -25 || echo "package.json 없음"`
+프로젝트 타입과 주요 의존성은 1단계에서 `package.json`을 `Read`로 읽어 확인합니다. `package.json`이 없으면 일반 프로젝트로 봅니다.
 
 ---
 
@@ -30,6 +26,7 @@ allowed-tools: Task, Read, Glob, Grep
 - 주요 기능 목록
 - 제약 조건 (기술 스택, 성능, 호환성 등)
 - 참고할 기존 코드나 패턴
+- 프로젝트 타입: `package.json`의 `dependencies`에 `react` 또는 `next`가 있으면 React 프로젝트
 
 ### 2. 코드베이스 분석 (Explore 에이전트)
 

@@ -1,6 +1,6 @@
 ---
 description: 브랜치 차이, 커밋, 변경 파일을 분석하여 Pull Request 자동 생성
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git rev-parse:*), Bash(gh pr:*), Bash(gh auth:*), Bash(gh api:*)
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git rev-parse:*), Bash(git symbolic-ref:*), Bash(gh pr:*), Bash(gh auth:*), Bash(gh api:*)
 ---
 
 # 자동 PR 생성기
@@ -12,27 +12,18 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git b
 **현재 브랜치:**
 !`git rev-parse --abbrev-ref HEAD`
 
-**Main 브랜치 (타겟):**
-!`git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main"`
-
-**이 브랜치의 커밋 (main에 없는):**
-!`git log --oneline main..HEAD 2>/dev/null || git log --oneline origin/main..HEAD 2>/dev/null || echo "커밋을 찾을 수 없습니다"`
-
-**변경 파일 요약:**
-!`git diff --stat main..HEAD 2>/dev/null || git diff --stat origin/main..HEAD 2>/dev/null || echo "변경사항을 찾을 수 없습니다"`
-
-**상세 변경사항:**
-!`git diff main..HEAD --name-status 2>/dev/null || git diff origin/main..HEAD --name-status 2>/dev/null || echo "변경사항을 찾을 수 없습니다"`
-
 **현재 git 상태:**
 !`git status --short`
 
+타겟 브랜치, 커밋, 변경 파일은 아래 1단계에서 조회합니다.
+
 ## 작업 순서
 
-1. **브랜치 정보 분석**
-   - 현재 브랜치 이름 확인
-   - 타겟 브랜치 확인 (보통 main 또는 master)
-   - push되지 않은 커밋이 있는지 확인
+1. **브랜치 정보 분석** (명령은 하나씩 실행하고 결과를 다음 명령에 넣습니다)
+   - 타겟 브랜치: `git symbolic-ref --short refs/remotes/origin/HEAD`의 결과(예: `origin/main`)를 씁니다. 실패하면 `git rev-parse --verify origin/main`, 그다음 `origin/master` 순서로 확인합니다.
+   - 이 브랜치의 커밋: `git log --oneline <타겟>..HEAD`
+   - 변경 파일: `git diff --stat <타겟>...HEAD`, `git diff --name-status <타겟>...HEAD`
+   - push되지 않은 커밋이 있는지 확인: `git status -sb`의 ahead 표시
 
 2. **커밋 분석**
    - PR에 포함될 모든 커밋 검토

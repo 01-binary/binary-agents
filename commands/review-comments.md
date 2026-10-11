@@ -1,6 +1,6 @@
 ---
 description: 현재 브랜치 PR의 코드 리뷰 코멘트를 분석하여 개선 필요 여부 판단 및 변경 방법 제시
-allowed-tools: Bash(gh pr:*), Bash(gh api:*), Bash(git diff:*), Bash(git rev-parse:*), Bash(git log:*), Read, Glob, Grep
+allowed-tools: Bash(gh pr:*), Bash(gh api:*), Bash(git diff:*), Bash(git rev-parse:*), Bash(git log:*), Bash(git remote:*), Read, Glob, Grep
 ---
 
 # PR 리뷰 코멘트 분석기
@@ -12,24 +12,16 @@ allowed-tools: Bash(gh pr:*), Bash(gh api:*), Bash(git diff:*), Bash(git rev-par
 **현재 브랜치:**
 !`git rev-parse --abbrev-ref HEAD`
 
-**현재 브랜치의 PR 정보:**
-!`gh pr view --json number,title,state,author,url,reviewDecision,reviews 2>/dev/null || echo "PR을 찾을 수 없습니다"`
-
-**PR 리뷰 코멘트 (라인별):**
-!`gh pr view --json number --jq '.number' 2>/dev/null | xargs -I{} gh api --hostname "$(git remote get-url origin 2>/dev/null | sed -E 's#^[^@/]+@([^:]+):.*#\1#; s#^https?://([^/]+)/.*#\1#')" repos/:owner/:repo/pulls/{}/comments --jq '.[] | "---\n작성자: \(.user.login)\n파일: \(.path):\(.line // .original_line // "N/A")\n상태: \(.position // "outdated")\n내용: \(.body)\n"' 2>/dev/null || echo "리뷰 코멘트 없음"`
-
-**PR 일반 코멘트:**
-!`gh pr view --json comments --jq '.comments[] | "---\n작성자: \(.author.login)\n내용: \(.body)\n"' 2>/dev/null || echo "일반 코멘트 없음"`
-
-**PR 리뷰 요약:**
-!`gh pr view --json reviews --jq '.reviews[] | "---\n작성자: \(.author.login)\n상태: \(.state)\n내용: \(.body)\n"' 2>/dev/null || echo "리뷰 요약 없음"`
+PR 정보와 코멘트는 아래 1단계에서 조회합니다.
 
 ## 작업 순서
 
-1. **PR 존재 확인**
-   - 현재 브랜치에 열린 PR이 있는지 확인
-   - PR이 없으면 사용자에게 안내하고 종료
-   - PR이 있으면 번호, 제목, 리뷰 상태 표시
+1. **PR 존재 확인과 코멘트 조회** (명령은 하나씩 실행합니다)
+   - `gh pr view --json number,title,state,author,url,reviewDecision,reviews,comments`로 PR 정보, 리뷰 요약, 일반 코멘트를 한 번에 가져옵니다. 실패하면 PR이 없는 것이므로 사용자에게 안내하고 종료합니다.
+   - 라인별 리뷰 코멘트: `gh api repos/{owner}/{repo}/pulls/<PR 번호>/comments --jq '.[] | "---\n작성자: \(.user.login)\n파일: \(.path):\(.line // .original_line // "N/A")\n상태: \(.position // "outdated")\n내용: \(.body)\n"'`
+     - `{owner}`, `{repo}`는 gh가 현재 레포 기준으로 채웁니다.
+     - `git remote get-url origin`의 호스트가 github.com이 아니면(GitHub Enterprise) `gh api --hostname <호스트> ...`로 호출합니다.
+   - PR 번호, 제목, 리뷰 상태를 표시합니다.
 
 2. **코멘트 수집 및 분류**
 
