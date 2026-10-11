@@ -761,7 +761,7 @@ model: haiku  # 빠르고 적절함
 ```
 
 **✅ 더 좋음:**
-```markdown
+````markdown
 ## Output Format
 ```markdown
 # 보안 분석
@@ -779,6 +779,7 @@ model: haiku  # 빠르고 적절함
 **현재 코드:** [코드]
 **수정 방법:** [코드]
 ```
+````
 
 ---
 
