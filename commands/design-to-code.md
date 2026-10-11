@@ -290,7 +290,8 @@ export function NewComponent({ ... }: Props) {
 구현을 시작하려면:
 1. Phase 1부터 순서대로 진행
 2. 각 파일 구현 후 테스트 확인
-3. [추가 안내사항]
+3. 구현을 마치면 `/fundamentals-review`로 변경분을 리뷰
+4. [추가 안내사항]
 ```
 
 ---

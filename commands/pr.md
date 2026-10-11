@@ -53,6 +53,7 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git b
      - `## 변경 사항` (변경사항 요약)
      - `## 변경된 파일` (주요 변경 파일 목록)
      - `## 테스트` (해당되는 경우 테스트 방법)
+     - `## 리뷰 포인트` (리뷰어가 특히 봐 줬으면 하는 부분, 판단이 필요했던 트레이드오프. 이 브랜치에서 `/fundamentals-review`를 돌렸다면 남겨 둔 🟡 항목과 그 이유. 없으면 생략)
    - **"Generated with Claude Code" 또는 AI attribution footer 추가 금지**
    - **생성한 title과 body를 사용자에게 보여주고 확인받기**
    - 사용자가 수정을 원하면 반영 후 다시 확인
