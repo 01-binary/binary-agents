@@ -74,14 +74,15 @@ Task(Plan): "다음 설계를 구현하기 위한 계획을 수립하세요:
 | `fundamentals-predictability` | 예측 가능성 관점에서 설계 검증 |
 | `fundamentals-cohesion` | 응집도 관점에서 설계 검증 |
 | `fundamentals-coupling` | 결합도 관점에서 설계 검증 |
-| `refactor-analyzer` | 추상화 기회, 재사용 가능한 컴포넌트 식별 |
+
+공통화·재사용 기회는 응집도·결합도 에이전트가 `fe-tradeoffs` 기준(함께 안 바뀌면 버그가 나는지, 앞으로도 같은 동작인지)으로 함께 판단합니다.
 
 **조건부 에이전트 (React 프로젝트):**
 
 | 에이전트 | 검증 내용 |
 |----------|----------|
 | `react-state-reviewer` | 상태 성질 기반 배치, Context 오용, 서버/클라이언트 상태 분리 검증 |
-| `react-principles-reviewer` | 컴포넌트 구조, Props 설계, 부수효과 위치 검증 |
+| `react-principles-reviewer` | 컴포넌트 데이터 소유, 부수효과 위치, 데이터 Fetching·비동기 경계, 네이밍 검증 |
 
 **React 프로젝트 감지 방법:**
 ```bash
@@ -105,15 +106,11 @@ Task(fundamentals-predictability): "다음 구현 계획을 예측 가능성 원
 
 Task(fundamentals-cohesion): "다음 구현 계획을 응집도 원칙으로 검증하세요:
 [Plan 결과]
-디렉토리 구조, 매직 넘버 관리, 폼 응집도 관점에서 개선점을 제안하세요."
+디렉토리 구조, 매직 넘버 관리, 폼 응집도 관점에서 개선점을 제안하세요. 공통화할 후보가 보이면 fe-tradeoffs 기준으로 묶을지 판단하세요."
 
 Task(fundamentals-coupling): "다음 구현 계획을 결합도 원칙으로 검증하세요:
 [Plan 결과]
-단일 책임, 중복 코드 허용, Props Drilling 관점에서 개선점을 제안하세요."
-
-Task(refactor-analyzer): "다음 구현 계획에서 추상화 기회를 분석하세요:
-[Plan 결과]
-재사용 가능한 컴포넌트, 공통 유틸리티, 중복 제거 가능한 부분을 식별하세요."
+단일 책임, 중복 코드 허용, Props Drilling 관점에서 개선점을 제안하세요. 재사용·중복 제거 후보는 fe-tradeoffs 기준으로 공통화할지 중복으로 둘지 판단하세요."
 
 // React 프로젝트면 추가
 Task(react-state-reviewer): "다음 구현 계획의 상태관리 전략을 검증하세요:
@@ -122,7 +119,7 @@ Task(react-state-reviewer): "다음 구현 계획의 상태관리 전략을 검�
 
 Task(react-principles-reviewer): "다음 구현 계획을 React 개발 원칙으로 검증하세요:
 [Plan 결과]
-컴포넌트 응집도, Props 설계, 부수효과 위치, AsyncBoundary를 검토하세요."
+컴포넌트 데이터 소유(응집도/명시성), 부수효과 위치, 데이터 Fetching과 비동기 경계(Suspense·AsyncBoundary), 네이밍을 검토하세요."
 ```
 
 ### 5. 결과 종합 및 최종 계획 생성
@@ -220,13 +217,12 @@ export function NewComponent({ ... }: Props) {
 | 응집도 | fundamentals-cohesion | ✅/🟡/🔴 | [피드백] |
 | 결합도 | fundamentals-coupling | ✅/🟡/🔴 | [피드백] |
 
-### refactor-analyzer 검증
-**추상화 기회:**
-- [기회 1]: [설명]
-- [기회 2]: [설명]
+### 공통화·재사용 판단 (응집도·결합도 에이전트)
+**공통화할 것:**
+- [대상]: [근거 — fe-tradeoffs 판단 기준]
 
-**재사용 제안:**
-- [제안 1]
+**중복으로 둘 것:**
+- [대상]: [근거 — 동작이 갈라질 여지 등]
 
 ### react-state-reviewer 검증 (React 프로젝트)
 | 원칙 | 상태 | 피드백 |
@@ -238,9 +234,10 @@ export function NewComponent({ ... }: Props) {
 ### react-principles-reviewer 검증 (React 프로젝트)
 | 원칙 | 상태 | 피드백 |
 |------|------|--------|
-| 컴포넌트 응집도 | ✅/🟡/🔴 | [피드백] |
-| Props 설계 | ✅/🟡/🔴 | [피드백] |
+| 컴포넌트 데이터 소유 | ✅/🟡/🔴 | [피드백] |
 | 부수효과 위치 | ✅/🟡/🔴 | [피드백] |
+| 데이터 Fetching·비동기 경계 | ✅/🟡/🔴 | [피드백] |
+| 네이밍 | ✅/🟡/🔴 | [피드백] |
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: root-cause-reviewer
-description: Toss Frontend Fundamentals 디버깅 가이드 기반 근본 원인 리뷰어. 증상을 덮는 코드(as·!·기본값 폴백), 응답 순서 경쟁, res.ok 미확인, 삼킨 에러, cleanup 누락, 순수 함수로 뺄 로직, 데드코드 검토
+description: Toss Frontend Fundamentals 디버깅 가이드 기반 근본 원인 리뷰어. 증상을 덮는 코드(as·!·기본값 폴백), 응답 순서 경쟁, res.ok 미확인, 삼킨 에러, cleanup 누락, 순수 함수로 뺄 로직, 데드코드, 보안 위험(XSS·하드코딩된 시크릿) 검토
 tools: Read, Glob, Grep, Skill, Bash(gh pr:*), Bash(gh api:*)
 model: opus
 skills:
@@ -37,6 +37,7 @@ skills:
 5. **순수 함수 분리**: 컴포넌트 본문·effect에 섞인 계산, 저장소 접근, 날짜 로직
 6. **데드코드**: 호출하는 곳이 없어진 export·유틸·CSS, 끝난 실험 분기, 쓰지 않는 의존성
 7. **값 변환**: 큰 ID의 `Number()` 변환, DOM 값(문자열)을 타입 단언으로 다른 타입처럼 쓰기
+8. **보안 위험**: 검증하지 않은 HTML 삽입(XSS), 코드나 클라이언트 번들에 들어간 시크릿, 사용자 입력을 그대로 쓰는 URL·리다이렉트·`eval`
 
 ---
 
@@ -45,6 +46,7 @@ skills:
 - **조용한 실패**: 에러 응답이나 값 없음이 사용자에게 알려지지 않고 잘못된 화면·데이터로 이어짐
 - **덮어쓰기 경쟁**: 늦게 온 이전 응답이 최신 결과를 덮을 수 있음
 - **실행되지 않는 가드**: 의도한 조건(권한 확인, 리다이렉트 등)이 실제로는 동작하지 않는 위치나 방식으로 작성됨
+- **보안 취약점**: XSS로 이어지는 HTML 삽입, 하드코딩된 시크릿이나 자격증명
 
 ---
 
@@ -60,6 +62,7 @@ skills:
    - `setInterval`, `addEventListener`, `new WebSocket` 과 cleanup(`return () =>`)
    - `Number\(`, `parseInt\(` 가 ID·URL 파라미터에 쓰였는지
    - `@deprecated`, `TODO`, 실험·플래그 분기
+   - `dangerouslySetInnerHTML`, `innerHTML`, `eval\(`, `(api[_-]?key|secret|token|password)\s*[:=]\s*['"]`
 3. 각 후보에 대해 "어떤 입력·상황에서 무엇이 잘못 보이는가"를 구체적으로 적을 수 있을 때만 이슈로 올립니다. 상황을 못 적으면 확신도를 낮춥니다.
 4. 이슈를 Critical / Recommended Improvements / Best Practices Found로 분류합니다.
 
@@ -82,7 +85,7 @@ skills:
 
 ### 1. [Issue Name]
 
-**위반 항목:** [7가지 중 해당 항목]
+**위반 항목:** [8가지 중 해당 항목]
 **파일:** [file:line]
 **확신도:** 높음 / 중간 / 낮음 (판단이 범위 밖 코드에 달려 있으면 낮음)
 
@@ -134,6 +137,7 @@ skills:
 - 에러 처리 누락: M곳
 - 비동기·생명주기 위험: P곳
 - 데드코드 후보: Q곳
+- 보안 위험: R곳
 ````
 
 ---
