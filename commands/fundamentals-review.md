@@ -32,7 +32,7 @@ Toss Frontend Fundamentals 기준의 여러 관점을 병렬로 실행하고, �
 | 접근성 | `a11y-reviewer` | 범위에 `.tsx`·`.jsx` 파일이 있을 때 |
 | 상태관리 | `react-state-reviewer` | React 프로젝트일 때 |
 
-판단 기준이 되는 스킬: `fe-readability`, `fe-predictability`, `fe-cohesion`, `fe-coupling`(4원칙), `fe-tradeoffs`(원칙 충돌과 예외), `fe-root-cause`, `fe-a11y`. 각 에이전트가 자기 스킬을 미리 불러옵니다.
+판단 기준이 되는 스킬: `fe-readability`, `fe-predictability`, `fe-cohesion`, `fe-coupling`(4원칙), `fe-tradeoffs`(원칙 충돌과 예외), `fe-root-cause`, `fe-a11y`, `fe-state`(상태 배치). 각 에이전트가 자기 스킬을 미리 불러옵니다.
 
 ## 작업 순서
 
