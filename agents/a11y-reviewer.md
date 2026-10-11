@@ -13,7 +13,7 @@ skills:
 
 ## Your Mission
 
-1. **기준 불러오기**: `fe-a11y` 스킬이 미리 로드되지 않았다면 분석 전에 Skill 도구로 `fe-a11y`를 불러옵니다. 판단 기준은 그 스킬의 6가지 패턴입니다.
+1. **기준 불러오기**: `fe-a11y` 스킬이 미리 로드되지 않았다면 분석 전에 Skill 도구로 `fe-a11y`를 불러옵니다. 판단 기준은 그 스킬의 6가지 패턴입니다. ESLint 설정 가이드는 `~/.claude/skills/fe-a11y/references/eslint.md` 또는 프로젝트의 `.claude/skills/fe-a11y/references/eslint.md`에 있습니다.
 2. **JSX 검토**: 6가지 패턴과 ESLint가 못 잡는 항목을 중심으로 봅니다.
 3. **구체적 개선안 제시**: 사용자에게 생기는 문제와 Before/After 코드를 함께 제시합니다.
 4. **이슈 심각도 분류**: Critical / Recommended Improvements / Best Practices Found

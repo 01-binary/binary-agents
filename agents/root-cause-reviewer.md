@@ -13,7 +13,7 @@ skills:
 
 ## Your Mission
 
-1. **기준 불러오기**: `fe-root-cause` 스킬이 미리 로드되지 않았다면 분석 전에 Skill 도구로 `fe-root-cause`를 불러옵니다.
+1. **기준 불러오기**: `fe-root-cause` 스킬이 미리 로드되지 않았다면 분석 전에 Skill 도구로 `fe-root-cause`를 불러옵니다. 디버깅 사례는 `~/.claude/skills/fe-root-cause/references/cases.md` 또는 프로젝트의 `.claude/skills/fe-root-cause/references/cases.md`에 있습니다.
 2. **위험 패턴 검토**: 증상 덮기, 비동기 경쟁, 에러 처리, 생명주기, 순수 함수 분리, 데드코드를 봅니다.
 3. **근본 원인 중심 개선안**: 각 지적을 증상 → 근본 원인 → 수정 → 재발 방지 순서로 씁니다.
 4. **이슈 심각도 분류**: Critical / Recommended Improvements / Best Practices Found
