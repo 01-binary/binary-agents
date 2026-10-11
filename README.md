@@ -64,7 +64,7 @@ npx binary-agents@latest list
 | `fe-tradeoffs` | 4원칙이 부딪힐 때의 판단 기준, 원칙을 깨도 되는 경우, 하지 말아야 할 제안, 추상화를 볼 때 세 가지 질문 | fundamentals 4개, `/fundamentals-review` |
 | `fe-root-cause` | 진단 → 재현 → 수정 → 재발 방지, 증상 덮기와 근본 원인 수정 구분, 순수 함수 분리, 데드코드, 디버깅 사례 8개 | `root-cause-reviewer` |
 | `fe-a11y` | 접근성 6가지 패턴과 ESLint(jsx-a11y)로 넘길 범위 | `a11y-reviewer` |
-| `fe-react` | 컴포넌트 데이터 소유, 부수효과 위치, 데이터 Fetching·Suspense·AsyncBoundary, 네이밍, 메모이제이션 기준 | `react-principles-reviewer` |
+| `fe-react` | 컴포넌트 데이터 소유, 부수효과 위치, 데이터 Fetching·Suspense·AsyncBoundary, 네이밍, 메모이제이션 기준 | `react-principles-reviewer`, `/fundamentals-review`·`/design-to-code`에서 사용 |
 | `fe-state` | 상태 성질(수명·범위·빈도)로 도구 고르기, 5단계 에스컬레이터, Context·서버 상태·전역 스토어 기준 | `react-state-reviewer` |
 
 ## 슬래시 명령어
@@ -74,7 +74,7 @@ npx binary-agents@latest list
 | `/commit` | git log 분석 후 컨벤션에 맞는 커밋 메시지 자동 생성 및 커밋 |
 | `/branch` | main에서 pull 후 브랜치 네이밍 컨벤션에 맞는 새 브랜치 생성 |
 | `/pr` | 브랜치 변경사항 분석 후 PR 자동 생성 |
-| `/fundamentals-review` | Toss Fundamentals 4원칙 + 근본 원인 + 접근성 + 상태관리 리뷰를 병렬 실행하고 이슈 단위로 합쳐 원칙 충돌까지 판단 |
+| `/fundamentals-review` | Toss Fundamentals 4원칙 + 근본 원인 + 접근성 + 상태관리 + React 패턴 리뷰를 병렬 실행하고 이슈 단위로 합쳐 원칙 충돌까지 판단 |
 | `/design-to-code` | 설계/요구사항을 분석하여 구현 계획 생성 |
 | `/review-comments` | 현재 브랜치 PR의 리뷰 코멘트를 분석하여 개선 필요 여부 판단 및 변경 방법 제시 |
 
@@ -141,7 +141,7 @@ Claude가 자동으로:
 
 Claude가 자동으로:
 1. 인자에 맞는 범위의 파일과 변경 줄 수집
-2. 관점 선택 (4원칙 + 근본 원인은 항상, JSX가 있으면 접근성, React면 상태관리)
+2. 관점 선택 (4원칙 + 근본 원인은 항상, JSX가 있으면 접근성과 React 패턴, React면 상태관리)
 3. 관점별 에이전트 병렬 실행
 4. 같은 문제를 하나로 묶고, 원칙끼리 부딪히는 제안은 `fe-tradeoffs` 기준으로 판단
 5. Critical 항목은 해당 코드를 다시 열어 검증
@@ -178,8 +178,9 @@ Claude가 자동으로:
 2. Explore 에이전트로 코드베이스 분석
 3. Plan 에이전트로 구현 계획 수립
 4. fundamentals-readability/predictability/cohesion/coupling으로 설계 검증 (공통화·재사용 판단은 fe-tradeoffs 기준)
-5. React 프로젝트면 react-principles-reviewer도 실행
-6. 종합 구현 계획 리포트 생성
+5. React 프로젝트면 react-state-reviewer, react-principles-reviewer도 실행
+6. 계획에 UI 컴포넌트가 있으면 a11y-reviewer로 접근성 구조 검증
+7. 종합 구현 계획 리포트 생성
 
 ## 저장소 구조
 
