@@ -77,13 +77,13 @@ EOF
 | 명령어 | 설명 | 언제 |
 |--------|------|------|
 | `/binary-agents:spec` | 요구사항 인터뷰 → 레포 직접 읽기 → 1페이지 `SPEC.md`. 구현은 새 세션에서 | tier 3 (공용·수익 로직·큰 기능) 시작 전 |
-| `/binary-agents:fe-verify` | typecheck·test → 두 뷰포트 스크린샷·콘솔 → `/simplify` → a11y·상태 리뷰 → PR. 증거를 PR 본문에 남김 | 구현이 끝났을 때 |
+| `/binary-agents:fe-verify` | typecheck·test → 영향 범위 → 두 뷰포트 스크린샷·콘솔 → `/simplify` → a11y·상태 리뷰. 결과를 REPORT.md로 남김 (커밋·PR은 안 함) | 구현이 끝났을 때 |
 | `/binary-agents:fundamentals-review` | 4원칙 + 근본 원인 + 접근성 + 상태 + React 리뷰를 병렬 실행, 이슈 단위로 합쳐 원칙 충돌까지 판단 | tier 2·3 PR을 사람이 보기 전 |
 | `/binary-agents:review-comments` | PR 리뷰 코멘트를 스킬 기준으로 분석해 개선 필요 여부·변경 방법·답글 초안 | 리뷰 받은 뒤 |
 | `/binary-agents:promote` | 지난 2~4주 반복된 교정·리뷰 지적을 모아 ESLint → 테스트 → 예시 → CLAUDE.md 순으로 승격 **제안서** 작성. 항목별 승인 후에만 적용 | 월 1회, 15분 |
 | `/binary-agents:commit` | 컨벤션에 맞는 커밋 메시지, 섞인 변경은 나눠서 커밋 | |
 | `/binary-agents:branch` | 기본 브랜치 최신화 후 컨벤션에 맞는 브랜치 생성 | |
-| `/binary-agents:pr` | 브랜치 변경 분석 후 PR 생성 | `fe-verify`가 마지막에 호출 |
+| `/binary-agents:pr` | 브랜치 변경 분석 후 PR 생성. `fe-verify`의 REPORT.md가 있으면 본문에 포함 | `fe-verify` 뒤 |
 
 ## 훅
 
@@ -105,9 +105,9 @@ EOF
 
 | tier | 기준 (`templates/github/pr-tier.yml`이 라벨링) | 흐름 |
 |------|------|------|
-| 1 | ≤150줄, ≤5파일, 보호 경로 없음 | 구현 → `fe-verify` → PR → (shadow 기간 후) auto-merge, 사람은 증거만 봄 |
-| 2 | 그 외 | 구현 → `fe-verify` → `fundamentals-review` → 사람이 PR 훑고 승인 |
-| 3 | 광고 SDK·수익·공용 컴포넌트·CI·설정 | `spec` → 새 세션 구현 → `fe-verify` → `fundamentals-review` → 실제 리뷰 |
+| 1 | ≤150줄, ≤5파일, 보호 경로 없음 | 구현 → `fe-verify` → `commit` → `pr` → (shadow 기간 후) auto-merge, 사람은 증거만 봄 |
+| 2 | 그 외 | 구현 → `fe-verify` → `fundamentals-review` → `commit` → `pr` → 사람이 PR 훑고 승인 |
+| 3 | 광고 SDK·수익·공용 컴포넌트·CI·설정 | `spec` → 새 세션 구현 → `fe-verify` → `fundamentals-review` → `commit` → `pr` → 실제 리뷰 |
 
 ### /binary-agents:commit 사용법
 

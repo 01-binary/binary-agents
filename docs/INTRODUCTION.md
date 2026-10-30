@@ -83,7 +83,7 @@ PR에 달린 리뷰 코멘트를 분석해서 뭘 고쳐야 하는지 정리하�
 
 ### /fe-verify — 구현 마무리 검증
 
-typecheck·test → 두 뷰포트 스크린샷·콘솔 → `/simplify` → a11y·상태 리뷰 → PR까지. "됐다" 대신 증거를 PR에 남깁니다.
+typecheck·test → 영향 범위 → 두 뷰포트 스크린샷·콘솔 → `/simplify` → a11y·상태 리뷰. "됐다" 대신 증거를 REPORT.md에 남깁니다. 커밋·PR은 `/commit`, `/pr`로.
 
 ```bash
 /binary-agents:fe-verify
@@ -155,8 +155,8 @@ Claude가 관련 코드를 쓸 때 자동으로 불러오고, 리뷰 에이전�
 ### 새 기능 시작
 
 ```
-작은 변경(tier 1·2): /branch → 구현 → /fe-verify (PR까지)
-큰 변경(tier 3):    /spec → 새 세션에서 SPEC.md 보고 구현 → /fe-verify → /fundamentals-review
+작은 변경(tier 1·2): /branch → 구현 → /fe-verify → /commit → /pr
+큰 변경(tier 3):    /spec → 새 세션에서 SPEC.md 보고 구현 → /fe-verify → /fundamentals-review → /commit → /pr
 ```
 
 ---

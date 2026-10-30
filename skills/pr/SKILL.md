@@ -5,6 +5,8 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git b
 disable-model-invocation: true
 ---
 
+> `.claude/verify/<현재 브랜치>/REPORT.md`가 있으면 PR 본문에 "검증" 섹션으로 그 내용(검사 결과·스크린샷·영향 범위·리뷰어 🟡·건드리지 않은 것)을 넣는다. 스크린샷은 `gh`로 업로드가 안 되므로 경로만 적고 사용자에게 첨부를 안내한다.
+
 # 자동 PR 생성기
 
 현재 브랜치와 main 브랜치의 차이를 분석하여 적절한 PR을 생성합니다.

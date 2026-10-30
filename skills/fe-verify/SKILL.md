@@ -1,8 +1,8 @@
 ---
 name: fe-verify
-description: 프론트엔드 구현을 마무리할 때 사용. typecheck·test → 브라우저 스크린샷·콘솔 증거 → simplify → a11y·상태관리 리뷰 → PR 까지 한 번에 돌리는 검증 루프. "구현 끝났어", "검증해줘", "PR 올려" 류 요청이거나 SPEC.md 기반 구현이 끝났을 때
+description: 프론트엔드 구현을 마무리할 때 사용. typecheck·test → 영향 범위 → 브라우저 스크린샷·콘솔 증거 → simplify → a11y·상태관리 리뷰까지 돌리는 검증 루프 (커밋·PR은 하지 않음). "구현 끝났어", "검증해줘", "PR 올려" 류 요청이거나 SPEC.md 기반 구현이 끝났을 때
 argument-hint: "[SPEC.md 경로 또는 변경 설명]"
-allowed-tools: Read, Glob, Grep, Edit, Write, Skill, Agent, Bash(git:*), Bash(gh:*), Bash(pnpm:*), Bash(npm:*), Bash(yarn:*), Bash(bun:*), Bash(npx:*), Bash(node:*)
+allowed-tools: Read, Glob, Grep, Edit, Write, Skill, Agent, Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git branch:*), Bash(pnpm:*), Bash(npm:*), Bash(yarn:*), Bash(bun:*), Bash(npx:*), Bash(node:*)
 ---
 
 # /fe-verify — 구현 마무리 검증 루프
@@ -48,16 +48,18 @@ allowed-tools: Read, Glob, Grep, Edit, Write, Skill, Agent, Bash(git:*), Bash(gh
 
 🔴 항목은 고치고 1단계부터 다시. 🟡은 PR 본문 "리뷰 포인트"에 적는다. 스타일 지적은 여기서 다루지 않는다 (`/binary-agents:fundamentals-review`는 사람이 필요할 때 따로 호출).
 
-## 5. PR
-`/binary-agents:pr` 로 PR을 만들되 본문에 아래를 반드시 포함:
+## 5. 검증 리포트 (커밋·PR은 하지 않는다)
+`.claude/verify/<branch>/REPORT.md`에 아래를 쓴다. 나중에 `/binary-agents:pr`이 이 파일을 PR 본문에 붙인다.
 - 실행한 명령과 결과 (typecheck / lint / test 통과 여부, 테스트 개수)
-- 스크린샷 (두 뷰포트) 또는 "브라우저 검증 건너뜀: <이유>"
-- 리뷰어 🟡 항목
+- 스크린샷 경로 (두 뷰포트) 또는 "브라우저 검증 건너뜀: <이유>"
 - 영향 범위 (1.5 단계 결과)
+- 리뷰어 🟡 항목
 - 건드리지 않은 것 (SPEC.md의 "건드리지 않는 것" 그대로)
+
+**git commit, git push, gh pr create 를 실행하지 않는다.** 커밋과 PR은 사용자가 `/binary-agents:commit`, `/binary-agents:pr`로 한다.
 
 ## 마지막 출력
 세 줄만:
-1. PR 링크
-2. 통과한 검사 요약 (예: `typecheck ✓ test 14/14 ✓ 스크린샷 2장 ✓ 콘솔 0 ✓`)
-3. 사람이 봐야 할 것이 있으면 그것만 (없으면 "없음")
+1. 통과한 검사 요약 (예: `typecheck ✓ test 14/14 ✓ 스크린샷 2장 ✓ 콘솔 0 ✓ 영향 범위 3곳 ✓`)
+2. 사람이 봐야 할 것이 있으면 그것만 (없으면 "없음")
+3. `다음: /binary-agents:commit → /binary-agents:pr`
