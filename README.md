@@ -80,6 +80,7 @@ EOF
 | `/binary-agents:fe-verify` | typecheck·test → 두 뷰포트 스크린샷·콘솔 → `/simplify` → a11y·상태 리뷰 → PR. 증거를 PR 본문에 남김 | 구현이 끝났을 때 |
 | `/binary-agents:fundamentals-review` | 4원칙 + 근본 원인 + 접근성 + 상태 + React 리뷰를 병렬 실행, 이슈 단위로 합쳐 원칙 충돌까지 판단 | tier 2·3 PR을 사람이 보기 전 |
 | `/binary-agents:review-comments` | PR 리뷰 코멘트를 스킬 기준으로 분석해 개선 필요 여부·변경 방법·답글 초안 | 리뷰 받은 뒤 |
+| `/binary-agents:promote` | 지난 2~4주 반복된 교정·리뷰 지적을 모아 ESLint → 테스트 → 예시 → CLAUDE.md 순으로 승격 **제안서** 작성. 항목별 승인 후에만 적용 | 월 1회, 15분 |
 | `/binary-agents:commit` | 컨벤션에 맞는 커밋 메시지, 섞인 변경은 나눠서 커밋 | |
 | `/binary-agents:branch` | 기본 브랜치 최신화 후 컨벤션에 맞는 브랜치 생성 | |
 | `/binary-agents:pr` | 브랜치 변경 분석 후 PR 생성 | `fe-verify`가 마지막에 호출 |
@@ -92,6 +93,12 @@ EOF
 |--------|------|
 | `PostToolUse` (Edit/Write) | 방금 편집한 파일 하나만 `prettier` → `eslint --fix`. 실패해도 막지 않음 |
 | `Stop` | `typecheck`(없으면 `tsc --noEmit`) + `test` 실패 시 exit 2로 Claude를 되돌림. 마지막 40줄만 전달. `stop_hook_active`·백그라운드 작업 중이면 통과 |
+
+## 운영 루프 (자가개선, 사람 승인제)
+
+- **매 세션**: 아무것도 안 함. auto memory가 교정 사항을 자동 기록.
+- **2~4주마다 15분**: `/binary-agents:promote` → 제안서 보고 항목별 승인 → `/doctor prompt-audit`, `/skill-doctor`로 비대해진 규칙·안 쓰는 스킬 정리.
+- 승격 순서는 항상 ESLint 룰 → 테스트 → 모범 예시 → CLAUDE.md 한 줄. 프로즈 규칙은 마지막 수단.
 
 ## 개발 흐름 (tier)
 
@@ -221,6 +228,7 @@ binary-agents/
 │   ├── spec/                # tier 3 진입점
 │   ├── fe-verify/           # 구현 마무리 검증 루프
 │   ├── fundamentals-review/ # 수동 리뷰
+│   ├── promote/             # 월 1회 승격 제안서
 │   └── commit/ branch/ pr/ review-comments/
 ├── hooks/hooks.json         # PostToolUse 포맷, Stop typecheck+test
 ├── scripts/                 # 훅 스크립트
