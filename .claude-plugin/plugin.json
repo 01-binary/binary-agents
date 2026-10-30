@@ -4,5 +4,8 @@
   "author": { "name": "01-binary" },
   "repository": "https://github.com/01-binary/binary-agents",
   "license": "MIT",
-  "keywords": ["frontend", "react", "typescript", "code-review", "toss-frontend-fundamentals"]
+  "keywords": ["frontend", "react", "typescript", "code-review", "toss-frontend-fundamentals"],
+  "dependencies": [
+    { "name": "mattpocock-skills", "marketplace": "claude-plugins-official" }
+  ]
 }

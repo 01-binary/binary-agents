@@ -2,7 +2,7 @@
 name: fe-verify
 description: 프론트엔드 구현을 마무리할 때 사용. typecheck·test → 영향 범위 → 브라우저 스크린샷·콘솔 증거 → simplify → a11y·상태관리 리뷰까지 돌리는 검증 루프 (커밋·PR은 하지 않음). "구현 끝났어", "검증해줘", "PR 올려" 류 요청이거나 SPEC.md 기반 구현이 끝났을 때
 argument-hint: "[SPEC.md 경로 또는 변경 설명]"
-allowed-tools: Read, Glob, Grep, Edit, Write, Skill, Agent, Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git branch:*), Bash(pnpm:*), Bash(npm:*), Bash(yarn:*), Bash(bun:*), Bash(npx:*), Bash(node:*)
+allowed-tools: Read, Glob, Grep, Edit, Write, Skill, Agent, Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git branch:*), Bash(pnpm:*), Bash(npm:*), Bash(yarn:*), Bash(bun:*), Bash(npx:*), Bash(node:*), Bash(agent-browser:*), Bash(command -v:*)
 ---
 
 # /fe-verify — 구현 마무리 검증 루프
@@ -30,9 +30,14 @@ allowed-tools: Read, Glob, Grep, Edit, Write, Skill, Agent, Bash(git status:*), 
 
 ## 2. 브라우저 증거 (UI 변경이 있을 때)
 순서대로 가능한 방법을 쓴다:
+0. `command -v agent-browser`가 있으면 이걸 우선 쓴다. **사용법은 이 파일에 적지 않고 매번 `agent-browser skills get core`로 불러와 따른다** (설치된 CLI 버전과 항상 맞음. 갱신은 `agent-browser upgrade`). dev 서버를 띄운 뒤 두 뷰포트(1280×800, 375×812)마다:
+   - 변경된 화면을 열고, **이번 변경이 추가한 요소가 보일 때까지 기다린 뒤** 스크린샷 (캐시된 옛 페이지 방지)
+   - `console`·`errors`로 콘솔 error와 잡히지 않은 예외 수집
+   - UI 변경 범위에 `a11y --selector <변경 영역>` — 결과의 critical/serious는 4단계 a11y 리뷰에 같이 넘긴다
+   - 로딩·레이아웃이 바뀐 변경이면 `vitals`로 LCP·CLS를 REPORT.md에 남긴다
 1. 프로젝트에 Playwright(`@playwright/test` 또는 `playwright`)가 있으면: dev 서버를 띄우고 1280×800, 375×812 두 뷰포트로 변경된 화면을 찍는다. `page.on('console')`로 error 레벨 메시지를 모은다. **이번 변경이 추가한 DOM 요소를 `expect(locator).toBeVisible()`로 단언**한다 — 캐시된 옛 페이지를 찍는 사고 방지.
-2. Playwright가 없고 브라우저 도구(Claude in Chrome / 내장 브라우저)가 있으면: dev 서버 띄우고 같은 두 뷰포트로 확인하고 스크린샷을 남긴다.
-3. 둘 다 없으면: 이 단계를 건너뛰었다고 **명시적으로** 보고한다. 건너뛴 걸 숨기지 않는다.
+2. 위 둘이 없고 브라우저 도구(Claude in Chrome / 내장 브라우저)가 있으면: dev 서버 띄우고 같은 두 뷰포트로 확인하고 스크린샷을 남긴다.
+3. 모두 없으면: 이 단계를 건너뛰었다고 **명시적으로** 보고한다. 건너뛴 걸 숨기지 않는다.
 
 스크린샷은 `.claude/verify/<branch>/` 아래에 저장한다 (gitignore 대상).
 
