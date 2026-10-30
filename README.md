@@ -92,12 +92,13 @@ EOF
 | 이벤트 | 동작 |
 |--------|------|
 | `PostToolUse` (Edit/Write) | 방금 편집한 파일 하나만 `prettier` → `eslint --fix`. 실패해도 막지 않음 |
+| `SessionStart` | 마지막 promote 후 21일 지났거나 교정성 커밋이 5개 이상이면 Claude가 먼저 `/binary-agents:promote`를 제안 |
 | `Stop` | `typecheck`(없으면 `tsc --noEmit`) + `test` 실패 시 exit 2로 Claude를 되돌림. 마지막 40줄만 전달. `stop_hook_active`·백그라운드 작업 중이면 통과 |
 
 ## 운영 루프 (자가개선, 사람 승인제)
 
 - **매 세션**: 아무것도 안 함. auto memory가 교정 사항을 자동 기록.
-- **2~4주마다 15분**: `/binary-agents:promote` → 제안서 보고 항목별 승인 → `/doctor prompt-audit`, `/skill-doctor`로 비대해진 규칙·안 쓰는 스킬 정리.
+- **2~4주마다 15분** (시기는 세션 시작 시 Claude가 먼저 제안): `/binary-agents:promote` → 제안서 보고 항목별 승인 → `/doctor prompt-audit`, `/skill-doctor`로 비대해진 규칙·안 쓰는 스킬 정리.
 - 승격 순서는 항상 ESLint 룰 → 테스트 → 모범 예시 → CLAUDE.md 한 줄. 프로즈 규칙은 마지막 수단.
 
 ## 개발 흐름 (tier)

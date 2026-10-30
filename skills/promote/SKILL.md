@@ -2,7 +2,7 @@
 name: promote
 description: 2~4주에 한 번 수동으로 실행. 지난 기간 동안 반복된 교정·리뷰 지적을 모아 ESLint 룰 → 테스트 → 모범 예시 → CLAUDE.md 한 줄 순으로 "승격 제안"을 만든다. 제안만 하고 적용은 사용자가 diff를 보고 승인
 argument-hint: "[기간, 기본 30일]"
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash(git log:*), Bash(git diff:*), Bash(gh pr:*), Bash(gh api:*), AskUserQuestion
+allowed-tools: Read, Glob, Grep, Write, Edit, Bash(mkdir:*), Bash(date:*), Bash(git rev-parse:*), Bash(git log:*), Bash(git diff:*), Bash(gh pr:*), Bash(gh api:*), AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -50,6 +50,12 @@ diff:
 - CLAUDE.md에서 **코드 보면 알 수 있는 줄**, 존재하지 않는 경로, 서로 충돌하는 줄 → 삭제 제안
 - MEMORY.md에서 이미 규칙으로 승격된 항목 → 삭제 제안 (중복 로드 방지)
 - `/doctor prompt-audit`, `/skill-doctor` 돌려보라고 안내 (이 스킬이 대신 못 돌림)
+
+## 6. 마지막에
+승인 처리가 끝나면 아래 명령으로 "마지막 promote 날짜"를 기록한다 (세션 시작 훅이 이걸 보고 다음 제안 시점을 정한다):
+```bash
+mkdir -p ~/.claude/binary-agents && date +%F > ~/.claude/binary-agents/last-promote$(git rev-parse --show-toplevel | tr '/' '_')
+```
 
 ## 하지 않는 것
 - 승인 없이 파일 수정

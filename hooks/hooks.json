@@ -1,5 +1,5 @@
 {
-  "description": "binary-agents: 편집한 파일 포맷(PostToolUse), 세션 종료 전 typecheck+test 게이트(Stop)",
+  "description": "binary-agents: 편집한 파일 포맷(PostToolUse), 세션 종료 전 typecheck+test 게이트(Stop), promote 시기 제안(SessionStart)",
   "hooks": {
     "PostToolUse": [
       {
@@ -8,7 +8,9 @@
           {
             "type": "command",
             "command": "bash",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/format-edited-file.sh"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/format-edited-file.sh"
+            ],
             "timeout": 30
           }
         ]
@@ -20,8 +22,24 @@
           {
             "type": "command",
             "command": "bash",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/stop-verify.sh"],
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/stop-verify.sh"
+            ],
             "timeout": 300
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/promote-nudge.sh"
+            ],
+            "timeout": 10
           }
         ]
       }
