@@ -1,6 +1,9 @@
 {
   "name": "binary-agents",
-  "owner": { "name": "01-binary" },
+  "description": "01-binary 개인 프론트엔드 파이프라인 플러그인 마켓플레이스",
+  "owner": {
+    "name": "01-binary"
+  },
   "plugins": [
     {
       "name": "binary-agents",
