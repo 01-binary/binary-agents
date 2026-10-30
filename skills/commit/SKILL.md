@@ -1,6 +1,8 @@
 ---
+name: commit
 description: staged 변경사항과 최근 커밋을 분석하여 컨벤션에 맞는 커밋 메시지를 만들고, 여러 논리적 변경이 섞였으면 나눠서 커밋
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git commit:*), Bash(git add:*), Bash(git restore:*)
+disable-model-invocation: true
 ---
 
 # 자동 커밋 생성기

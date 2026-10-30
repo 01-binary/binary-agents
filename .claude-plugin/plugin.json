@@ -1,0 +1,8 @@
+{
+  "name": "binary-agents",
+  "description": "프론트엔드(React/TS) 구현·검증·리뷰 파이프라인. Toss Frontend Fundamentals 기반 리뷰 에이전트와 fe-* 스킬, 구현 마무리 검증 스킬, lint/typecheck/test 훅을 묶은 플러그인",
+  "author": { "name": "01-binary" },
+  "repository": "https://github.com/01-binary/binary-agents",
+  "license": "MIT",
+  "keywords": ["frontend", "react", "typescript", "code-review", "toss-frontend-fundamentals"]
+}

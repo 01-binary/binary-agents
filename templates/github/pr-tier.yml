@@ -1,0 +1,42 @@
+# 프로젝트의 .github/workflows/pr-tier.yml 로 복사해서 쓴다.
+# PR이 열리거나 갱신될 때 변경 경로·줄 수로 tier 라벨을 붙인다. 머지는 하지 않는다.
+#   tier-1: 작은 변경, 보호 경로 없음  → (2~3주 shadow 후) branch protection + auto-merge 대상
+#   tier-2: 중간 변경                  → 사람이 PR 훑어보고 승인
+#   tier-3: 보호 경로 또는 큰 변경     → SPEC.md + 실제 리뷰
+name: pr-tier
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  pull-requests: write
+  contents: read
+jobs:
+  tier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: compute tier
+        id: t
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          # 프로젝트에 맞게 수정. 광고 SDK·수익·공용·CI·설정은 항상 tier-3
+          PROTECTED: '^(src/ads/|src/revenue/|src/shared/|\.github/|package\.json|pnpm-lock\.yaml|tsconfig)'
+          T1_MAX_LINES: '150'
+          T1_MAX_FILES: '5'
+        run: |
+          files=$(git diff --name-only "$BASE" "$HEAD")
+          nfiles=$(printf '%s\n' "$files" | grep -c . || true)
+          lines=$(git diff --numstat "$BASE" "$HEAD" | awk '{a+=$1+$2} END{print a+0}')
+          if printf '%s\n' "$files" | grep -Eq "$PROTECTED"; then tier=3
+          elif [ "$lines" -le "$T1_MAX_LINES" ] && [ "$nfiles" -le "$T1_MAX_FILES" ]; then tier=1
+          else tier=2; fi
+          echo "tier=$tier" >> "$GITHUB_OUTPUT"
+          echo "files=$nfiles lines=$lines tier=$tier"
+      - name: label
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          pr=${{ github.event.pull_request.number }}
+          gh pr edit "$pr" --remove-label tier-1,tier-2,tier-3 2>/dev/null || true
+          gh pr edit "$pr" --add-label "tier-${{ steps.t.outputs.tier }}"

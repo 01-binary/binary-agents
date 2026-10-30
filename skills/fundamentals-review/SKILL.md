@@ -1,7 +1,9 @@
 ---
+name: fundamentals-review
 description: Fundamentals 4원칙 + 근본 원인 + 접근성 + 상태관리 + React 패턴 관점을 병렬로 리뷰하고, 이슈 단위로 합쳐 원칙 충돌까지 판단
 argument-hint: "[branch|staged|unstaged|<경로>] [--save]"
 allowed-tools: Task, Agent, Skill, Read, Glob, Grep, Write, Bash(git status:*), Bash(git diff:*), Bash(git ls-files:*), Bash(git merge-base:*), Bash(git rev-parse:*), Bash(git symbolic-ref:*), Bash(git branch:*)
+disable-model-invocation: true
 ---
 
 # Fundamentals 리뷰
@@ -21,6 +23,8 @@ Toss Frontend Fundamentals 기준의 여러 관점을 병렬로 실행하고, �
 ```
 
 ## 사용 관점
+
+> 플러그인으로 설치된 경우 에이전트 이름은 `binary-agents:` 프리픽스가 붙는다 (예: `binary-agents:a11y-reviewer`). Agent 호출 시 프리픽스 이름을 쓴다.
 
 | 관점 | 에이전트 | 실행 조건 |
 |------|----------|----------|

@@ -1,6 +1,8 @@
 ---
+name: pr
 description: 브랜치 차이, 커밋, 변경 파일을 분석하여 Pull Request 자동 생성
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git rev-parse:*), Bash(git symbolic-ref:*), Bash(gh pr:*), Bash(gh auth:*), Bash(gh api:*)
+disable-model-invocation: true
 ---
 
 # 자동 PR 생성기

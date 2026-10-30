@@ -141,6 +141,8 @@ async function fetchCommandFiles() {
 
     return commandFiles;
   } catch (error) {
+    // commands/ 는 skills/ 로 통합됨 (플러그인 전환). 디렉토리가 없으면 빈 목록.
+    if (error.code === 'ENOENT') return [];
     throw new Error(`Failed to read commands directory: ${error.message}`);
   }
 }

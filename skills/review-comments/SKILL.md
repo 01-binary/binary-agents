@@ -1,7 +1,9 @@
 ---
+name: review-comments
 description: PR 리뷰 코멘트를 분석하여 개선 필요 여부를 판단하고 변경 방법과 답글 초안 제시 (resolve된 스레드 제외)
 argument-hint: "[PR 번호 또는 URL]"
 allowed-tools: Bash(gh pr:*), Bash(gh api:*), Bash(git diff:*), Bash(git rev-parse:*), Bash(git log:*), Bash(git remote:*), Read, Glob, Grep, Skill
+disable-model-invocation: true
 ---
 
 # PR 리뷰 코멘트 분석기

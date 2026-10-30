@@ -1,7 +1,9 @@
 ---
+name: branch
 description: 기본 브랜치(main/master 자동 감지 또는 --from 지정)를 최신으로 받은 뒤 프로젝트의 브랜치 네이밍 컨벤션을 따르는 새 브랜치 생성
 argument-hint: "[--from <기준 브랜치>] [작업 설명]"
 allowed-tools: Bash(git branch:*), Bash(git checkout:*), Bash(git switch:*), Bash(git pull:*), Bash(git fetch:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git remote:*), Bash(git symbolic-ref:*), Bash(git for-each-ref:*), Bash(git status:*)
+disable-model-invocation: true
 ---
 
 # 자동 브랜치 생성기

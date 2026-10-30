@@ -73,13 +73,20 @@ PR에 달린 리뷰 코멘트를 분석해서 뭘 고쳐야 하는지 정리하�
 
 → 범위 수집 → 관점별 에이전트 병렬 실행 → 이슈 단위로 합치기 + 원칙 충돌 판단 → Critical과 라이브러리 동작 주장 검증 → 이슈마다 문제·현재 코드·수정 코드·해결·확인을 짧게 출력
 
-### /design-to-code — 설계 → 구현 계획
+### /spec — 구현 전 1페이지 스펙 (tier 3)
 
-요구사항을 설명하면 코드베이스를 분석해서 구현 계획을 만들어줍니다.
+공용 코드·수익 로직·큰 기능을 건드릴 때 먼저 씁니다. 모호한 요구사항은 질문하고, 레포를 직접 읽어 `SPEC.md`를 만든 뒤 새 세션에서 구현하도록 안내합니다.
 
 ```bash
-# 먼저 요구사항 설명 후
-/design-to-code
+/binary-agents:spec 프로필 페이지 — 이미지·이름·이메일, 수정 모달
+```
+
+### /fe-verify — 구현 마무리 검증
+
+typecheck·test → 두 뷰포트 스크린샷·콘솔 → `/simplify` → a11y·상태 리뷰 → PR까지. "됐다" 대신 증거를 PR에 남깁니다.
+
+```bash
+/binary-agents:fe-verify
 ```
 
 ---
@@ -148,7 +155,8 @@ Claude가 관련 코드를 쓸 때 자동으로 불러오고, 리뷰 에이전�
 ### 새 기능 시작
 
 ```
-/branch → 요구사항 설명 → /design-to-code → 구현 → /commit → /pr
+작은 변경(tier 1·2): /branch → 구현 → /fe-verify (PR까지)
+큰 변경(tier 3):    /spec → 새 세션에서 SPEC.md 보고 구현 → /fe-verify → /fundamentals-review
 ```
 
 ---
@@ -157,12 +165,13 @@ Claude가 관련 코드를 쓸 때 자동으로 불러오고, 리뷰 에이전�
 
 ```
 binary-agents/
-├── agents/     ← AI 리뷰어 정의 (마크다운 파일)
-├── commands/   ← 슬래시 커맨드 정의 (마크다운 파일)
-├── skills/     ← 스킬 정의 (SKILL.md + 부속 파일)
-├── src/        ← 설치 도구 (sync engine)
-└── bin/        ← CLI 진입점
+├── .claude-plugin/ ← 플러그인 매니페스트 + 마켓플레이스
+├── agents/         ← AI 리뷰어 정의 (마크다운 파일)
+├── skills/         ← 스킬·슬래시 커맨드 정의 (SKILL.md + 부속 파일)
+├── hooks/ scripts/ ← 포맷·typecheck·test 훅
+├── templates/      ← GitHub tier 라벨 워크플로
+└── bin/ src/       ← 예전 npx 설치 도구 (호환용)
 ```
 
-에이전트와 커맨드는 전부 **마크다운 파일 하나**로, 스킬은 **SKILL.md가 든 폴더 하나**로 정의됩니다.
+에이전트는 **마크다운 파일 하나**로, 스킬은 **SKILL.md가 든 폴더 하나**로 정의됩니다.
 코드를 안 짜도 새 에이전트를 만들 수 있습니다.

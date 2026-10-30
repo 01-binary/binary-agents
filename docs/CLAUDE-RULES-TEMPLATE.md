@@ -11,6 +11,26 @@
 ```markdown
 # 개발 규칙
 
+## 명령 (검증은 이걸로 돌린다)
+- typecheck: `pnpm typecheck` · lint: `pnpm lint` · test: `pnpm test` · dev: `pnpm dev` (포트 3000)
+- 작업이 끝났다는 뜻 = 위 셋이 통과하고, UI 변경이면 아래 "UI 완료 정의"까지 충족
+- **코드 변경 작업이 끝나면 항상 `/binary-agents:fe-verify`를 실행**하고, 그 마지막 세 줄(PR·통과 요약·사람이 볼 것)로 보고한다. "됐습니다"로 끝내지 않는다
+
+## 모범 예시 (새 코드는 이 파일의 패턴을 따른다)
+- 컴포넌트: `src/components/Button/`  · 훅: `src/hooks/useXxx.ts` · API 호출: `src/api/posts.ts`
+  (규칙 열 줄보다 예시 한 파일이 더 잘 먹힌다. 실제 경로로 바꿔 쓸 것)
+
+## 사람 승인 없이 건드리지 않는 경로 (tier 3)
+- `src/ads/**`, `src/revenue/**` — 광고 SDK·수익 로직
+- `src/shared/**`, 공용 디자인 시스템 컴포넌트
+- CI 워크플로, 패키지 매니저 설정
+- 이 경로를 바꿔야 하면 먼저 `/binary-agents:spec`으로 SPEC.md를 만들고 승인받는다
+
+## UI 완료 정의
+- 1280×800, 375×812 두 뷰포트 스크린샷에서 변경된 화면이 보인다
+- 콘솔 error 0, 가로 스크롤 없음
+- 이번 변경이 추가한 요소를 테스트에서 `getByRole`로 찾을 수 있다
+
 ## 필수 (반드시 지킴)
 
 ### 위치
@@ -31,6 +51,7 @@
 ### 커밋
 - 구조 변경(리팩터링)과 동작 변경을 한 커밋에 섞지 않는다.
 - `--no-verify`로 훅을 건너뛰지 않는다.
+- 테스트를 통과시키려고 테스트를 약화시키지 않는다.
 
 ## 참고 (상황에 따라 판단)
 - 코드 품질은 `fe-readability`, `fe-predictability`, `fe-cohesion`, `fe-coupling` 스킬을 따른다.

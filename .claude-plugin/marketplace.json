@@ -1,0 +1,11 @@
+{
+  "name": "binary-agents",
+  "owner": { "name": "01-binary" },
+  "plugins": [
+    {
+      "name": "binary-agents",
+      "description": "프론트엔드 구현·검증·리뷰 파이프라인 (Toss Frontend Fundamentals 기반)",
+      "source": "./"
+    }
+  ]
+}
