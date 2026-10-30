@@ -4,6 +4,9 @@
   "owner": {
     "name": "01-binary"
   },
+  "allowCrossMarketplaceDependenciesOn": [
+    "claude-plugins-official"
+  ],
   "plugins": [
     {
       "name": "binary-agents",

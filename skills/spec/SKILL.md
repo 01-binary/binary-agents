@@ -2,7 +2,7 @@
 name: spec
 description: 큰 기능이나 공용 코드·수익 로직을 건드리는 작업(tier 3)을 시작하기 전에 사용. 요구사항을 인터뷰로 확정하고 레포를 직접 읽어 1페이지 SPEC.md를 만든다. 구현은 새 세션에서 SPEC.md를 읽고 진행
 argument-hint: "[기능 설명 또는 티켓 링크]"
-allowed-tools: Read, Glob, Grep, Write, Bash(git log:*), Bash(git ls-files:*), AskUserQuestion
+allowed-tools: Read, Glob, Grep, Write, Skill, Bash(git log:*), Bash(git ls-files:*), AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -13,7 +13,12 @@ plan mode 대신 쓰는 tier 3 진입점이다. 목표는 **다음 세션이 이
 ## 절차
 
 ### 1. 인터뷰 (모호하면 멈춘다)
-요구사항에서 아래 중 하나라도 비어 있으면 AskUserQuestion으로 **한 번에 최대 3개**만 묻는다. 추측으로 채우지 않는다.
+**`mattpocock-skills:grilling` 스킬이 있으면 먼저 로드해서 그 방식으로 인터뷰한다** (이 플러그인의 의존성으로 함께 설치된다. 복사하지 않고 불러 쓰므로 원본이 업데이트되면 그대로 따라간다). 단 아래 규칙이 grilling보다 우선한다:
+- 아래 4가지는 반드시 질문 트리에 넣는다
+- 레포에서 확인할 수 있는 사실(파일 위치, 기존 컴포넌트, 명령)은 묻지 않고 2단계처럼 **직접** Glob/Grep/Read로 확인한다. 서브에이전트를 띄우지 않는다
+- 사용자가 "이해 일치"를 확인하면 바로 2단계로 넘어간다. 구현은 하지 않는다
+
+grilling 스킬이 없으면 아래 중 비어 있는 것만 AskUserQuestion으로 **한 번에 최대 3개**씩 묻는다. 추측으로 채우지 않는다.
 - 사용자에게 보이는 결과가 뭔가 (화면·동작)
 - 건드리면 안 되는 것 (광고 SDK·수익 로직·공용 컴포넌트·외부 계약)
 - 완료 판정 기준 (어떤 테스트·스크린샷이 있어야 끝인가)

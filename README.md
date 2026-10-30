@@ -33,6 +33,15 @@ cat >> ~/.claude/CLAUDE.md <<'EOF'
 EOF
 ```
 
+### 함께 쓰는 외부 도구 (복사하지 않고 연결)
+
+| 도구 | 설치 | 쓰는 곳 | 갱신 |
+|---|---|---|---|
+| `mattpocock-skills` 플러그인의 `grilling` 스킬 | 이 플러그인 설치 시 의존성으로 자동 설치 (`claude-plugins-official`) | `/spec` 1단계 인터뷰 | 플러그인 자동 업데이트 |
+| [`agent-browser`](https://github.com/vercel-labs/agent-browser) CLI | `npm install -g agent-browser && agent-browser install` (머신마다 1회) | `/fe-verify` 2단계 브라우저 증거 | `agent-browser upgrade` |
+
+둘 다 없어도 `/spec`·`/fe-verify`는 기존 방식으로 동작합니다. 이미 설치한 머신은 `claude plugin marketplace update binary-agents` 후 `/reload-plugins`를 하면 빠진 의존성이 설치됩니다. `mattpocock-skills`에는 모델이 스스로 부르는 `code-review`·`tdd` 등도 들어 있으니, 리뷰가 겹치면 `/plugin`에서 해당 스킬을 확인하세요.
+
 `plugin.json`에 `version`을 두지 않으므로 커밋마다 새 버전으로 인식됩니다. 한 세션만 써 보려면 `claude --plugin-dir ~/code/chore/binary-agents`.
 
 프로젝트 쪽에는 `docs/CLAUDE-RULES-TEMPLATE.md`를 참고해 **30줄 안쪽의 CLAUDE.md**만 두면 됩니다. GitHub 쪽(tier 라벨, branch protection)은 `templates/github/README.md`.
