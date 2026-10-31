@@ -37,6 +37,8 @@ allowed-tools: Read, Glob, Grep, Edit, Write, Skill, Agent, Bash(git status:*), 
    - 로딩·레이아웃이 바뀐 변경이면 `vitals`로 LCP·CLS를 REPORT.md에 남긴다
 1. 프로젝트에 Playwright(`@playwright/test` 또는 `playwright`)가 있으면: dev 서버를 띄우고 1280×800, 375×812 두 뷰포트로 변경된 화면을 찍는다. `page.on('console')`로 error 레벨 메시지를 모은다. **이번 변경이 추가한 DOM 요소를 `expect(locator).toBeVisible()`로 단언**한다 — 캐시된 옛 페이지를 찍는 사고 방지.
 2. 위 둘이 없고 브라우저 도구(Claude in Chrome / 내장 브라우저)가 있으면: dev 서버 띄우고 같은 두 뷰포트로 확인하고 스크린샷을 남긴다.
+   로딩·레이아웃·늦게 채워지는 값(카운트다운, 건수, 클라이언트 시간)을 건드렸으면 페이지를 새로 연 뒤 JS로 CLS를 재서 REPORT.md에 남긴다(통과 기준 0.05 이하):
+   `await new Promise(r => { let s = 0; new PerformanceObserver(l => { for (const e of l.getEntries()) if (!e.hadRecentInput) s += e.value; }).observe({ type: "layout-shift", buffered: true }); setTimeout(() => r(s), 3000); })`
 3. 모두 없으면: 이 단계를 건너뛰었다고 **명시적으로** 보고한다. 건너뛴 걸 숨기지 않는다.
 
 스크린샷은 `.claude/verify/<branch>/` 아래에 저장한다 (gitignore 대상).
