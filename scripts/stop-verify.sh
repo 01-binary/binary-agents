@@ -27,6 +27,19 @@ has_script() { jq -e --arg s "$1" '.scripts[$s] // empty' package.json >/dev/nul
 
 log="$(mktemp)"; fail=0
 
+# turbo 모노레포면 HEAD 대비 바뀐 패키지(커밋 안 한 변경 포함)만 검사한다 — 전체 앱을 돌리면 느리고 상관없는 앱 실패에 걸린다
+if [ -f turbo.json ]; then
+  npx turbo run check-types test --filter='[HEAD]' >"$log" 2>&1 || fail=1
+  if [ $fail -ne 0 ]; then
+    {
+      echo "[binary-agents stop-verify] 바뀐 패키지의 check-types/test 실패. 고치고 다시 끝내라. 마지막 40줄:"
+      tail -n 40 "$log"
+    } >&2
+    rm -f "$log"; exit 2
+  fi
+  rm -f "$log"; exit 0
+fi
+
 if has_script typecheck; then
   $run typecheck >"$log" 2>&1 || fail=1
 elif [ -f tsconfig.json ] && [ -x node_modules/.bin/tsc ]; then

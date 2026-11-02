@@ -102,7 +102,7 @@ EOF
 |--------|------|
 | `PostToolUse` (Edit/Write) | 방금 편집한 파일 하나만 `prettier` → `eslint --fix`. 실패해도 막지 않음 |
 | `SessionStart` | 마지막 promote 후 21일 지났거나 교정성 커밋이 5개 이상이면 Claude가 먼저 `/binary-agents:promote`를 제안 |
-| `Stop` | `typecheck`(없으면 `tsc --noEmit`) + `test` 실패 시 exit 2로 Claude를 되돌림. 마지막 40줄만 전달. `stop_hook_active`·백그라운드 작업 중이면 통과 |
+| `Stop` | `typecheck`(없으면 `tsc --noEmit`) + `test` 실패 시 exit 2로 Claude를 되돌림. turbo 모노레포(`turbo.json`)면 HEAD 대비 바뀐 패키지만 `check-types`+`test`(`turbo --filter='[HEAD]'`). 마지막 40줄만 전달. 변경이 없거나 `stop_hook_active`·백그라운드 작업 중이면 통과 |
 
 ## 운영 루프 (자가개선, 사람 승인제)
 
