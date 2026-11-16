@@ -109,6 +109,57 @@ EOF
 - **매 세션**: 아무것도 안 함. auto memory가 교정 사항을 자동 기록.
 - **2~4주마다 15분** (시기는 세션 시작 시 Claude가 먼저 제안): `/binary-agents:promote` → 제안서 보고 항목별 승인 → `/doctor prompt-audit`, `/skill-doctor`로 비대해진 규칙·안 쓰는 스킬 정리.
 - 승격 순서는 항상 ESLint 룰 → 테스트 → 모범 예시 → CLAUDE.md 한 줄. 프로즈 규칙은 마지막 수단.
+- **스킬을 고칠 때** (promote 레벨 5 포함): 승인 전에 `claude plugin eval .`로 전후 점수를 비교. 아래 [eval](#eval-플러그인-자체-검증) 참고.
+
+## eval (플러그인 자체 검증)
+
+`fe-verify`와 Stop 훅은 **이번 작업의 결과물**을 검사합니다. eval은 **플러그인 자체**를 검사합니다. 같은 요청을 플러그인을 켜고 3번, 끄고 3번 풀게 한 뒤 채점해서, `fe-*` 스킬이 실제로 불리는지와 결과를 바꾸는지를 숫자로 봅니다. 평소 구현 흐름에는 들어가지 않고, 플러그인을 고칠 때와 모델이 바뀔 때만 돌립니다.
+
+```bash
+node scripts/check-eval-graders.mjs    # 기계 채점기를 정답지에 대보기 (모델 호출 없음)
+claude plugin eval .                   # 전체 실행 (Claude Code v2.1.269 이상)
+claude plugin eval . --case state-filter-in-url --runs 1 --ablation none   # 고치는 중: 한 케이스만 1회
+claude plugin eval . --tag fe-a11y     # 스킬별로
+```
+
+전체 실행은 케이스 6개 × (켜고 3번 + 끄고 3번) = 36회 실행이고, 전부 실제 모델 호출이라 사용량을 씁니다. 결과 표의 `WITH`는 플러그인을 켠 점수, `W/OUT`은 끈 점수, `Δ`는 그 차이입니다. 둘 다 1.00이면 스킬 없이도 푸는 문제라는 뜻이고, 그런 스킬은 정리 후보입니다. `skill-fired`가 실패하면서 `Δ`가 0 근처면 스킬이 불리지 않은 것이니 본문이 아니라 `description`을 고칩니다.
+
+| 언제 | 무엇을 |
+|------|--------|
+| 도입 직후 한 번 | 전체를 돌려 기준선을 남긴다. 첫 실행은 플러그인이 아니라 **기준을 디버깅하는 회차**: 떨어진 실행의 기록을 읽고 기준이 좁거나 넓으면 고친다 |
+| `fe-*` 스킬 본문·description을 고친 뒤, push 전 | 고치는 중엔 해당 케이스만 1회, 확정 전에 전체 |
+| `/binary-agents:promote`의 레벨 5(스킬 수정) 승인 전 | 적용 전후 점수를 비교한다 |
+| 모델이 바뀌었을 때 | 전체를 다시 돌린다 |
+
+### 케이스
+
+| 케이스 | 스킬 | 보는 것 |
+|--------|------|---------|
+| `state-filter-in-url` | `fe-state` | 검색 필터 값을 URL 파라미터에 두는가 |
+| `state-server-data-query` | `fe-state` | 서버 데이터를 `useState`+`useEffect`가 아니라 서버 상태 도구로 가져오는가 |
+| `state-local-toggle` | `fe-state` (반대 케이스) | 한 페이지에서만 쓰는 모달 열림 여부를 전역 스토어·Context로 올리지 않는가 |
+| `a11y-clickable-card` | `fe-a11y` | 카드 이동을 `div onClick`이 아니라 링크로 만드는가 |
+| `a11y-icon-button-label` | `fe-a11y` | 아이콘만 있는 버튼에 이름을 주는가 |
+| `react-props-to-state` | `fe-react` | 받은 props를 state로 복사하지 않는가 |
+
+```
+evals/<케이스>/
+├── prompt.md           # 문제. 규칙을 직접 말하지 않는 평범한 요청으로 쓴다 (답을 흘리면 Δ가 0이 된다)
+├── graders/
+│   ├── criteria.md     # 모델 채점: PASS if / FAIL if
+│   ├── <이름>.md        # 기계 채점: regex
+│   └── skill-fired.md  # 스킬이 불렸는지 (켠 쪽·끈 쪽을 같이 돌릴 땐 표시만 되고 점수 제외)
+└── reference/          # 정답지. good은 붙어야 하고 bad는 떨어져야 한다
+```
+
+### 케이스 추가
+
+1. 반복된 교정(`/binary-agents:promote`가 모으는 것)에서 하나를 고른다. 기준에는 **PR에서 실제로 반려할 것**만 넣는다.
+2. 해당 스킬 `references/examples.md`의 ❌ 안티패턴을 FAIL 문장으로, ✅를 PASS 문장으로, 🔍 패턴을 regex 채점기로 옮긴다. "해야 하는데 안 한 것"만 재면 과하게 굴어도 점수가 오르므로, `fe-tradeoffs`의 "하지 말아야 할 제안"에서 반대 케이스도 만든다.
+3. `reference/good.*`, `reference/bad.*`를 쓰고 `node scripts/check-eval-graders.mjs`로 기준부터 검사한다.
+4. 스킬을 고치기 **전에** 돌려서 떨어지는 걸 확인한 뒤, 스킬을 고치고 다시 돌린다.
+
+실행은 매번 빈 폴더에서 시작하고 전역 CLAUDE.md·다른 플러그인·프로젝트 설정은 실리지 않습니다. 필요한 코드는 문제에 붙여 넣습니다. 기본은 읽기 전용 도구만 허용되므로, 지금 케이스들은 답변에 코드를 쓰게 하고 그 답변을 채점합니다.
 
 ## 개발 흐름 (tier)
 
@@ -240,8 +291,9 @@ binary-agents/
 │   ├── fundamentals-review/ # 수동 리뷰
 │   ├── promote/             # 월 1회 승격 제안서
 │   └── commit/ branch/ pr/ review-comments/
+├── evals/                   # 플러그인 eval 케이스 (문제 + 채점 기준 + 정답지)
 ├── hooks/hooks.json         # PostToolUse 포맷, Stop typecheck+test
-├── scripts/                 # 훅 스크립트
+├── scripts/                 # 훅 스크립트, eval 채점기 검사(check-eval-graders.mjs)
 ├── templates/github/        # PR tier 라벨 워크플로 + branch protection 가이드
 ├── docs/
 │   ├── CLAUDE-RULES-TEMPLATE.md # 프로젝트 CLAUDE.md 템플릿 (30줄 안쪽)
