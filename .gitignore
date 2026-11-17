@@ -31,3 +31,6 @@ build/
 
 # Plugin eval results (written by `claude plugin eval`)
 evals/results/
+
+# eval 실행에 함께 싣는 의존성 플러그인 복사본 (scripts/link-eval-deps.mjs가 만든다)
+.eval-deps/

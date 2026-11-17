@@ -2,6 +2,7 @@
 description: "fe-state 반대 케이스: 한 페이지에서만 쓰는 모달 열림 여부는 로컬 상태로 충분하다. 전역 스토어·Context로 올리면 안 된다"
 tags: [fe-state, negative]
 expected_outcome: "모달 열림 여부를 CartPage 안의 useState로 두고, 이미 있는 cartStore에는 손대지 않는다"
+plugins: ["../..", "../../.eval-deps/mattpocock-skills"]
 max_turns: 15
 allowed_tools: [Read, Glob, Grep, Skill]
 ---
