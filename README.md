@@ -109,6 +109,65 @@ EOF
 - **매 세션**: 아무것도 안 함. auto memory가 교정 사항을 자동 기록.
 - **2~4주마다 15분** (시기는 세션 시작 시 Claude가 먼저 제안): `/binary-agents:promote` → 제안서 보고 항목별 승인 → `/doctor prompt-audit`, `/skill-doctor`로 비대해진 규칙·안 쓰는 스킬 정리.
 - 승격 순서는 항상 ESLint 룰 → 테스트 → 모범 예시 → CLAUDE.md 한 줄. 프로즈 규칙은 마지막 수단.
+- **스킬을 고칠 때** (promote 레벨 5 포함): 승인 전에 `claude plugin eval .`로 전후 점수를 비교. 아래 [eval](#eval-플러그인-자체-검증) 참고.
+
+## eval (플러그인 자체 검증)
+
+`fe-verify`와 Stop 훅은 **이번 작업의 결과물**을 검사합니다. eval은 **플러그인 자체**를 검사합니다. 같은 요청을 플러그인을 켜고 3번, 끄고 3번 풀게 한 뒤 채점해서, `fe-*` 스킬이 실제로 불리는지와 결과를 바꾸는지를 숫자로 봅니다. 평소 구현 흐름에는 들어가지 않고, 플러그인을 고칠 때와 모델이 바뀔 때만 돌립니다.
+
+```bash
+node scripts/link-eval-deps.mjs        # 처음 한 번, 의존성 버전이 바뀌면 다시: 의존성 플러그인을 .eval-deps/에 복사
+node scripts/check-eval-graders.mjs    # 기계 채점기를 정답지에 대보기 (모델 호출 없음)
+claude plugin eval .                   # 전체 실행 (Claude Code v2.1.269 이상)
+claude plugin eval . --case a11y-table-row-link --runs 1 --ablation none   # 고치는 중: 한 케이스만 1회
+claude plugin eval . --tag fe-a11y     # 스킬별로
+```
+
+전체 실행은 케이스 7개 × (켜고 3번 + 끄고 3번) = 42회 실행이고, 전부 실제 모델 호출이라 사용량을 씁니다. 결과 표의 `WITH`는 플러그인을 켠 점수, `W/OUT`은 끈 점수, `Δ`는 그 차이입니다. 둘 다 1.00이면 모델이 원래 지키는 규칙이라 스킬 효과를 가르지 못하는 케이스이니, 기본으로는 틀리는 상황으로 바꾸거나 지웁니다(반대 케이스는 예외: 둘 다 1.00이 정상). `skill-fired`가 실패하면서 `Δ`가 0 근처면 스킬이 불리지 않은 것이니 본문이 아니라 `description`을 고칩니다.
+
+| 언제 | 무엇을 |
+|------|--------|
+| 도입 직후 한 번 | 전체를 돌려 기준선을 남긴다. 첫 실행은 플러그인이 아니라 **기준을 디버깅하는 회차**: 떨어진 실행의 기록을 읽고 기준이 좁거나 넓으면 고친다 |
+| `fe-*` 스킬 본문·description을 고친 뒤, push 전 | 고치는 중엔 해당 케이스만 1회, 확정 전에 전체 |
+| `/binary-agents:promote`의 레벨 5(스킬 수정) 승인 전 | 적용 전후 점수를 비교한다 |
+| 모델이 바뀌었을 때 | 전체를 다시 돌린다 |
+
+### 케이스
+
+모델이 **기본으로는 틀리기 쉬운** 상황만 남깁니다. 필터를 URL에 두기, 아이콘 버튼에 이름 주기처럼 스킬 없이도 지키는 규칙은 첫 실행(2026-11-17)에서 켠 쪽·끈 쪽 모두 1.00이 나와 뺐습니다.
+
+| 케이스 | 스킬 | 보는 것 | 기본으로 틀리기 쉬운 이유 |
+|--------|------|---------|---------------------------|
+| `a11y-card-delete-button` | `fe-a11y` | 링크 카드에 삭제 버튼을 넣을 때 링크 안에 버튼을 중첩하지 않는가 | "누르면 이동하면 안 돼"를 `stopPropagation`·`preventDefault`로 막기 쉽다 |
+| `a11y-table-row-link` | `fe-a11y` | 행 클릭 이동을 `tr onClick`이 아니라 행 안의 링크로 만드는가 | 행 전체 클릭은 `tr onClick` + `navigate`가 흔한 답이다 |
+| `root-cause-search-race` | `fe-root-cause` | 응답 순서 문제를 디바운스만으로 끝내지 않고, `res.ok`를 확인하는가 | 요청이 "디바운스 넣어줘"라서 그대로 따르기 쉽다 |
+| `root-cause-missing-user` | `fe-root-cause` | "possibly undefined"를 `!`·`as`·빈 객체로 덮지 않고 없을 때를 처리하는가 | 요청이 "타입 에러 없애줘"라서 단언으로 끝내기 쉽다 |
+| `react-shared-hook-side-effects` | `fe-react` | 두 화면이 쓰는 mutation 훅에 토스트·페이지 이동을 고정하지 않는가 | 요구사항을 훅의 `onSuccess`에 한꺼번에 넣기 쉽다 |
+| `state-drilling-composition` | `fe-state` | 중간이 안 쓰는 prop drilling을 Context보다 컴포넌트 합성으로 먼저 푸는가 | prop drilling 정리 요청에는 Context가 흔한 답이다 |
+| `state-local-toggle` | `fe-state` (반대 케이스) | 한 페이지에서만 쓰는 모달 열림 여부를 전역 스토어·Context로 올리지 않는가 | 과하게 굴면 떨어진다. 켠 쪽·끈 쪽 모두 1.00이 정상 |
+
+```
+evals/<케이스>/
+├── prompt.md           # 문제. 규칙을 직접 말하지 않는 평범한 요청으로 쓴다 (답을 흘리면 Δ가 0이 된다)
+├── graders/
+│   ├── criteria.md     # 모델 채점: PASS if / FAIL if
+│   ├── <이름>.md        # 기계 채점: regex
+│   └── skill-fired.md  # 스킬이 불렸는지 (켠 쪽·끈 쪽을 같이 돌릴 땐 표시만 되고 점수 제외)
+└── reference/          # 정답지. good은 붙어야 하고 bad는 떨어져야 한다
+```
+
+### 케이스 추가
+
+1. 반복된 교정(`/binary-agents:promote`가 모으는 것)에서 하나를 고른다. 기준에는 **PR에서 실제로 반려할 것**만 넣는다.
+2. 해당 스킬 `references/examples.md`의 ❌ 안티패턴을 FAIL 문장으로, ✅를 PASS 문장으로, 🔍 패턴을 regex 채점기로 옮긴다. "해야 하는데 안 한 것"만 재면 과하게 굴어도 점수가 오르므로, `fe-tradeoffs`의 "하지 말아야 할 제안"에서 반대 케이스도 만든다.
+3. `reference/good.*`, `reference/bad.*`를 쓰고 `node scripts/check-eval-graders.mjs`로 기준부터 검사한다.
+4. 스킬을 고치기 **전에** 돌려서 떨어지는 걸 확인한 뒤, 스킬을 고치고 다시 돌린다.
+
+**플러그인이 실제로 로드됐는지 먼저 확인합니다.** eval은 매번 빈 환경에서 돌아서 사용자에게 설치된 플러그인이 없습니다. `plugin.json`의 `dependencies`(`mattpocock-skills`)가 채워지지 않으면 binary-agents 전체가 로드에 실패하는데(`plugin_errors: dependency-unsatisfied`), 점수 표에는 아무 표시 없이 켠 쪽도 플러그인 없이 돈 결과가 나옵니다. 그래서 각 케이스는 `plugins: ["../..", "../../.eval-deps/mattpocock-skills"]`로 의존성을 함께 싣고, `.eval-deps/`는 `node scripts/link-eval-deps.mjs`가 설치된 의존성을 복사해 만듭니다(gitignore 대상). 링크로는 안 됩니다: eval은 레포 밖으로 풀리는 플러그인 경로를 거부합니다. 의존성을 추가하면 이 스크립트를 다시 돌리고 케이스의 `plugins`에도 넣습니다. 켠 쪽 `skill-fired`가 전부 0회면 description보다 먼저 `--keep-temp`로 남긴 `trace.jsonl`의 첫 줄(`plugins`, `skills`, `plugin_errors`)부터 봅니다.
+
+실행은 매번 빈 폴더에서 시작하고 전역 CLAUDE.md·다른 플러그인·프로젝트 설정은 실리지 않습니다. 필요한 코드는 문제에 붙여 넣습니다. 기본은 읽기 전용 도구만 허용되므로, 지금 케이스들은 답변에 코드를 쓰게 하고 그 답변을 채점합니다.
+
+스킬이나 에이전트를 추가·삭제했으면 `node scripts/check-readme.mjs`로 README에 빠진 이름이 없는지 확인합니다.
 
 ## 개발 흐름 (tier)
 
@@ -240,8 +299,9 @@ binary-agents/
 │   ├── fundamentals-review/ # 수동 리뷰
 │   ├── promote/             # 월 1회 승격 제안서
 │   └── commit/ branch/ pr/ review-comments/
+├── evals/                   # 플러그인 eval 케이스 (문제 + 채점 기준 + 정답지)
 ├── hooks/hooks.json         # PostToolUse 포맷, Stop typecheck+test
-├── scripts/                 # 훅 스크립트
+├── scripts/                 # 훅 스크립트, eval 채점기 검사(check-eval-graders.mjs), README 누락 검사(check-readme.mjs)
 ├── templates/github/        # PR tier 라벨 워크플로 + branch protection 가이드
 ├── docs/
 │   ├── CLAUDE-RULES-TEMPLATE.md # 프로젝트 CLAUDE.md 템플릿 (30줄 안쪽)

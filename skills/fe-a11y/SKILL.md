@@ -1,6 +1,6 @@
 ---
 name: fe-a11y
-description: 클릭 가능한 요소, 폼과 입력 레이블, 아이콘만 있는 버튼, 카드 안 버튼, 테이블 행 이동을 JSX로 작성하거나 리뷰할 때 사용. Toss Frontend Fundamentals 접근성 가이드에서 고른 6가지 패턴과, ESLint로 넘길 범위
+description: React·JSX에서 누르면 동작하는 UI(카드·목록·테이블 행 클릭 이동, 버튼, 아이콘 버튼, 링크, 폼 입력)를 만들거나 고치기 전에 먼저 불러온다. 클릭 영역을 넓히거나, 카드·행 안에 버튼을 추가하거나, 아이콘만 있는 버튼이나 입력창을 만들 때 흔히 생기는 접근성 실수(div·tr onClick, 링크 안 버튼과 stopPropagation, 이름 없는 버튼, placeholder만 있는 입력)와 고치는 패턴. JSX 리뷰에도 사용. Toss Frontend Fundamentals 접근성 가이드 기반
 ---
 
 # 접근성 6가지 패턴

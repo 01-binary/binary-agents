@@ -1,6 +1,6 @@
 ---
 name: fe-state
-description: React 상태를 어디에 둘지 정하는 기준. useState·props·컴포넌트 합성·Context·전역 스토어·서버 상태(TanStack Query 등)·URL 중 무엇을 쓸지 정할 때, Context나 전역 스토어를 새로 만들려 할 때, 서버 데이터를 useState와 useEffect로 다루려 할 때 사용
+description: React에서 상태나 데이터를 어디에 둘지 정해야 하는 코드를 쓰거나 고치기 전에 먼저 불러온다. props가 여러 단계로 내려가서 정리하고 싶을 때, 모달·필터·폼 값 같은 UI 상태를 추가할 때, Context나 전역 스토어(Zustand·Redux)를 만들거나 쓰려 할 때, 서버 데이터를 useState와 useEffect로 가져오려 할 때. useState·props·컴포넌트 합성·Context·전역 스토어·서버 상태(TanStack Query 등)·URL 중에서 고르는 기준
 ---
 
 # React 상태 배치

@@ -1,6 +1,6 @@
 ---
 name: fe-react
-description: React 컴포넌트를 설계하거나 리뷰할 때 쓰는 패턴 기준. 컴포넌트가 데이터를 직접 가져올지 페이지가 내려줄지, 부수효과를 함수 안에 둘지, 데이터 fetching과 Suspense·에러 경계를 어디에 둘지, 컴포넌트·함수·훅·불리언 이름을 지을 때, memo·useMemo·useCallback을 쓸지 정할 때 사용
+description: React 컴포넌트나 커스텀 훅을 새로 만들거나 고치기 전에 먼저 불러온다. 여러 화면이 함께 쓰는 훅(useMutation 등)에 토스트·페이지 이동 같은 부수효과를 어디에 둘지, 컴포넌트가 데이터를 직접 가져올지 props로 받을지, Suspense·에러 경계 위치, 컴포넌트·함수·훅·불리언 이름, memo·useMemo·useCallback 사용, props를 state로 복사하는 문제를 판단하는 기준
 ---
 
 # React 컴포넌트 패턴
