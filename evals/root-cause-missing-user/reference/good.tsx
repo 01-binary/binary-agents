@@ -16,3 +16,5 @@ export function OrderSummary({ order, users }: { order: Order; users: User[] }) 
     </section>
   );
 }
+
+// 답 끝 설명 문장 예: `!`나 `as User`, `buyer!`, `?? {}`로 덮지 않고 없으면 에러를 던졌어요.
