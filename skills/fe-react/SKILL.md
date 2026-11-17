@@ -1,6 +1,6 @@
 ---
 name: fe-react
-description: React 컴포넌트나 커스텀 훅을 새로 만들거나 고치기 전에 먼저 불러온다. 여러 화면이 함께 쓰는 훅(useMutation 등)에 토스트·페이지 이동 같은 부수효과를 어디에 둘지, 컴포넌트가 데이터를 직접 가져올지 props로 받을지, Suspense·에러 경계 위치, 컴포넌트·함수·훅·불리언 이름, memo·useMemo·useCallback 사용, props를 state로 복사하는 문제를 판단하는 기준
+description: React 커스텀 훅(TanStack Query useMutation·useQuery를 감싼 useXxx 훅 등)이나 컴포넌트의 코드를 짜거나 고치기 전에 먼저 불러온다. 코드만 달라는 짧은 요청이어도 부른다. 특히 "이 훅을 여러 페이지에서 쓸 거야"인데 "어떤 페이지에서는 성공하면 토스트를 띄우고 다른 페이지로 이동해야 해" 같은 요청에서 흔히 하는 실수(훅의 onSuccess 안에 toast·navigate를 고정하거나 redirect 같은 옵션 플래그로 켜고 끄기)를 피하고, 부수효과를 호출부(mutate의 onSuccess)로 빼는 기준. 컴포넌트가 데이터를 직접 가져올지 props로 받을지, Suspense·에러 경계 위치, 컴포넌트·함수·훅·불리언 이름, memo·useMemo·useCallback 사용, props를 state로 복사하는 문제에도 사용
 ---
 
 # React 컴포넌트 패턴
