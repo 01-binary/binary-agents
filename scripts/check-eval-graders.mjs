@@ -6,6 +6,7 @@
 // 통과 조건
 // 1. 모든 regex 채점기가 good을 통과시킨다 (맞는 답을 떨어뜨리면 기준이 좁은 것)
 // 2. 케이스마다 bad를 떨어뜨리는 regex 채점기가 하나 이상 있다 (틀린 답을 못 잡으면 기준이 넓은 것)
+// 3. 모든 케이스의 prompt.md가 플러그인과 의존성을 plugins로 함께 싣는다
 //
 // llm·tool_used 채점기는 실제 실행이 있어야 해서 여기서 다루지 않는다.
 // 판정 방식은 `claude plugin eval`의 regex 채점기와 같다: 기본은 "패턴이 있으면 통과",
@@ -68,6 +69,21 @@ if (!existsSync(evalDir)) {
   console.error('evals/ 폴더가 없습니다.');
   process.exit(1);
 }
+
+// 3. 모든 케이스가 플러그인과 의존성을 함께 싣는다. 빠지면 켠 쪽이 조용히 플러그인 없이 돈다(plugin_errors: dependency-unsatisfied).
+const manifest = JSON.parse(readFileSync(join(root, '.claude-plugin', 'plugin.json'), 'utf8'));
+const dependencyNames = (manifest.dependencies ?? []).map((dependency) => dependency.name);
+const requiredPlugins = ['../..', ...dependencyNames.map((name) => `../../.eval-deps/${name}`)];
+for (const caseName of readdirSync(evalDir).sort()) {
+  const promptFile = join(evalDir, caseName, 'prompt.md');
+  if (!existsSync(promptFile)) continue;
+  const raw = readFrontmatter(promptFile).plugins;
+  const plugins = raw ? JSON.parse(raw) : [];
+  const missing = requiredPlugins.filter((plugin) => !plugins.includes(plugin));
+  if (missing.length > 0) problems.push(`${caseName}: prompt.md의 plugins에 ${missing.join(', ')} 가 없습니다`);
+}
+const unlinked = dependencyNames.filter((name) => !existsSync(join(root, '.eval-deps', name)));
+if (unlinked.length > 0) console.warn(`주의: .eval-deps/에 ${unlinked.join(', ')} 가 없습니다. eval 전에 node scripts/link-eval-deps.mjs\n`);
 
 for (const caseName of readdirSync(evalDir).sort()) {
   const caseDir = join(evalDir, caseName);

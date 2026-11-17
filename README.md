@@ -167,6 +167,8 @@ evals/<케이스>/
 
 실행은 매번 빈 폴더에서 시작하고 전역 CLAUDE.md·다른 플러그인·프로젝트 설정은 실리지 않습니다. 필요한 코드는 문제에 붙여 넣습니다. 기본은 읽기 전용 도구만 허용되므로, 지금 케이스들은 답변에 코드를 쓰게 하고 그 답변을 채점합니다.
 
+스킬이나 에이전트를 추가·삭제했으면 `node scripts/check-readme.mjs`로 README에 빠진 이름이 없는지 확인합니다.
+
 ## 개발 흐름 (tier)
 
 | tier | 기준 (`templates/github/pr-tier.yml`이 라벨링) | 흐름 |
@@ -299,7 +301,7 @@ binary-agents/
 │   └── commit/ branch/ pr/ review-comments/
 ├── evals/                   # 플러그인 eval 케이스 (문제 + 채점 기준 + 정답지)
 ├── hooks/hooks.json         # PostToolUse 포맷, Stop typecheck+test
-├── scripts/                 # 훅 스크립트, eval 채점기 검사(check-eval-graders.mjs)
+├── scripts/                 # 훅 스크립트, eval 채점기 검사(check-eval-graders.mjs), README 누락 검사(check-readme.mjs)
 ├── templates/github/        # PR tier 라벨 워크플로 + branch protection 가이드
 ├── docs/
 │   ├── CLAUDE-RULES-TEMPLATE.md # 프로젝트 CLAUDE.md 템플릿 (30줄 안쪽)
