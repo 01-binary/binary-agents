@@ -17,6 +17,7 @@ description: React 커스텀 훅(TanStack Query useMutation·useQuery를 감싼 
 |---|---|---|
 | 컴포넌트 데이터 소유 | 페이지가 모든 데이터를 가져와 props로 내려준다. 같은 역할의 컴포넌트마다 방식이 다르다 | 재사용성과 변경 영향을 기준으로 응집도 우선과 명시성 우선 중 하나를 골라 일관되게 쓴다 |
 | 부수효과 위치 | 선택적이거나 호출처마다 다른 부수효과(알림, 페이지 이동)가 함수 안에 고정돼 있다 | 호출하는 쪽으로 꺼낸다. 항상 발생하고 주 동작의 일부면 안에 둬도 된다 |
+| 비동기 버튼 | `await` 가 있는 클릭 핸들러에 진행 중 막기가 없다. 막기는 있는데 이벤트 전송 · 토스트가 막기 바깥에서 매번 실행된다 | 진행 중에는 다시 실행되지 않게 ref 가드(또는 `isPending`)로 막고, 이벤트 전송도 막힌 쪽 안에서 한 번만 보낸다 |
 | 데이터 fetching | 순차 `await`로 차례차례 가져온다. 부모 데이터가 온 뒤에야 렌더되는 자식이 또 가져온다(중첩 waterfall). 한 컴포넌트에서 `useSuspenseQuery`를 여러 번 쓴다 | 형제 컴포넌트끼리는 각자 가져와도 병렬로 실행된다. 중첩이면 쿼리를 위로 끌어올리거나 미리 가져오고(prefetch), 한 컴포넌트의 여러 Suspense 쿼리는 `useSuspenseQueries`로 묶는다 |
 | 비동기 경계 | Suspense만 있고 에러 경계가 없다. `useSuspenseQuery`를 경계 없이 쓴다 | Suspense와 ErrorBoundary를 함께(AsyncBoundary) 두고, 즉시 그릴 영역은 경계 밖에 둔다 |
 | 네이밍 | `data`, `info`, 대상이 없는 `handle`(`handleData`) 같은 모호한 이름, `is`/`has`가 없는 불리언, 훅 이름의 `fetch`/`get` | 역할이 드러나는 이름, `is`/`has`/`can`/`should`, 훅은 목적으로 (`useProductList`) |
