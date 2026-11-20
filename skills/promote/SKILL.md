@@ -52,9 +52,9 @@ diff:
 - `/doctor prompt-audit`, `/skill-doctor` 돌려보라고 안내 (이 스킬이 대신 못 돌림)
 
 ## 6. 마지막에
-승인 처리가 끝나면 아래 명령으로 "마지막 promote 날짜"를 기록한다 (세션 시작 훅이 이걸 보고 다음 제안 시점을 정한다):
+승인 처리가 끝나면 아래 명령으로 "마지막 promote 날짜"를 기록한다 (세션 시작 훅이 이걸 보고 다음 제안 시점을 정한다). worktree 에서 돌려도 메인 레포 날짜 하나에 기록된다:
 ```bash
-mkdir -p ~/.claude/binary-agents && date +%F > ~/.claude/binary-agents/last-promote$(git rev-parse --show-toplevel | tr '/' '_')
+mkdir -p ~/.claude/binary-agents && date +%F > ~/.claude/binary-agents/last-promote$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)" | tr '/' '_')
 ```
 
 ## 하지 않는 것
