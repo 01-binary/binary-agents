@@ -96,6 +96,38 @@ onClick={() => {
 - 선택적이어야 할 부수효과가 강제로 포함
 - 호출처마다 다른 동작이 필요한데 하드코딩
 
+#### 비동기 버튼은 진행 중 다시 실행하지 않는다
+
+**❌ 막기가 없고, 이벤트가 탭마다 나간다**
+
+```tsx
+const handleResume = async () => {
+  track('resume_click') // 연타하면 탭마다 쌓인다
+  await resumeGame() // 끝나기 전에 또 실행된다
+}
+```
+
+**✅ 진행 중이면 돌아가고, 이벤트도 그 안에서 한 번만**
+
+```tsx
+const isRunningRef = useRef(false)
+
+const handleResume = async () => {
+  if (isRunningRef.current) return
+  isRunningRef.current = true
+  try {
+    track('resume_click')
+    await resumeGame()
+  } finally {
+    isRunningRef.current = false
+  }
+}
+```
+
+- 가드는 state 가 아니라 ref 로 둔다. state 는 다음 렌더 전에 들어온 두 번째 클릭을 못 막는다 (`fe-root-cause` "중복 실행 방지를 state로만 함")
+- 레포에 같은 일을 하는 훅(예: `useCallOnce`)이 있으면 그걸 쓰되, 이벤트 전송도 그 훅이 감싼 함수 안에 둔다
+- 🔍 클릭 핸들러 안에 `await` 가 있는데 가드(`useRef` 가드 · `isPending` · `isRunning`)가 없는 곳
+
 ---
 
 ### 3. 데이터 Fetching 패턴

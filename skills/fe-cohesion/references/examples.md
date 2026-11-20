@@ -47,6 +47,33 @@ src/
 - 범위 관리: 기능 제거 시 도메인 디렉토리 전체 삭제로 미사용 코드 제거
 - 프로젝트 규모 증가에 대응
 
+**경계: 한 화면만 쓰면 그 화면 옆에, 한 곳만 쓰면 같은 파일 안에**
+
+도메인 폴더로 나눈 뒤에도 같은 기준을 한 단계 더 적용한다. 한 화면에서만 쓰는 파일을 도메인 최상위에 모으면, 그 화면을 지울 때 남는 미아 코드가 된다.
+
+```
+❌ 한 화면만 쓰는 컴포넌트를 도메인 최상위에 모음
+money-check/
+├─ _components/
+│  ├─ InsuranceQuestion.tsx   # [category] 화면만 씀
+│  └─ BridgeSummary.tsx       # (bridge) 화면만 씀
+├─ (bridge)/page.tsx
+└─ [category]/page.tsx
+
+✅ 쓰는 화면 옆에, 두 화면 이상이 쓸 때만 위로
+money-check/
+├─ _lib/survey-answers.ts     # 두 화면이 씀
+├─ (bridge)/
+│  ├─ _components/BridgeSummary.tsx
+│  └─ page.tsx
+└─ [category]/
+   ├─ _components/InsuranceQuestion.tsx
+   └─ page.tsx
+```
+
+- 한 컴포넌트에서만 쓰는 하위 컴포넌트 · 함수 · 상수는 따로 파일을 만들지 않고 그 파일 안에 둔다. 테스트가 필요한 순수 함수만 export 한다
+- 두 곳 이상에서 쓰게 되면 그때 공통 위치로 올린다
+
 **🔍 검색:**
 
 - `../../../` 같은 깊은 상대 경로가 있는가?
