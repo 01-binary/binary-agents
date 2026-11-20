@@ -89,7 +89,7 @@ EOF
 | `/binary-agents:fe-verify` | typecheck·test → 영향 범위 → 두 뷰포트 스크린샷·콘솔 → `/simplify` → a11y·상태 리뷰. 결과를 REPORT.md로 남김 (커밋·PR은 안 함) | 구현이 끝났을 때 |
 | `/binary-agents:fundamentals-review` | 4원칙 + 근본 원인 + 접근성 + 상태 + React 리뷰를 병렬 실행, 이슈 단위로 합쳐 원칙 충돌까지 판단 | tier 2·3 PR을 사람이 보기 전 |
 | `/binary-agents:review-comments` | PR 리뷰 코멘트를 스킬 기준으로 분석해 개선 필요 여부·변경 방법·답글 초안 | 리뷰 받은 뒤 |
-| `/binary-agents:promote` | 지난 2~4주 반복된 교정·리뷰 지적을 모아 ESLint → 테스트 → 예시 → CLAUDE.md 순으로 승격 **제안서** 작성. 항목별 승인 후에만 적용 | 월 1회, 15분 |
+| `/binary-agents:promote` | 지난 2~4주 반복된 교정·리뷰 지적을 모아 보낼 곳(레포 · 전역 CLAUDE.md · 플러그인)과 승격 레벨을 정하고, 안건마다 한 줄 사유를 붙인 **제안서** 작성. 항목별 승인 후에만 적용 | 2주 이상 지나고 지적이 쌓였을 때, 15분 |
 | `/binary-agents:commit` | 컨벤션에 맞는 커밋 메시지, 섞인 변경은 나눠서 커밋 | |
 | `/binary-agents:branch` | 기본 브랜치 최신화 후 컨벤션에 맞는 브랜치 생성 | |
 | `/binary-agents:pr` | 브랜치 변경 분석 후 PR 생성. `fe-verify`의 REPORT.md가 있으면 본문에 포함 | `fe-verify` 뒤 |
@@ -101,14 +101,14 @@ EOF
 | 이벤트 | 동작 |
 |--------|------|
 | `PostToolUse` (Edit/Write) | 방금 편집한 파일 하나만 `prettier` → `eslint --fix`. 실패해도 막지 않음 |
-| `SessionStart` | 마지막 promote 후 21일 지났거나 교정성 커밋이 5개 이상이면 Claude가 먼저 `/binary-agents:promote`를 제안 |
+| `SessionStart` | 마지막 promote 후 14일이 지났고 그 뒤 새로 쌓인 지적(auto memory의 `type: feedback` 메모리)이 1개 이상이면 Claude가 먼저 `/binary-agents:promote`를 제안. 커밋 내역은 보지 않음. worktree도 메인 레포의 날짜·메모리를 같이 씀 |
 | `Stop` | `typecheck`(없으면 `tsc --noEmit`) + `test` 실패 시 exit 2로 Claude를 되돌림. turbo 모노레포(`turbo.json`)면 HEAD 대비 바뀐 패키지만 타입 검사 태스크 + `test`(`turbo --filter='[HEAD]'`). 타입 검사 태스크는 `check-types`·`typecheck`·`type-check` 중 `turbo.json`에 있는 것을 쓰고, 없는 태스크는 빼며 둘 다 없으면 통과. 마지막 40줄만 전달. 되돌린 뒤에도 다시 검사하되 연속 2번까지만 되돌리고, 그래도 실패면 통과시키며 사용자에게 경고를 띄움. 변경이 없거나 `subagent`·`workflow`·`teammate`가 아직 작업 중이면 통과(dev 서버 같은 `shell`·`monitor`는 세지 않음) |
 
 ## 운영 루프 (자가개선, 사람 승인제)
 
 - **매 세션**: 아무것도 안 함. auto memory가 교정 사항을 자동 기록.
-- **2~4주마다 15분** (시기는 세션 시작 시 Claude가 먼저 제안): `/binary-agents:promote` → 제안서 보고 항목별 승인 → `/doctor prompt-audit`, `/skill-doctor`로 비대해진 규칙·안 쓰는 스킬 정리.
-- 승격 순서는 항상 ESLint 룰 → 테스트 → 모범 예시 → CLAUDE.md 한 줄. 프로즈 규칙은 마지막 수단.
+- **2주 이상 지나고 지적이 쌓였을 때 15분** (시기는 세션 시작 시 Claude가 먼저 제안): `/binary-agents:promote` → 제안서 보고 항목별 승인 → `/doctor prompt-audit`, `/skill-doctor`로 비대해진 규칙·안 쓰는 스킬 정리.
+- 승격 순서는 항상 ESLint 룰 → 테스트 → 모범 예시 → CLAUDE.md 한 줄. 프로즈 규칙은 마지막 수단. 플러그인으로 갈 지적은 예시(`references/`) → 본문 → description 순.
 - **스킬을 고칠 때** (promote 레벨 5 포함): 승인 전에 `claude plugin eval .`로 전후 점수를 비교. 아래 [eval](#eval-플러그인-자체-검증) 참고.
 
 ## eval (플러그인 자체 검증)
@@ -129,7 +129,7 @@ claude plugin eval . --tag fe-a11y     # 스킬별로
 |------|--------|
 | 도입 직후 한 번 | 전체를 돌려 기준선을 남긴다. 첫 실행은 플러그인이 아니라 **기준을 디버깅하는 회차**: 떨어진 실행의 기록을 읽고 기준이 좁거나 넓으면 고친다 |
 | `fe-*` 스킬 본문·description을 고친 뒤, push 전 | 고치는 중엔 해당 케이스만 1회, 확정 전에 전체 |
-| `/binary-agents:promote`의 레벨 5(스킬 수정) 승인 전 | 적용 전후 점수를 비교한다 |
+| `/binary-agents:promote`의 레벨 5a~5c(스킬 수정) 승인 전 | 적용 전후 점수를 비교한다 |
 | 모델이 바뀌었을 때 | 전체를 다시 돌린다 |
 
 ### 케이스
