@@ -33,10 +33,22 @@ has_script() { jq -e --arg s "$1" '.scripts[$s] // empty' package.json >/dev/nul
 
 log="$(mktemp)"; fail=0; label="typecheck/test"
 
+# turbo.json 에 정의된 태스크인지. 없는 태스크를 넘기면 turbo 가 "Could not find task" 로 실패해 검사 실패로 오인한다
+# turbo.json 은 주석을 허용해 jq 로 못 읽을 수 있으므로 키 이름으로 찾는다
+has_turbo_task() { grep -Eq "\"$1\"[[:space:]]*:" turbo.json; }
+
 # turbo 모노레포면 HEAD 대비 바뀐 패키지(커밋 안 한 변경 포함)만 검사한다 — 전체 앱을 돌리면 느리고 상관없는 앱 실패에 걸린다
 if [ -f turbo.json ]; then
-  label="바뀐 패키지의 check-types/test"
-  npx turbo run check-types test --filter='[HEAD]' >"$log" 2>&1 || fail=1
+  # 타입 검사 태스크 이름은 레포마다 다르다 (check-types, typecheck, type-check)
+  turbo_tasks=""
+  for t in check-types typecheck type-check; do
+    if has_turbo_task "$t"; then turbo_tasks="$t"; break; fi
+  done
+  has_turbo_task test && turbo_tasks="${turbo_tasks:+$turbo_tasks }test"
+  [ -z "$turbo_tasks" ] && { rm -f "$log"; exit 0; }
+  label="바뀐 패키지의 ${turbo_tasks// //}"
+  # shellcheck disable=SC2086 # 태스크 이름은 공백으로 나눠 넘긴다
+  npx turbo run $turbo_tasks --filter='[HEAD]' >"$log" 2>&1 || fail=1
 else
   if has_script typecheck; then
     $run typecheck >"$log" 2>&1 || fail=1
